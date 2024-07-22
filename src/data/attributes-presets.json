@@ -1,0 +1,266 @@
+[
+  {
+    "id": "1",
+    "name": "to do",
+    "description": "Simple todo tasks manager",
+    "item_name": "task",
+    "attributes": {
+      "statuses": {
+        "open": [
+          {
+            "id": 1,
+            "type": "open",
+            "name": "to do",
+            "color": "gray"
+          },
+          {
+            "id": 1.1,
+            "type": "open",
+            "name": "open",
+            "color": "black"
+          }
+        ],
+        "active": null,
+        "done": null,
+        "close": [
+          {
+            "id": 2,
+            "type": "closed",
+            "name": "completed",
+            "color": "blue"
+          }
+        ]
+      },
+      "dates": {},
+      "priority": {}
+    }
+  },
+  {
+    "id": "2",
+    "name": "kanban",
+    "description": "Classic kanban board sections",
+    "item_name": "task",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 1,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
+        }
+      ],
+      "active": [
+        {
+          "id": 2,
+          "type": "active",
+          "name": "in progress",
+          "color": "blue"
+        },
+        {
+          "id": 3,
+          "type": "active",
+          "name": "review",
+          "color": "purple"
+        }
+      ],
+      "done": null,
+      "close": [
+        {
+          "id": 4,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
+        }
+      ]
+    }
+  },
+  {
+    "id": "3",
+    "name": "scrum",
+    "description": "Scrum or cum?",
+    "item_name": "task",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 5,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
+        }
+      ],
+      "active": [
+        {
+          "id": 6,
+          "type": "active",
+          "name": "pending",
+          "color": "yellow"
+        },
+        {
+          "id": 7,
+          "type": "active",
+          "name": "in progress",
+          "color": "pink"
+        },
+        {
+          "id": 8,
+          "type": "active",
+          "name": "completed",
+          "color": "black"
+        },
+        {
+          "id": 9,
+          "type": "active",
+          "name": "in review",
+          "color": "orange"
+        },
+        {
+          "id": 10,
+          "type": "active",
+          "name": "accepted",
+          "color": "red"
+        },
+        {
+          "id": 11,
+          "type": "active",
+          "name": "rejected",
+          "color": "magenta"
+        },
+        {
+          "id": 12,
+          "type": "active",
+          "name": "blocked",
+          "color": "violet"
+        }
+      ],
+      "done": null,
+      "close": [
+        {
+          "id": 13,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
+        }
+      ]
+    }
+  },
+  {
+    "id": "4",
+    "name": "content",
+    "description": "What you going to post now? a video, blog, articules?",
+    "item_name": "post",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 14,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
+        }
+      ],
+      "active": [
+        {
+          "id": 15,
+          "type": "active",
+          "name": "ready",
+          "color": "yellow"
+        },
+        {
+          "id": 16,
+          "type": "active",
+          "name": "writing",
+          "color": "pink"
+        },
+        {
+          "id": 17,
+          "type": "active",
+          "name": "approval",
+          "color": "red"
+        },
+        {
+          "id": 18,
+          "type": "active",
+          "name": "rejected",
+          "color": "magenta"
+        }
+      ],
+      "done": [
+        {
+          "id": 19,
+          "type": "done",
+          "name": "publish",
+          "color": "purple"
+        }
+      ],
+      "close": [
+        {
+          "id": 20,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
+        }
+      ]
+    }
+  },
+  {
+    "id": "5",
+    "name": "ideas",
+    "description": "What do you want to post? a video, blog, article?",
+    "item_name": "idea",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 21,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
+        }
+      ],
+      "active": [
+        {
+          "id": 22,
+          "type": "active",
+          "name": "concept",
+          "color": "yellow"
+        },
+        {
+          "id": 23,
+          "type": "active",
+          "name": "in progress",
+          "color": "blue"
+        },
+        {
+          "id": 24,
+          "type": "active",
+          "name": "running",
+          "color": "purple"
+        },
+        {
+          "id": 25,
+          "type": "active",
+          "name": "blocked",
+          "color": "red"
+        }
+      ],
+      "done": [
+        {
+          "id": 26,
+          "type": "done",
+          "name": "done",
+          "color": "orange"
+        }
+      ],
+      "close": [
+        {
+          "id": 27,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "id": -1,
+  "name": null,
+  "description": null,
+  "items_name": "",
+  "attributes": {
+    "statuses": {
+      "active": false,
+      "values": {
+        "open": [],
+        "active": [],
+        "done": [],
+        "close": []
+      }
+    },
+    "dates": {
+      "active": false,
+      "values": {
+        "stat_date": true,
+        "due_date": true,
+        "reminders": true,
+        "repeats": true
+      }
+    },
+    "priority": {
+      "active": false,
+      "values": [
+        {
+          "name": "High",
+          "color": "red"
+        },
+        {
+          "name": "Medium",
+          "color": "yellow"
+        },
+        {
+          "name": "Low",
+          "color": "blue"
+        },
+        {
+          "name": "none",
+          "color": "gray"
+        }
+      ]
+    },
+    "tags": {
+      "active": false,
+      "values": []
+    },
+    "fields": {
+      "active": false,
+      "values": []
+    },
+    "timer": {
+      "active": false,
+      "values": {
+        "pomodoro": {
+          "active": true,
+          "minutes": 25
+        },
+        "tracker": true,
+        "estimation": true,
+        "goal": true
+      }
+    },
+    "relationships": {
+      "active": false,
+      "values": {
+        "lists": true,
+        "elements": true,
+        "notes": true,
+        "whiteboards": false,
+        "dependencies": true,
+        "urls": true
+      }
+    },
+    "collaboration": {
+      "active": false,
+      "values": {
+        "multiple": true
+      }
+    }
+  }
+}
