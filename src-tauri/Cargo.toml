@@ -1,0 +1,49 @@
+[package]
+<<<<<<< HEAD
+name = "sigma"
+version = "0.0.0"
+description = "A Tauri App"
+authors = ["you"]
+license = ""
+repository = ""
+=======
+name = "notask-react"
+version = "0.0.0"
+description = "A Tauri App"
+authors = ["you"]
+>>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+<<<<<<< HEAD
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.5", features = [ "http-all", "shell-open"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_with_macros = "3.4.0"
+surrealdb = { version = "1.0.0", features = ["kv-mem", "kv-tikv"] }
+tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread"] }
+ts-rs = { version = "7" }
+
+[dev-dependencies]
+anyhow="1"
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+=======
+tauri-build = { version = "1", features = [] }
+
+[dependencies]
+tauri = { version = "1", features = ["shell-open"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[features]
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+>>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
+custom-protocol = ["tauri/custom-protocol"]

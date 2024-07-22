@@ -1,0 +1,24 @@
+
+
+Texto
+Numero
+Telefono
+Checkbox
+Fecha
+Rango de Fechas
+Dinero
+Area de Texto
+Url
+Rating
+Relacion con otro lista
+Usuario
+Archivo
+Barra de progreso
+Otro elemento
+Seleccion multiple
+votos
+Ubicacion
+Correo
+
+
+

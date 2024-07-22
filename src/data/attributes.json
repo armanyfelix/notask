@@ -1,0 +1,34 @@
+[
+  {
+    "name": "statuses",
+    "description": "Track a task or"
+  },
+  {
+    "name": "dates",
+    "description": "Add a due date or a start date or both."
+  },
+  {
+    "name": "priority",
+    "description": "Group your list groups by importance."
+  },
+  {
+    "name": "tags",
+    "description": "Add tags to organize and classify your items."
+  },
+  {
+    "name": "fields",
+    "description": "Add fields to your items to do everything you want: dates, phone numbers, emails, drop-downs, checkboxes, links, currencies, and numbers."
+  },
+  {
+    "name": "tracker",
+    "description": "Track time using our timer or log time manually."
+  },
+  {
+    "name": "relationships",
+    "description": "Make a item depend or wait for another item."
+  },
+  {
+    "name": "members",
+    "description": "Assignee people to the item."
+  }
+]
