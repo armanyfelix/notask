@@ -191,16 +191,6 @@ html {
 }
 
 .react-aria-Input,
-<<<<<<< HEAD
-  .react-aria-TextArea {
-    width: 100%;
-
-    &[data-focused] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -1px;
-    }
-  }
-=======
 .react-aria-TextArea {
   width: 100%;
 
@@ -209,7 +199,6 @@ html {
     outline-offset: -1px;
   }
 }
->>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
 
 @keyframes modal-fade {
   from {
@@ -247,31 +236,3 @@ html {
   align-items: start;
   gap: 8px;
 }
-<<<<<<< HEAD
-
-.react-aria-ResizableTableContainer {
-  .react-aria-Row {
-    &[data-pressed] {
-      background: black;
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-      --focus-ring-color: var(--highlight-foreground);
-
-      &[data-focus-visible],
-      .react-aria-Cell[data-focus-visible] {
-        outline-offset: -4px;
-      }
-    }
-  }
-  .react-aria-Column,
-  .react-aria-Cell {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-=======
->>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
