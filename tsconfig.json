@@ -20,7 +20,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
     "types": ["vite/client", "vite-plugin-svgr/client"],
     "baseUrl": ".",
     "paths": {

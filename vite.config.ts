@@ -1,30 +1,37 @@
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
-// import fs from 'fs'
+import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
 import path from 'path'
 
-// https://vitejs.dev/config/
+const host = process.env.TAURI_DEV_HOST
+
 export default defineConfig(async () => ({
-  plugins: [react({
-    babel: {
-      plugins: [['module:@preact/signals-react-transform']],
-    },
-  }), svgr()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [['module:@preact/signals-react-transform']],
+      },
+    }),
+    svgr(),
+  ],
   define: {
     'process.env': process.env,
   },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
-  //
   // 1. prevent vite from obscuring rust errors
   clearScreen: false,
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
-    port: 4321,
-    strictPort: true,
+    port: 1234,
+          protocol: 'ws',
+          host,
+          port: 1235,
+        }
+      : undefined,
     watch: {
       // 3. tell vite to ignore watching `src-tauri`
-      ignored: ["**/src-tauri/**"],
+      ignored: ['**/src-tauri/**'],
     },
   },
   resolve: {
@@ -32,45 +39,18 @@ export default defineConfig(async () => ({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    esbuildOptions: {
+      plugins: [fixReactVirtualized],
+    },
+  },
+  // envPrefix: ['VITE_', 'TAURI_ENV_*'],
+  // build: {
+    // Tauri uses Chromium on Windows and WebKit on macOS and Linux
+    // target: process.env.TAURI_ENV_PLATFORM == 'windows' ? 'chrome105' : 'safari13',
+    // don't minify for debug builds
+    // minify: !process.env.TAURI_ENV_DEBUG ? 'esbuild' : false,
+    // produce sourcemaps for debug builds
+    // sourcemap: !!process.env.TAURI_ENV_DEBUG,
+  // },
 }))
-
-// function emptySourcemapFix() {
-//   let currentInterval = null
-//   return {
-//     name: 'fix-source-map',
-//     enforce: 'post',
-//     transform: function (source) {
-//       if (currentInterval) {
-//         return
-//       }
-//       currentInterval = setInterval(function () {
-//         const nodeModulesPath = path.join(
-//           __dirname,
-//           'node_modules',
-//           '.vite',
-//           'deps',
-//         )
-//         if (fs.existsSync(nodeModulesPath)) {
-//           clearInterval(currentInterval)
-//           currentInterval = null
-//           const files = fs.readdirSync(nodeModulesPath)
-//           files.forEach(function (file) {
-//             const mapFile = file + '.map'
-//             const mapPath = path.join(nodeModulesPath, mapFile)
-//             if (fs.existsSync(mapPath)) {
-//               const mapData = JSON.parse(fs.readFileSync(mapPath, 'utf8'))
-//               if (!mapData.sources || mapData.sources.length == 0) {
-//                 mapData.sources = [
-//                   path.relative(mapPath, path.join(nodeModulesPath, file)),
-//                 ]
-//                 fs.writeFileSync(mapPath, JSON.stringify(mapData), 'utf8')
-//               }
-//             }
-//           })
-//         }
-//       }, 100)
-//       return source
-//     },
-//   }
-// }
-

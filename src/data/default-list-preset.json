@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1,
+    "name": "to do",
+    "items_name": "task",
+    "attributes": {
+      "statuses": {
+        "active": true,
+        "values": {
+          "open": [
+            {
+              "id": 1,
+              "name": "to do",
+              "color": "gray"
+            },
+            {
+              "id": 2,
+              "name": "open",
+              "color": "black"
+            }
+          ],
+          "active": [],
+          "done": [],
+          "close": [
+            {
+              "id": 3,
+              "name": "completed",
+              "color": "blue"
+            }
+          ]
+        }
+      },
+      "dates": {
+        "active": true,
+        "values": {
+          "due_date": false,
+          "start_date": true,
+          "reminders": true,
+          "recurrence": false
+        }
+      },
+      "priority": {
+        "active": true,
+        "values": [
+          {
+            "id": 1,
+            "name": "High",
+            "color": "red"
+          },
+          {
+            "id": 2,
+            "name": "Medium",
+            "color": "yellow"
+          },
+          {
+            "id": 3,
+            "name": "Low",
+            "color": "blue"
+          },
+          {
+            "id": 4,
+            "name": "none",
+            "color": "gray"
+          }
+        ]
+      },
+      "tags": {
+        "active": false,
+        "values": [
+          {
+            "id": 1,
+            "name": "hard",
+            "color": "red"
+          },
+          {
+            "id": 2,
+            "name": "easy",
+            "color": "green"
+          }
+        ]
+      },
+      "fields": {
+        "active": false,
+        "values": [
+          {
+            "id": 1,
+            "name": "field 1",
+            "type": "checkbox",
+            "required": true,
+            "pinned": false
+          },
+          {
+            "id": 2,
+            "name": "field 2",
+            "type": "dropdown",
+            "required": true,
+            "pinned": false
+          },
+          {
+            "id": 3,
+            "name": "field 3",
+            "type": "money",
+            "required": true,
+            "pinned": false
+          }
+        ]
+      },
+      "timer": {
+        "active": false,
+        "values": {
+          "pomodoro": {
+            "active": true,
+            "minutes": 25
+          },
+          "tracker": true,
+          "estimation": true,
+          "goal": true
+        }
+      },
+      "relationships": {
+        "active": false,
+        "values": {
+          "lists": true,
+          "elements": true,
+          "docs": true,
+          "dependencies": true,
+          "urls": true
+        }
+      },
+      "collaboration": {
+        "active": false,
+        "values": {
+          "multiple": true
+        }
+      }
+    }
+  }
+]

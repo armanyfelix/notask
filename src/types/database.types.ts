@@ -174,6 +174,7 @@ export type Database = {
           priority: string | null
           reminders: string[] | null
           repeat: Json | null
+          space: number | null
           start_date: string | null
           trash: boolean | null
         }
@@ -190,6 +191,7 @@ export type Database = {
           priority?: string | null
           reminders?: string[] | null
           repeat?: Json | null
+          space?: number | null
           start_date?: string | null
           trash?: boolean | null
         }
@@ -206,6 +208,7 @@ export type Database = {
           priority?: string | null
           reminders?: string[] | null
           repeat?: Json | null
+          space?: number | null
           start_date?: string | null
           trash?: boolean | null
         }
@@ -222,6 +225,13 @@ export type Database = {
             columns: ["list"]
             isOneToOne: false
             referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "items_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
             referencedColumns: ["id"]
           },
         ]
@@ -413,9 +423,13 @@ export type Database = {
       }
     }
     Views: {
-      space_content: {
+      space_data: {
         Row: {
-          data: Json | null
+          folder: number | null
+          id: number | null
+          name: string | null
+          space: number | null
+          type: string | null
         }
         Relationships: []
       }

@@ -1,40 +1,48 @@
-import UserDropdown from '../components/UserDropdown'
-import BellIcon from '../assets/svgs/BellIcon'
-import MagniferIcon from '../assets/svgs/magnifer.svg?react'
 import { signal } from '@preact/signals-react'
 import PlusIcon from '../assets/svgs/plus.svg?react'
 import HamburgerIcon from '../assets/svgs/hamburger.svg?react'
 import ToggleRightIcon from '../assets/svgs/toggleRight.svg?react'
 import ToggleLeftIcon from '../assets/svgs/toggleLeft.svg?react'
-import CreateModal from '../components/CreateModal'
-import { UIState, useSessionStore, useUIStore } from '../utils/zustand'
+import {
+  useAccountStore,
+  useSessionStore,
+  useSidebarStore,
+  useSpacesStore,
+} from '../utils/zustand'
+import { Button } from 'react-aria-components'
+import UserDropdown from '@/components/UserDropdown'
 import NotificationsDialog from './NotificationsDialog'
+import CreateModal from '@/components/CreateModal'
 
 const activeTab = signal('')
 const tabs = ['A', 'B', 'C', 'D']
+
 export default function Navbar() {
-  const { openExplorer, setOpenExplorer } = useUIStore((s: UIState) => s)
+  const { WideSidebar, setWideSidebar } = useSidebarStore()
+  const { account } = useAccountStore()
+  const { session } = useSessionStore()
+  const { spaces } = useSpacesStore()
 
   return (
-    <header className="sticky top-0 z-50 flex justify-between py-1">
+    <header className="sticky top-0 right-0 p-1 z-50 flex justify-between">
       <div className="flex items-center overflow-hidden pl-2">
-        <button
-          onClick={() => setOpenExplorer(!openExplorer)}
+        <Button
+          onPress={() => setWideSidebar(!WideSidebar)}
           className="group btn btn-square btn-ghost btn-sm"
         >
           <HamburgerIcon className="block group-hover:hidden" />
-          {!openExplorer ? (
+          {!WideSidebar ? (
             <ToggleRightIcon className="hidden h-5 w-5 group-hover:block" />
           ) : (
             <ToggleLeftIcon className="hidden h-5 w-5 group-hover:block" />
           )}
-        </button>
+        </Button>
         {tabs.map((tab) => (
           <a
             key={tab}
             href="#"
             onClick={() => (activeTab.value = tab)}
-            className={`tab-lifted tab-lg tab ${
+            className={`tab-lg tab tabs-bordered ${
               activeTab.value === tab
                 ? 'tab-active bg-base-100 !pl-3 !pr-2'
                 : ''
@@ -42,15 +50,26 @@ export default function Navbar() {
           >
             <span className="mr-2">{tab}</span>
             {activeTab.value === tab ? (
-              <button className="btn btn-square btn-ghost btn-xs">
-                <PlusIcon />
-              </button>
+              <Button className="btn btn-circle btn-ghost btn-xs">
+                <PlusIcon className="rotate-45" />
+              </Button>
             ) : (
               ''
             )}
           </a>
         ))}
       </div>
+      <ul className="flex flex-row items-center justify-center">
+        <li>
+          <CreateModal accountId={account?.id} spaces={spaces} />
+        </li>
+        <li>
+          <NotificationsDialog />
+        </li>
+        <li className="disabled ml-1">
+          <UserDropdown session={session} />
+        </li>
+      </ul>
     </header>
   )
 }

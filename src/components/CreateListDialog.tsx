@@ -6,7 +6,11 @@ import EmojiSelector from './EmojiSelectorSimple'
 import supabase from '../utils/supabase'
 import { useContext } from 'preact/hooks'
 import { AlertContext } from '../context/AlertContext'
+<<<<<<< HEAD
 import AttributesConfig from './attributes/AttributesConfig'
+=======
+import AttributesConfig from './ListConfig'
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
 import { ThemeState, useThemeStore } from '../utils/zustand'
 
 interface Props {

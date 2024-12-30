@@ -1,5 +1,6 @@
 [package]
 <<<<<<< HEAD
+<<<<<<< HEAD
 name = "sigma"
 version = "0.0.0"
 description = "A Tauri App"
@@ -12,10 +13,17 @@ version = "0.0.0"
 description = "A Tauri App"
 authors = ["you"]
 >>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
+=======
+name = "notask-app"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+<<<<<<< HEAD
 [build-dependencies]
 <<<<<<< HEAD
 tauri-build = { version = "1.5", features = [] }
@@ -47,3 +55,19 @@ serde_json = "1"
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 >>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
 custom-protocol = ["tauri/custom-protocol"]
+=======
+[lib]
+name = "notask_app_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0.0-rc", features = [] }
+
+[dependencies]
+tauri = { version = "2.0.0-rc", features = [] }
+tauri-plugin-shell = "2.0.0-rc"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri-plugin-http = "2"
+
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc

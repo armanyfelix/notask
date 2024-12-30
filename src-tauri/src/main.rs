@@ -1,5 +1,6 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 <<<<<<< HEAD
+<<<<<<< HEAD
 #![allow(unused)]
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
@@ -40,4 +41,10 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 >>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
+=======
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+fn main() {
+    notask_app_lib::run()
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
 }

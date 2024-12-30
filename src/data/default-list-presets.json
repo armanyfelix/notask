@@ -2,137 +2,263 @@
   {
     "id": 1,
     "name": "to do",
-    "items_name": "task",
-    "attributes": {
-      "statuses": {
-        "active": true,
-        "values": {
-          "open": [
-            {
-              "id": 1,
-              "name": "to do",
-              "color": "gray"
-            },
-            {
-              "id": 2,
-              "name": "open",
-              "color": "black"
-            }
-          ],
-          "active": [],
-          "done": [],
-          "close": [
-            {
-              "id": 3,
-              "name": "completed",
-              "color": "blue"
-            }
-          ]
+    "description": "Simple todo tasks manager",
+    "item_name": "task",
+    "statuses": {
+      "open": [
+        {
+          "id": 1,
+          "type": "open",
+          "name": "to do",
+          "color": "gray"
+        },
+        {
+          "id": 2,
+          "type": "open",
+          "name": "open",
+          "color": "black"
         }
-      },
-      "dates": {
-        "active": true,
-        "values": {
-          "due_date": false,
-          "start_date": true,
-          "reminders": true,
-          "recurrence": false
+      ],
+      "active": null,
+      "done": null,
+      "close": [
+        {
+          "id": 1,
+          "type": "closed",
+          "name": "completed",
+          "color": "blue"
         }
-      },
-      "priority": {
-        "active": true,
-        "values": [
-          {
-            "id": 1,
-            "name": "High",
-            "color": "red"
-          },
-          {
-            "id": 2,
-            "name": "Medium",
-            "color": "yellow"
-          },
-          {
-            "id": 3,
-            "name": "Low",
-            "color": "blue"
-          },
-          {
-            "id": 4,
-            "name": "none",
-            "color": "gray"
-          }
-        ]
-      },
-      "tags": {
-        "active": false,
-        "values": [
-          {
-            "id": 1,
-            "name": "hard",
-            "color": "red"
-          },
-          {
-            "id": 2,
-            "name": "easy",
-            "color": "green"
-          }
-        ]
-      },
-      "fields": {
-        "active": false,
-        "values": [
-          {
-            "id": 1,
-            "name": "field 1",
-            "type": "checkbox",
-            "required": true,
-            "pinned": false
-          },
-          {
-            "id": 2,
-            "name": "field 2",
-            "type": "dropdown",
-            "required": true,
-            "pinned": false
-          },
-          {
-            "id": 3,
-            "name": "field 3",
-            "type": "money",
-            "required": true,
-            "pinned": false
-          }
-        ]
-      },
-      "timer": {
-        "active": false,
-        "values": {
-          "pomodoro": {
-            "active": true,
-            "minutes": 25
-          },
-          "tracker": true,
-          "estimation": true,
-          "goal": true
+      ]
+    },
+    "dates": {},
+    "priority": {}
+  },
+  {
+    "id": 2,
+    "name": "kanban",
+    "description": "Classic kanban board sections",
+    "item_name": "task",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 1,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
         }
-      },
-      "relationships": {
-        "active": false,
-        "values": {
-          "lists": true,
-          "elements": true,
-          "docs": true,
-          "dependencies": true,
-          "urls": true
+      ],
+      "active": [
+        {
+          "id": 2,
+          "type": "active",
+          "name": "in progress",
+          "color": "blue"
+        },
+        {
+          "id": 3,
+          "type": "active",
+          "name": "review",
+          "color": "purple"
         }
-      },
-      "collaboration": {
-        "active": false,
-        "values": {
-          "multiple": true
+      ],
+      "done": null,
+      "close": [
+        {
+          "id": 4,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
         }
-      }
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "name": "scrum",
+    "description": "Scrum or cum?",
+    "item_name": "task",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 5,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
+        }
+      ],
+      "active": [
+        {
+          "id": 6,
+          "type": "active",
+          "name": "pending",
+          "color": "yellow"
+        },
+        {
+          "id": 7,
+          "type": "active",
+          "name": "in progress",
+          "color": "pink"
+        },
+        {
+          "id": 8,
+          "type": "active",
+          "name": "completed",
+          "color": "black"
+        },
+        {
+          "id": 9,
+          "type": "active",
+          "name": "in review",
+          "color": "orange"
+        },
+        {
+          "id": 10,
+          "type": "active",
+          "name": "accepted",
+          "color": "red"
+        },
+        {
+          "id": 11,
+          "type": "active",
+          "name": "rejected",
+          "color": "magenta"
+        },
+        {
+          "id": 12,
+          "type": "active",
+          "name": "blocked",
+          "color": "violet"
+        }
+      ],
+      "done": null,
+      "close": [
+        {
+          "id": 13,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
+        }
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "name": "content",
+    "description": "What you going to post now? a video, blog, articules?",
+    "item_name": "post",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 14,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
+        }
+      ],
+      "active": [
+        {
+          "id": 15,
+          "type": "active",
+          "name": "ready",
+          "color": "yellow"
+        },
+        {
+          "id": 16,
+          "type": "active",
+          "name": "writing",
+          "color": "pink"
+        },
+        {
+          "id": 17,
+          "type": "active",
+          "name": "approval",
+          "color": "red"
+        },
+        {
+          "id": 18,
+          "type": "active",
+          "name": "rejected",
+          "color": "magenta"
+        }
+      ],
+      "done": [
+        {
+          "id": 19,
+          "type": "done",
+          "name": "publish",
+          "color": "purple"
+        }
+      ],
+      "close": [
+        {
+          "id": 20,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
+        }
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "name": "ideas",
+    "description": "What do you want to post? a video, blog, article?",
+    "item_name": "idea",
+    "attributes": ["dates", "statuses", "priority"],
+    "statuses": {
+      "open": [
+        {
+          "id": 21,
+          "type": "open",
+          "name": "open",
+          "color": "gray"
+        }
+      ],
+      "active": [
+        {
+          "id": 22,
+          "type": "active",
+          "name": "concept",
+          "color": "yellow"
+        },
+        {
+          "id": 23,
+          "type": "active",
+          "name": "in progress",
+          "color": "blue"
+        },
+        {
+          "id": 24,
+          "type": "active",
+          "name": "running",
+          "color": "purple"
+        },
+        {
+          "id": 25,
+          "type": "active",
+          "name": "blocked",
+          "color": "red"
+        }
+      ],
+      "done": [
+        {
+          "id": 26,
+          "type": "done",
+          "name": "done",
+          "color": "orange"
+        }
+      ],
+      "close": [
+        {
+          "id": 27,
+          "type": "close",
+          "name": "closed",
+          "color": "green"
+        }
+      ]
     }
   }
 ]

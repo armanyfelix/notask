@@ -10,28 +10,10 @@ import {
 export default function NotificationsDialog() {
   return (
     <MenuTrigger>
-      <Button aria-label="Inbox" className="btn btn-square btn-ghost btn-sm">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="1.25rem"
-          height="1.25rem"
-          viewBox="0 0 24 24"
-        >
-          <g fill="none" stroke="currentColor" strokeWidth={1.5}>
-            <path
-              strokeLinecap="round"
-              d="M14 2.005C13.385 2 12.72 2 12 2C7.286 2 4.929 2 3.464 3.464C2 4.93 2 7.286 2 12c0 4.714 0 7.071 1.464 8.535C4.93 22 7.286 22 12 22c4.714 0 7.071 0 8.535-1.465C22 19.072 22 16.714 22 12c0-.72 0-1.385-.005-2"
-            ></path>
-            <circle cx={19} cy={5} r={3}></circle>
-            <path
-              strokeLinecap="round"
-              d="M2 13h3.16c.905 0 1.358 0 1.756.183c.398.183.692.527 1.281 1.214l.606.706c.589.687.883 1.031 1.281 1.214c.398.183.85.183 1.756.183h.32c.905 0 1.358 0 1.756-.183c.398-.183.692-.527 1.281-1.214l.606-.706c.589-.687.883-1.031 1.281-1.214c.398-.183.85-.183 1.756-.183H22"
-              opacity={0.5}
-            ></path>
-          </g>
-        </svg>
+      <Button aria-label="Inbox" className="btn btn-circle btn-ghost">
+        <span className="icon-[solar--inbox-unread-line-duotone] h-5 w-5"></span>
       </Button>
-      <Popover placement='right top'>
+      <Popover placement="bottom right">
         {/* <OverlayArrow>
           <svg
             viewBox="0 0 12 12"

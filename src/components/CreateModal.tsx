@@ -14,7 +14,11 @@ import CreateItem from './common/CreateItem'
 export default function CreateModal({ accountId, spaces }: any) {
   return (
     <DialogTrigger>
+<<<<<<< HEAD
       <Button className="btn btn-square btn-ghost btn-sm">
+=======
+      <Button className="btn btn-circle btn-ghost">
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
         <span className="icon-[solar--traffic-economy-line-duotone] h-5 w-5"></span>
       </Button>
       <Modal
@@ -44,7 +48,13 @@ export default function CreateModal({ accountId, spaces }: any) {
                 />
               </TabPanel>
               <TabPanel id="space" className="pt-3">
+<<<<<<< HEAD
                 <CreateSpace accountId={accountId} spaces={spaces} close={close} />
+=======
+                <CreateSpace accountId={accountId} spaces={spaces} onClose={() => {
+                  close()
+                }} />
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
               </TabPanel>
             </Tabs>
           )}

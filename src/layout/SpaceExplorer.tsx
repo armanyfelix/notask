@@ -104,16 +104,19 @@ const openCreateFolder = signal<boolean>(false)
 const openCreateList = signal<boolean>(false)
 const loading = signal<boolean>(false)
 const parent = signal<any>(null)
-const elements = signal<Element[] | null>(null)
+const elements = signal<any>(null)
 
 export default function SpaceExplorer({ space, account, setAccount }: Props) {
   async function getData() {
+    console.log('20milli')
     loading.value = true
-    const { data }: { data: Element[] | null } = await supabase
+    const { data, error }: { data: any; error: any } = await supabase
       .from('space_data')
       .select('*')
       .eq('space', space.value.id)
 
+    console.log('data :>> ', data)
+    console.log('error :>> ', error);
     if (data) {
       elements.value = data
     }
@@ -122,8 +125,9 @@ export default function SpaceExplorer({ space, account, setAccount }: Props) {
   }
 
   useEffect(() => {
+    console.log('space :>> ', space.value);
     getData()
-  }, [space])
+  }, [space.value])
 
   return (
     <>
@@ -159,7 +163,7 @@ const Header = ({ space }: any) => {
             <PlusIcon className="h-4 w-4" />
           </Button>
           <Popover>
-            <Menu className="menu menu-sm dialog">
+            <Menu className="dialog menu menu-sm">
               <MenuItem
                 onAction={() => {
                   openCreateFolder.value = true
@@ -200,7 +204,7 @@ const Header = ({ space }: any) => {
             <DotsIcon className="h-4 w-4" />
           </Button>
           <Popover>
-            <Menu className="menu menu-sm dialog">
+            <Menu className="dialog menu menu-sm">
               <MenuItem>
                 <li>
                   <button className="whitespace-nowrap">Edit</button>
@@ -223,25 +227,27 @@ const Header = ({ space }: any) => {
 }
 
 const ElementsTree = ({ space }: any) => {
-  return loading.value ? (
-    <div className="mt-5 space-y-3 px-3">
-      <div className="skeleton h-4 w-28"></div>
-      <div className="skeleton h-4 w-44"></div>
-      <div className="skeleton h-4 w-36"></div>
-    </div>
-  ) : (
+  // loading.value ? (
+  //   <div className="mt-5 space-y-3 px-3">
+  //     <div className="skeleton h-4 w-28"></div>
+  //     <div className="skeleton h-4 w-44"></div>
+  //     <div className="skeleton h-4 w-36"></div>
+  //   </div>
+  // ) :
+  return  (
     <ul className="menu menu-xs [&>li>details>summary]:after:hidden">
       {elements.value ? (
         elements.value.map((e: Element, i: number) => (
-          <Fragment key={i}>
+          <div key={i}>
             {e.type === 'list' && !e.folder && <List e={e} />}
             {e.type === 'note' && !e.folder && <Notes e={e} />}
             {e.type === 'folder' && !e.folder && (
               <Folder id={e.id} name={e.name} />
             )}
-          </Fragment>
+          </div>
         ))
-      ) : (
+      )
+      : (
         <div>
           <ul className="menu w-full">
             <li>
@@ -282,7 +288,8 @@ const ElementsTree = ({ space }: any) => {
             </li>
           </ul>
         </div>
-      )}
+      )
+      }
     </ul>
   )
 }
@@ -375,7 +382,7 @@ const List = ({ e }: { e: Element }) => {
       <Link to={`/list/${e.id}`} className="group pr-1">
         <span className="icon-[solar--clipboard-list-outline] h-4 w-4"></span>
         {e.name}
-        <div className='inline-flex items-center'>
+        <div className="inline-flex items-center">
           <MenuTrigger>
             <Button className="btn btn-square btn-ghost btn-xs invisible mr-0 group-hover:visible">
               <PlusIcon className="h-4 w-4" />

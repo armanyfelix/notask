@@ -1,78 +1,99 @@
-import { Button, FieldError, Form, Input, TextArea, TextField } from 'react-aria-components'
-import AddIconPopover from './AddIconPopover'
+import {
+  Button,
+  FieldError,
+  Form,
+  Input,
+  TextArea,
+  TextField,
+} from 'react-aria-components'
 import supabase from '@/utils/supabase'
-import { useContext } from 'react'
+import { Suspense, useContext } from 'react'
 import { AlertContext } from '@/context/AlertContext'
 import { Signal, signal } from '@preact/signals-react'
+import IconSelectorPopover from './IconSelectorPopover'
 
 interface Props {
   accountId: number
   spaces: Signal<any>
-  close: () => void
+  onClose: () => void
 }
 
-const icon = signal<any>(null)
-// const preset = signal<any>(null)
+const icon = signal<any>({
+  image: '',
+  name: '',
+  color: '',
+})
 const loading = signal<boolean>(false)
-export default function CreateSpace({ accountId, spaces, close }: Props) {
+export default function CreateSpace({ accountId, spaces, onClose }: Props) {
   const notify = useContext(AlertContext)
-
-  const onClose = () => {
-    icon.value = null
-    close
-  }
 
   const onCreateSpace = async (e: any) => {
     e.preventDefault()
     loading.value = true
     let values: any = Object.fromEntries(new FormData(e.currentTarget))
-    let iconPath = null
 
-    if (icon.value) {
-      const fileExt = icon.value.name.split('.').pop()
+    console.log('icon.value :>> ', icon.value);
+    if (icon.value.image) {
+      const fileExt = icon.value.image.name.split('.').pop()
       const fileName = `${Math.random()}.${fileExt}`
       const filePath = `${fileName}`
       const { data, error } = await supabase.storage
         .from('spaces_icons')
-        .upload(filePath, icon.value)
+        .upload(filePath, icon.value.image)
       if (error) {
         notify(
           'error',
           'The avatar could not be saved, please try again later.',
         )
       } else {
-        iconPath = data.path
+        values = {
+          ...values,
+          image: data.path,
+        }
       }
     }
-
+    if (icon.value.name) {
+      values = {
+        ...values,
+        icon: {
+          name: icon.value.name,
+          color: icon.value.color,
+        },
+      }
+    }
     const { data, error } = await supabase
       .from('spaces')
       .insert([
         {
+          ...values,
           name: values.name.trim(),
           description: values.description,
-          // color: color.value,
-          image_url: iconPath,
           account: accountId,
         },
       ])
       .select()
       .single()
-
     if (error) {
       notify('error', 'Error creating the space, try again later')
     } else {
       notify('success', 'Space created')
       spaces.value?.push(data)
     }
-    onClose()
     loading.value = false
+    onClose()
+    icon.value = {
+      image: '',
+      name: '',
+      color: '',
+    }
   }
 
   return (
     <Form onSubmit={onCreateSpace} className="space-y-3">
       <div className="join w-full">
-        <AddIconPopover icon={icon} />
+        <Suspense fallback="">
+          <IconSelectorPopover selectedIcon={icon} />
+        </Suspense>
         <TextField
           name="name"
           type="text"
@@ -83,7 +104,7 @@ export default function CreateSpace({ accountId, spaces, close }: Props) {
           className="w-full"
         >
           <Input
-            className="input join-item input-bordered border-l-0 invalid:border-error w-full bg-transparent font-semibold outline-none placeholder:text-base-content/50"
+            className="input join-item input-bordered w-full border-l-0 bg-transparent font-semibold outline-none placeholder:text-base-content/50 invalid:border-error"
             placeholder="Name"
           />
           <FieldError className="text-error" />
@@ -109,7 +130,11 @@ export default function CreateSpace({ accountId, spaces, close }: Props) {
           // disabled={!name.value}
           // onClick={() => onCreateSpace()}
         >
-{loading.value ? (<span className="loading loading-dots loading-lg"></span>) : 'Create Space'}
+          {loading.value ? (
+            <span className="loading loading-dots loading-md"></span>
+          ) : (
+            'Create Space'
+          )}
         </Button>
       </div>
     </Form>

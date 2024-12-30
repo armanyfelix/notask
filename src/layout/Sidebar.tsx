@@ -1,40 +1,34 @@
 import { signal } from '@preact/signals-react'
-import ChevronLeftIcon from '../assets/svgs/chevronLeft.svg?react'
 import { useEffect, useRef } from 'react'
 import {
-  AccountState,
-  UIState,
   useAccountStore,
-  useSessionStore,
+  useSidebarStore,
+  useSpacesStore,
   useUIStore,
 } from '../utils/zustand'
-import ListsExplorer from './ListsExplorer'
-import SpaceExplorer from './SpaceExplorer'
 import supabase from '../utils/supabase'
 import { addImageUrl } from '../helpers/images'
-import CreateModal from '@/components/CreateModal'
-import NotificationsDialog from './NotificationsDialog'
-import UserDropdown from '@/components/UserDropdown'
 import { Button } from 'react-aria-components'
+import { Link } from 'react-router-dom'
+import ListsExplorer from './ListsExplorer'
+import SpaceExplorer from './SpaceExplorer'
+import { Icon } from '@iconify-icon/react/dist/iconify.mjs'
 
 const space = signal<any>(null)
 const page = signal<string>('')
-// const openCreateSpace = signal<boolean>(false)
-const spaces = signal<any>(null)
 // const favorites = signal<any>([])
 
 export default function Sidebar() {
-  const { account, setAccount } = useAccountStore((s: AccountState) => s)
-  const session = useSessionStore((s: any) => s.session)
-
+  const { account, setAccount } = useAccountStore()
+  // const session = useSessionStore()
+  const { spaces } = useSpacesStore()
+  const { WideSidebar, setWideSidebar } = useSidebarStore()
   const {
+    setOpenFavoritesSidebar,
+    openFavoritesSidebar,
     setOpenSpacesSidebar,
     openSpacesSidebar,
-    openFavoritesSidebar,
-    setOpenFavoritesSidebar,
-    openExplorer,
-    setOpenExplorer,
-  } = useUIStore((s: UIState) => s)
+  } = useUIStore()
 
   const refBox = useRef(null)
   const refRight = useRef(null)
@@ -43,38 +37,25 @@ export default function Sidebar() {
     {
       name: 'lists',
       icon: (
-        <span className="icon-[solar--checklist-minimalistic-bold-duotone] h-6 w-6"></span>
+        <span className="icon-[solar--checklist-minimalistic-bold-duotone] h-7 w-7"></span>
       ),
     },
     {
       name: 'notes',
-      icon: <span className="icon-[solar--book-2-bold-duotone] h-6 w-6"></span>,
+      icon: <span className="icon-[solar--book-2-bold-duotone] h-7 w-7"></span>,
     },
   ]
 
   const onOpenSpace = (s: any) => {
-    setOpenExplorer(page.value === s.name ? !openExplorer : true)
+    setWideSidebar(page.value === s.name ? !WideSidebar : true)
     space.value = s
     page.value = s.name
   }
 
   const onToggle = (p: string, a: string) => {
-    setOpenExplorer(page.value === a ? !openExplorer : true)
+    setWideSidebar(page.value === a ? !WideSidebar : true)
     space.value = null
     page.value = p
-  }
-
-  async function getSpaces() {
-    if (account) {
-      const { data } = await supabase
-        .from('spaces')
-        .select('*')
-        .eq('account', account?.id)
-      if (data?.length) {
-        const dataWithImages = await addImageUrl(data)
-        spaces.value = dataWithImages
-      }
-    }
   }
 
   async function getFavorites() {
@@ -124,144 +105,182 @@ export default function Sidebar() {
   }, [])
 
   useEffect(() => {
-    if (!page.value) {
-      setOpenExplorer(false)
-    }
-    getSpaces()
     getFavorites()
   }, [])
 
   return (
-    <aside className="flex h-screen max-h-screen">
-      <section className="sticky bottom-0 left-0 top-0 z-50 bg-base-200">
-        <ul className="flex flex-col items-center justify-center mt-1 space-y-1">
-          <li>
-            <UserDropdown session={session} />
-          </li>
-          <li>
-            <NotificationsDialog />
-          </li>
-          <li>
-            <CreateModal accountId={account?.id} spaces={spaces} />
-          </li>
-          <li>
-            <Button className="btn btn-square btn-ghost btn-sm">
-              <span className="icon-[solar--rounded-magnifer-line-duotone] w-5 h-5"></span>
-            </Button>
-          </li>
+    <>
+      <aside className="hidden h-screen max-h-screen bg-base-200 sm:flex">
+        <section className="sticky bottom-0 left-0 top-0 z-50 py-1 pl-1">
+          <ul>
+            {routes.map((r, i) => (
+              <li key={i}>
+                <Button
+                  onPress={() => onToggle(r.name, r.name)}
+                  className={`btn btn-ghost flex-nowrap font-sans text-lg transition-all duration-500 ${WideSidebar && !space.value ? 'btn-wide justify-start' : 'btn-circle'}`}
+                >
+                  {r.icon}
+                  {WideSidebar && !space.value ? <span>{r.name}</span> : ''}
+                </Button>
+              </li>
+            ))}
+          </ul>
           <span className="divider"></span>
-          {routes.map((r, i) => (
-            <li key={i} className="tooltip tooltip-right" data-tip={r.name}>
-              <button onClick={() => onToggle(r.name, r.name)}>{r.icon}</button>
-            </li>
-          ))}
-        </ul>
-        <div>
-          <button
-            onClick={() => setOpenFavoritesSidebar(!openFavoritesSidebar)}
-            className="group btn btn-ghost btn-xs m-0 w-full p-0 text-xs font-medium lowercase tracking-tighter opacity-50"
-          >
-            <span className="icon-[solar--star-fall-bold] h-6 w-6"></span>
-            <span
-              className={`${openFavoritesSidebar && '-rotate-90'} icon-[solar--alt-arrow-left-linear] h-3 w-3`}
-            ></span>
-          </button>
           <div>
-            {openFavoritesSidebar && (
-              <ul className="menu menu-xs space-y-3">
-                <li className="items-center">
-                  <a
-                    href="/"
-                    className="hover:bg-opacity-9 tooltip tooltip-right rounded-btn p-2 leading-[0]"
-                    data-tip="planet"
-                  >
-                    <span className="icon-[solar--star-linear] h-6 w-6"></span>
-                  </a>
-                </li>
-              </ul>
-            )}
+            <Button
+              onPress={() => setOpenFavoritesSidebar(!openFavoritesSidebar)}
+              className={`group btn btn-ghost btn-xs justify-between text-xs font-medium tracking-tighter opacity-50 ${WideSidebar && !space.value ? 'btn-wide' : 'px-1'}`}
+            >
+              <span className="icon-[solar--star-fall-bold] h-4 w-4"></span>
+              {WideSidebar && !space.value && 'Favorites'}
+              <span
+                className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${WideSidebar && !space.value ? 'h-5 w-5' : 'h-3 w-3'} ${openFavoritesSidebar && 'rotate-180'}`}
+              ></span>
+            </Button>
+            <div>
+              {openFavoritesSidebar && (
+                <ul className="menu menu-xs space-y-3">
+                  <li className="items-center">
+                    <Link
+                      to="/"
+                      className="hover:bg-opacity-9 tooltip tooltip-right rounded-btn p-2 leading-[0]"
+                      data-tip="planet"
+                    >
+                      <span className="icon-[solar--star-linear] h-5 w-5"></span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </div>
           </div>
-        </div>
-        <div>
-          <button
-            onClick={() => setOpenSpacesSidebar(!openSpacesSidebar)}
-            className="group btn btn-ghost btn-xs m-0 w-full p-0 text-xs font-medium lowercase tracking-tighter opacity-50"
-          >
-            <span className="icon-[solar--planet-4-bold] h-5 w-5"></span>
-            <ChevronLeftIcon
-              className={`h-3 w-3 ${openSpacesSidebar && '-rotate-90'}`}
+          <div>
+            <Button
+              onPress={() => setOpenSpacesSidebar(!openSpacesSidebar)}
+              className={`group btn btn-ghost btn-xs justify-between text-xs font-medium tracking-tighter opacity-50 ${WideSidebar && !space.value ? 'btn-wide' : 'px-1'}`}
+            >
+              <span className="icon-[solar--planet-4-bold] h-4 w-4"></span>
+              {WideSidebar && !space.value && 'Spaces'}
+              <span
+                className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${WideSidebar && !space.value ? 'h-5 w-5' : 'h-3 w-3'} ${openSpacesSidebar && 'rotate-180'}`}
+              ></span>
+            </Button>
+            <div>
+              {openSpacesSidebar && (
+                <ul className="mt-2 space-y-2">
+                  {spaces &&
+                    spaces.map((s: any) => (
+                      <li key={s.id}>
+                        <Button
+                          className={`btn flex items-center p-2.5 ${
+                            s?.icon?.color && `hover:bg-opacity-60`
+                          } ${WideSidebar && !space.value ? 'btn-wide justify-start' : 'btn-circle justify-center'}`}
+                          onPress={() => {
+                            onOpenSpace(s)
+                          }}
+                        >
+                          {!s.image && !s.icon && (
+                            <span className="icon-[solar--planet-bold-duotone] h-6 w-6"></span>
+                          )}
+                          {s.image && (
+                            <img src={s.image} width={24} height={24} alt="" />
+                          )}
+                          {!s.image && s.icon && (
+                            <Icon
+                              icon={`tabler:${s.icon.name}`}
+                              style={{ color: s.icon.color }}
+                              width={24}
+                              height={24}
+                            />
+                          )}
+                          {WideSidebar && !space.value ? (
+                            <span>{s.name}</span>
+                          ) : (
+                            ''
+                          )}
+                        </Button>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          {/* <span className="divider"></span> */}
+        </section>
+
+        <section
+          ref={refBox}
+          className={`${
+            WideSidebar && space.value
+              ? 'w-56 translate-x-0 scale-100 border-l-2 border-base-300'
+              : 'w-0 !-translate-x-96 scale-50'
+          } box-border overflow-auto bg-base-200 py-2`}
+        >
+          {page.value === 'lists' && <ListsExplorer />}
+          {WideSidebar && space.value && (
+            <SpaceExplorer
+              space={space}
+              account={account}
+              setAccount={setAccount}
             />
-          </button>
-          <div>
-            {openSpacesSidebar && (
-              <ul className="mt-2 flex flex-col items-center space-y-3">
-                {spaces.value &&
-                  spaces.value.map((s: any) => (
-                    <li key={s.id}>
-                      <button
-                        className={`tooltip tooltip-right rounded-btn p-2 leading-[0] hover:bg-opacity-90 ${
-                          s.color && `bg-${s.color}-500`
-                        }`}
-                        data-tip={s.name}
-                        onClick={() => {
-                          onOpenSpace(s)
-                        }}
-                      >
-                        {!s.image_url && !s.emoji && (
-                          <span className="icon-[solar--planet-bold-duotone] h-6 w-6"></span>
-                        )}
-                        {s.image_url && (
-                          <img
-                            src={s.image_url}
-                            width={24}
-                            height={24}
-                            alt=""
-                          />
-                        )}
-                        {!s.image_url && s.emoji && (
-                          <img src={s.emoji} width={24} height={24} alt="" />
-                        )}
-                      </button>
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </div>
-        </div>
-        <span className="divider"></span>
-        <div className="flex flex-col items-center justify-end">
-          {/* <button
-            className="btn btn-square btn-sm tooltip tooltip-right scale-75"
-            data-tip="Create space"
-            onClick={() => (openCreateSpace.value = true)}
+          )}
+          <div
+            ref={refRight}
+            className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-base-300"
+          ></div>
+        </section>
+      </aside>
+
+      {/* BOTONES DE NAVEGACION ABAJO EN MOVIL */}
+      <div className="btm-nav z-50 sm:hidden">
+        <button className="text-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            <span className="icon-[solar--add-circle-linear]"></span>
-          </button> */}
-
-
-        </div>
-      </section>
-      <section
-        ref={refBox}
-        className={`${
-          openExplorer
-            ? 'w-56 translate-x-0 scale-100 border-l-2 border-base-300'
-            : 'w-0 !-translate-x-96 scale-50'
-        } box-border overflow-auto bg-base-200 py-2`}
-      >
-        {page.value === 'lists' && <ListsExplorer />}
-        {openExplorer && space.value && (
-          <SpaceExplorer
-            space={space}
-            account={account}
-            setAccount={setAccount}
-          />
-        )}
-        <div
-          ref={refRight}
-          className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-base-300"
-        ></div>
-      </section>
-    </aside>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+        </button>
+        <button className="active text-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </button>
+        <button className="text-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+        </button>
+      </div>
+    </>
   )
 }

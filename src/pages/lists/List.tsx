@@ -1,12 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { signal } from '@preact/signals-react'
 import DotsIcon from '../../assets/svgs/dots.svg?react'
-import TableViewIcon from '../../assets/svgs/tableView.svg?react'
-import KanbanViewIcon from '../../assets/svgs/kanbanView.svg?react'
-import ReorderIcon from '../../assets/svgs/reorder.svg?react'
-import FilterIcon from '../../assets/svgs/filter.svg?react'
-import GroupByIcon from '../../assets/svgs/groupBy.svg?react'
-import PlusIcon from '../../assets/svgs/plus.svg?react'
 import ShareIcon from '../../assets/svgs/share.svg?react'
 import StarIcon from '../../assets/svgs/star.svg?react'
 import StarSolidIcon from '../../assets/svgs/starSolid.svg?react'
@@ -20,31 +14,33 @@ import {
   Button,
   Dialog,
   DialogTrigger,
-  Heading,
-  Input,
+  FieldError,
+  Header,
   Label,
+  ListBox,
+  ListBoxItem,
   Menu,
   MenuItem,
   MenuTrigger,
-  Modal,
   Popover,
-  TextField,
+  Section,
+  Select,
+  SelectValue,
+  Switch,
+  Text,
 } from 'react-aria-components'
 import CreateItemModal from '@/components/CreateItemModal'
+import { Icon } from '@iconify-icon/react/dist/iconify.mjs'
 
 const list = signal<any>(null)
 const items = signal<any>([])
-const newItem = signal<string>('')
 const pinItemView = signal<boolean>(false)
-const newItemOpen = signal<boolean>(false)
 const item = signal<any>(null)
 const settings = signal<any>(null)
 const preferences = signal<any>(null)
 const parents = signal<any>([])
-const presets = signal<any>(null)
 const space = signal<any>(null)
 const listSettingsOpen = signal<boolean>(false)
-const openItemModal = signal<boolean>(false)
 const groupBy = ['None', 'Status', 'Priority', 'Member', 'Tag', 'Date']
 export default function List() {
   const { id } = useParams()
@@ -87,21 +83,21 @@ export default function List() {
     preferences.value = newPreferences
   }
   const addToFavorite = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('lists')
-        .update([{ favorite: !list.value?.favorite }])
-        .eq('id', id)
-        .select()
-        .single()
-      if (!error) {
-        list.value = data
-      } else {
-        console.log(error)
-      }
-    } catch (error) {
-      console.log(error)
-    }
+    // try {
+    //   const { data, error } = await supabase
+    //     .from('lists')
+    //     .update([{ favorite: !list.value?.favorite }])
+    //     .eq('id', id)
+    //     .select()
+    //     .single()
+    //   if (!error) {
+    //     list.value = data
+    //   } else {
+    //     console.log(error)
+    //   }
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   const getParents = async (id: number) => {
@@ -129,42 +125,46 @@ export default function List() {
     }
   }
   const getList = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('lists')
-        .select('*')
-        .eq('id', id)
-        .single()
-      if (data) {
-        list.value = data
-        settings.value = data.settings
-        if (data.folder) {
-          getParents(data.folder)
+    if (id) {
+      try {
+        const { data, error } = await supabase
+          .from('lists')
+          .select('*')
+          .eq('id', id)
+          .single()
+        if (data) {
+          list.value = data
+          settings.value = data.settings
+          if (data.folder) {
+            getParents(data.folder)
+          }
+          if (data.space) {
+            getSpace(data.space)
+          }
+        } else {
+          console.log(error)
         }
-        if (data.space) {
-          getSpace(data.space)
-        }
-      } else {
+      } catch (error) {
         console.log(error)
       }
-    } catch (error) {
-      console.log(error)
     }
   }
 
   const getItems = async () => {
-    try {
-      const { data, error }: any = await supabase
-        .from('items')
-        .select('*')
-        .eq('list', id)
-      if (data) {
-        items.value = data
-      } else {
+    if (id) {
+      try {
+        const { data, error }: any = await supabase
+          .from('items')
+          .select('*')
+          .eq('list', id)
+        if (data) {
+          items.value = data
+        } else {
+          console.log(error)
+        }
+      } catch (error) {
         console.log(error)
       }
-    } catch (error) {
-      console.log(error)
     }
   }
 
@@ -182,19 +182,21 @@ export default function List() {
   }
 
   useEffect(() => {
-    parents.value = []
-    getItems()
-    getList()
-    const view_settings = localStorage.getItem(String(id))
-    if (view_settings) {
-      preferences.value = JSON.parse(view_settings)
+    if (id) {
+      parents.value = []
+      getItems()
+      getList()
+      const view_settings = localStorage.getItem(String(id))
+      if (view_settings) {
+        preferences.value = JSON.parse(view_settings)
+      }
     }
   }, [id])
 
   return (
     <div className="inline-flex h-[94vh] w-full rounded-box bg-base-100">
-      <section className="relative w-full overflow-y-auto pb-32">
-        <Header
+      <div className="relative w-full overflow-y-auto pb-32">
+        <Navbar
           changeView={changeView}
           addToFavorite={addToFavorite}
           account={account}
@@ -216,7 +218,7 @@ export default function List() {
             />
           </Suspense>
         </div>
-      </section>
+      </div>
       {item.value && !pinItemView.value ? (
         <section className="border-l border-base-200/50">
           <ItemView
@@ -248,7 +250,7 @@ export default function List() {
   )
 }
 
-const Header = ({ changeView, addToFavorite }: any) => {
+const Navbar = ({ changeView, addToFavorite }: any) => {
   return (
     <header className="flex flex-wrap items-center justify-between px-4 py-1">
       <div className="breadcrumbs text-sm">
@@ -266,64 +268,6 @@ const Header = ({ changeView, addToFavorite }: any) => {
       </div>
       <div>
         <ul className="flex items-center">
-          <li className="tooltip tooltip-bottom" data-tip="View">
-            <MenuTrigger>
-              <Button className="btn btn-square btn-sm mr-2">
-                {(preferences.value?.view === 'table' ||
-                  !preferences.value?.view) && (
-                  <>
-                    <TableViewIcon className="h-5 w-5" />
-                    {/* <span className="pl-1">View</span> */}
-                  </>
-                )}
-                {preferences.value?.view === 'kanban' && (
-                  <>
-                    <KanbanViewIcon className="h-5 w-5" />
-                    <span className="pl-1">Kanban</span>
-                  </>
-                )}
-              </Button>
-              <Popover>
-                <Menu className="dialog menu menu-sm">
-                  <MenuItem>
-                    <li>
-                      <span className="menu-title">Views</span>
-                    </li>
-                  </MenuItem>
-                  <MenuItem>
-                    <li>
-                      <Button
-                        className={`${
-                          (preferences.value?.view === 'table' ||
-                            !preferences.value?.view) &&
-                          'active text-nowrap border border-secondary/30 !bg-secondary/10'
-                        }`}
-                        onPress={() => changeView('table')}
-                      >
-                        <TableViewIcon />
-                        Table
-                        <span className="text-sm opacity-50">default</span>
-                      </Button>
-                    </li>
-                  </MenuItem>
-                  <MenuItem>
-                    <li>
-                      <Button
-                        className={`${
-                          preferences.value?.view === 'kanban' &&
-                          'active border border-secondary/30 !bg-secondary/10'
-                        }`}
-                        onPress={() => changeView('kanban')}
-                      >
-                        <KanbanViewIcon />
-                        Kanban
-                      </Button>
-                    </li>
-                  </MenuItem>
-                </Menu>
-              </Popover>
-            </MenuTrigger>
-          </li>
           <li className="tooltip tooltip-bottom" data-tip="Share">
             <DialogTrigger>
               <Button className="btn btn-square btn-sm mr-2">
@@ -485,27 +429,7 @@ const Options = ({ getItems }: any) => {
           </MenuTrigger>
         </li>
         <li>
-          <MenuTrigger>
-            <Button className="btn btn-square btn-sm">
-              <span className="icon-[solar--tuning-3-line-duotone] h-5 w-5"></span>
-            </Button>
-            <Popover>
-              <Menu className="dialog menu menu-sm">
-                <Header>
-                  <li className="menu-title">Group By</li>
-                </Header>
-                {groupBy.map((g: any, i: number) => (
-                  <MenuItem key={i}>
-                    <li>
-                      <Button className="ui-selected:active" value={g}>
-                        {g}
-                      </Button>
-                    </li>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Popover>
-          </MenuTrigger>
+          <DisplayPopover />
         </li>
         {/* <li>
           <button onClick={() => showClosed()}>
@@ -552,3 +476,166 @@ const Options = ({ getItems }: any) => {
 //     </form>
 //   )
 // }
+
+const DisplayPopover = () => {
+  return (
+    <DialogTrigger>
+      <Button className="btn btn-square btn-sm">
+        <span className="icon-[solar--tuning-3-line-duotone] h-5 w-5"></span>
+      </Button>
+      <Popover>
+        <Dialog className="dialog p-4">
+          <div className="mb-4 flex items-center">
+            <Button className="btn btn-outline mr-4 w-32">
+              <Icon
+                icon="solar:server-minimalistic-bold"
+                width={20}
+                height={20}
+              />
+              List
+            </Button>
+            <Button className="btn btn-outline w-32">
+              <Icon icon="solar:widget-4-bold" width={20} height={20} />
+              Board
+            </Button>
+          </div>
+          <div className="mb-2 flex items-center justify-between">
+            <div className="flex items-center">
+              <Icon
+                icon="solar:widget-4-bold"
+                className="mr-2"
+                width={20}
+                height={20}
+              />
+              Grouping
+            </div>
+            <Select>
+              <Label />
+              <Button className="select select-xs bg-neutral text-neutral-content">
+                <SelectValue className="pl-3">
+                  {({ defaultChildren, isPlaceholder }) => {
+                    return isPlaceholder ? <b>Status</b> : defaultChildren
+                  }}
+                </SelectValue>
+              </Button>
+              <Text slot="description" />
+              <FieldError />
+              <Popover>
+                <ListBox>
+                  <ListBoxItem>
+                    <Text slot="label" />
+                    <Text slot="description" />
+                  </ListBoxItem>
+                  <Section>
+                    <Header />
+                    <ListBoxItem />
+                  </Section>
+                </ListBox>
+              </Popover>
+            </Select>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Icon
+                icon="tabler:arrows-sort"
+                className="mr-2"
+                width={20}
+                height={20}
+              />
+              Ordering
+            </div>
+            <div className="flex items-center space-x-2">
+              <Select>
+                <Label />
+                <Button className="select btn-xs select-xs bg-neutral text-neutral-content">
+                  <SelectValue className="pl-3">
+                    {({ defaultChildren, isPlaceholder }) => {
+                      return isPlaceholder ? <b>Priority</b> : defaultChildren
+                    }}
+                  </SelectValue>
+                </Button>
+                <Text slot="description" />
+                <FieldError />
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>
+                      <Text slot="label" />
+                      <Text slot="description" />
+                    </ListBoxItem>
+                    <Section>
+                      <Header />
+                      <ListBoxItem />
+                    </Section>
+                  </ListBox>
+                </Popover>
+              </Select>
+              <Button className="btn btn-square btn-neutral btn-xs">
+                <Icon icon="tabler:sort-descending" width={17} height={17} />
+              </Button>
+            </div>
+          </div>
+          <div className="mt-3">
+            <Switch>
+              <span>Order completed by recency</span>
+              <div className="switch" />
+            </Switch>
+          </div>
+          <span className="divider"></span>
+          <div className="flex items-center justify-between">
+            <span>Completed issues</span>
+            <Select>
+              <Label />
+              <Button className="select select-xs">
+                <SelectValue>
+                  {({ defaultChildren, isPlaceholder }) => {
+                    return isPlaceholder ? (
+                      <>
+                        <b>All</b>
+                      </>
+                    ) : (
+                      defaultChildren
+                    )
+                  }}
+                </SelectValue>
+              </Button>
+              <Text slot="description" />
+              <FieldError />
+              <Popover>
+                <ListBox>
+                  <ListBoxItem>
+                    <Text slot="label" />
+                    <Text slot="description" />
+                  </ListBoxItem>
+                  <Section>
+                    <Header />
+                    <ListBoxItem />
+                  </Section>
+                </ListBox>
+              </Popover>
+            </Select>
+          </div>
+          <div>
+            <Switch>
+              <span>Show sub-issues</span>
+              <div className="switch" />
+            </Switch>
+          </div>
+          <span className="divider"></span>
+          <h3>List options</h3>
+          <div>
+            <Switch>
+              <span>Show empty groups</span>
+              <div className="switch" />
+            </Switch>
+          </div>
+          <div>Display properties</div>
+          <div>
+            {['Priority', 'ID', 'Status', 'Labels'].map((colum) => (
+              <Button className="btn btn-sm">{colum}</Button>
+            ))}
+          </div>
+        </Dialog>
+      </Popover>
+    </DialogTrigger>
+  )
+}

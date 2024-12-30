@@ -10,11 +10,9 @@ import {
   useLocation,
 } from 'react-router-dom'
 import {
-  AccountState,
-  SessionState,
-  ThemeState,
   useAccountStore,
   useSessionStore,
+  useSpacesStore,
   useThemeStore,
 } from './utils/zustand'
 import Signin from './pages/auth/Signin'
@@ -29,13 +27,16 @@ import ForgotPassword from './pages/auth/ForgotPassword'
 import supabase from './utils/supabase'
 import ResetPassword from './pages/auth/ResetPassword'
 import { signal } from '@preact/signals-react'
+import { addImageUrl } from './helpers/images'
+import isTauri from './utils/isTauri'
 
 const allowResetPassword = signal<boolean>(false)
 
 export default function App({}: any) {
-  const { account, setAccount } = useAccountStore((s: AccountState) => s)
-  const { session, setSession } = useSessionStore((s: SessionState) => s)
-  const { theme, setTheme } = useThemeStore((a: ThemeState) => a)
+  const { account, setAccount } = useAccountStore()
+  const { session, setSession } = useSessionStore()
+  const { theme, setTheme } = useThemeStore()
+  const { setSpaces } = useSpacesStore()
 
   const getAccount = async (id: string) => {
     try {
@@ -52,6 +53,19 @@ export default function App({}: any) {
       }
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  async function getSpaces() {
+    if (account) {
+      const { data } = await supabase
+        .from('spaces')
+        .select('*')
+        .eq('account', account?.id)
+      if (data?.length) {
+        const dataWithImages = await addImageUrl(data)
+        setSpaces(dataWithImages)
+      }
     }
   }
 
@@ -77,24 +91,24 @@ export default function App({}: any) {
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'INITIAL_SESSION') {
         if (session) {
-          // console.log('initial')
-          getAccount(session.user.id)
+          await getAccount(session.user.id)
+          getSpaces()
         }
       } else if (event === 'SIGNED_IN') {
         if (session && !allowResetPassword.value) {
-          console.log('signin')
           await getAccount(session.user.id)
           setSession(session)
+          getSpaces()
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null)
         setAccount(null)
-        // redirect('/signin')
+        setSpaces([])
       } else if (event === 'PASSWORD_RECOVERY') {
         allowResetPassword.value = true
         setSession(null)
         setAccount(null)
-        // console.log('redirect')
+        setSpaces([])
         redirect('/password/reset')
       } else if (event === 'TOKEN_REFRESHED') {
         if (session) {
@@ -118,9 +132,11 @@ export default function App({}: any) {
         <Route
           element={
             <ProtectedRoute
-              isAllowed={session && account}
+              isAllowed={(session || isTauri) && account}
               redirectTo={
-                !session ? '/signin' : session && !account && '/welcome'
+                !session && !isTauri
+                  ? '/signin'
+                  : (session || isTauri) && !account && '/welcome'
               }
             />
           }
@@ -140,7 +156,7 @@ export default function App({}: any) {
         <Route
           path="/welcome"
           element={
-            <ProtectedRoute isAllowed={session && !account}>
+            <ProtectedRoute isAllowed={(session || isTauri) && !account}>
               <Welcome />
             </ProtectedRoute>
           }

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "build": {
     "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": "bun run build",
@@ -36,12 +37,29 @@
     "windows": [
       {
         "title": "notask-react",
+=======
+  "$schema": "https://schema.tauri.app/config/2.0.0-rc",
+  "productName": "notask-app",
+  "version": "0.1.0",
+  "identifier": "com.notask.app",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1234",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "notask-app",
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
         "width": 800,
         "height": 600
       }
     ],
     "security": {
       "csp": null
+<<<<<<< HEAD
     },
 >>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
     "bundle": {
@@ -72,5 +90,19 @@
 =======
     }
 >>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
+=======
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+>>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
   }
 }

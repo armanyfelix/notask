@@ -11,13 +11,14 @@ import {
   useSessionStore,
 } from '../utils/zustand'
 import { redirect } from 'react-router-dom'
+import { Button, Input } from 'react-aria-components'
 
 const name = signal<string>('')
-const avatar = signal<any>(null)
+const avatar = signal<any>(undefined)
 const avatarUrl = signal<string | ArrayBuffer | null>(null)
 const appUse = signal<string>('')
 const step = signal<number>(1)
-const error = signal<string>('')
+const error = signal<any>()
 const errorAlert = signal<string>('')
 
 export default function Welcome({}: any) {
@@ -26,6 +27,7 @@ export default function Welcome({}: any) {
 
   const imageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const files = (e.target as HTMLInputElement).files
+    console.log('files', files)
     if (files) {
       // Check file size (5MB)
       const maxSize = 5 * 1024 * 1024
@@ -117,9 +119,9 @@ export default function Welcome({}: any) {
             <div className="mx-auto w-full max-w-lg">
               <h1 className="mb-3 text-5xl font-bold">Welcome to Notask</h1>
               <h2 className="mt-1 text-xl font-semibold opacity-60">
-                Start to navigate your ideas
+                Start to navigate your mind
               </h2>
-              <input
+              <Input
                 type="text"
                 placeholder="Your name"
                 className="mt-32 w-full border-b border-base-300 bg-transparent p-3 text-xl shadow outline-none duration-100 ease-out focus:border-b-2 focus:border-primary"
@@ -167,7 +169,7 @@ export default function Welcome({}: any) {
                     ''
                   )}
                   <div className="flex flex-wrap items-end justify-end">
-                    <input
+                    <Input
                       type="file"
                       accept="image/png, image/jpeg, image/jpg"
                       className="file-input file-input-bordered file-input-md"
@@ -219,24 +221,24 @@ export default function Welcome({}: any) {
                 What kind of use do you want to give it?
               </h1>
               <div className="mt-10 flex justify-evenly gap-5">
-                <button
+                <Button
                   className={`btn btn-lg flex h-full w-52 flex-col p-5 text-center ${
                     appUse.value === 'individual' && 'ring-2 ring-primary'
                   }`}
-                  onClick={() => (appUse.value = 'individual')}
+                  onPress={() => (appUse.value = 'individual')}
                 >
                   <img src="/images/individual.png" className="" />
                   Individual
-                </button>
-                <button
+                </Button>
+                <Button
                   className={`btn btn-lg flex h-full w-52 flex-col p-5 text-center ${
                     appUse.value === 'collaborative' && 'ring-2 ring-primary'
                   }`}
-                  onClick={() => (appUse.value = 'collaborative')}
+                  onPress={() => (appUse.value = 'collaborative')}
                 >
                   <img src="/images/group.png" />
                   Collaborative
-                </button>
+                </Button>
               </div>
               <div className="flex w-full justify-end gap-2 py-2">
                 <a
@@ -271,13 +273,13 @@ export default function Welcome({}: any) {
               <h1 className="text-5xl font-bold">All ready!</h1>
               <h2 className="">Time to create</h2>
               <div className="flex w-full justify-end gap-2 py-2">
-                <button
-                  onClick={createAccount}
-                  disabled={!name.value && !appUse.value}
+                <Button
+                  onPress={createAccount}
+                  isDisabled={!name.value && !appUse.value}
                   className="btn btn-primary mt-10 capitalize"
                 >
                   Finish
-                </button>
+                </Button>
               </div>
             </div>
           </section>
