@@ -1,0 +1,98 @@
+{
+  "name": "Default",
+  "items_name": "item",
+  "description": "Default list configuration",
+  "statuses": {
+    "active": true,
+    "options": {
+      "done": [],
+      "open": [
+        {
+          "name": "to do",
+          "type": "open",
+          "color": "gray"
+        },
+        {
+          "name": "open",
+          "type": "open",
+          "color": "black"
+        }
+      ],
+      "close": [
+        {
+          "name": "completed",
+          "type": "closed",
+          "color": "blue"
+        }
+      ],
+      "active": []
+    }
+  },
+  "tags": {
+    "active": false,
+    "options": []
+  },
+  "timer": {
+    "active": false,
+    "options": {
+      "goal": true,
+      "tracker": true,
+      "pomodoro": {
+        "active": true,
+        "minutes": 25
+      },
+      "estimation": true
+    }
+  },
+  "fields": {
+    "active": false,
+    "options": []
+  },
+  "priority": {
+    "active": false,
+    "options": [
+      {
+        "name": "High",
+        "color": "red"
+      },
+      {
+        "name": "Medium",
+        "color": "yellow"
+      },
+      {
+        "name": "Low",
+        "color": "blue"
+      },
+      {
+        "name": "none",
+        "color": "gray"
+      }
+    ]
+  },
+  "schedule": {
+    "active": true,
+    "options": {
+      "recurrency": true,
+      "reminders": true,
+      "start_date": true,
+      "finish_date": true
+    }
+  },
+  "collaboration": {
+    "active": false,
+    "options": {
+      "multiple": true
+    }
+  },
+  "relationships": {
+    "active": false,
+    "options": {
+      "urls": true,
+      "lists": true,
+      "notes": true,
+      "elements": true,
+      "whiteboards": false,
+      "dependencies": true
+    }
+  }
+}
