@@ -4,7 +4,7 @@
 
 @layer components {
   .dialog {
-    @apply backdrop-blur-md bg-base-300 text-base-content border-2 border-base-200 bg-opacity-80 shadow-xl rounded-box;
+    @apply rounded-box border-2 border-base-200 bg-base-300 bg-opacity-60 text-base-content shadow-xl backdrop-blur-md;
   }
 }
 
@@ -24,6 +24,28 @@
   src: url('/fonts/proto/0xProtoNerdFont-Regular.ttf');
 }
 
+.titlebar {
+  height: 30px;
+  background: #329ea3;
+  user-select: none;
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.titlebar-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+}
+.titlebar-button:hover {
+  background: #5bbec3;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -37,6 +59,18 @@ input[type='number']::-webkit-outer-spin-button {
   margin: 0;
 }
 
+button:focus {
+  outline: none;
+}
+
+input[type='button'] {
+  border: none;
+  outline: none;
+}
+
+input[type='text'] {
+  outline: none;
+}
 
 body,
 html {
@@ -46,6 +80,62 @@ html {
   width: 100%;
   height: 100%;
 }
+
+.react-aria-Switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.571rem;
+  forced-color-adjust: none;
+
+  .switch {
+    width: 2rem;
+    height: 1.143rem;
+    border: 2px solid white;
+    background: gray;
+    border-radius: 1.143rem;
+    transition: all 200ms;
+
+    &:before {
+      content: '';
+      display: block;
+      margin: 0.143rem;
+      width: 0.857rem;
+      height: 0.857rem;
+      background: black;
+      border-radius: 16px;
+      transition: all 200ms;
+    }
+  }
+
+  &[data-pressed] .switch {
+    border-color: yellow;
+
+    &:before {
+      background: blue;
+    }
+  }
+
+  &[data-selected] {
+    .switch {
+      border-color: var(--highlight-background);
+      background: var(--highlight-background);
+
+      &:before {
+        background: var(--field-background);
+        transform: translateX(100%);
+      }
+    }
+
+    &[data-pressed] {
+      .switch {
+        border-color: var(--highlight-background-pressed);
+        background: var(--highlight-background-pressed);
+      }
+    }
+  }
+}
+
 .react-aria-Popover[data-entering] {
   animation: slide 200ms;
 }
@@ -101,14 +191,14 @@ html {
 }
 
 .react-aria-Input,
-  .react-aria-TextArea {
-    width: 100%;
+.react-aria-TextArea {
+  width: 100%;
 
-    &[data-focused] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -1px;
-    }
+  &[data-focused] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
+}
 
 @keyframes modal-fade {
   from {
@@ -145,29 +235,4 @@ html {
   flex-direction: column;
   align-items: start;
   gap: 8px;
-}
-
-.react-aria-ResizableTableContainer {
-  .react-aria-Row {
-    &[data-pressed] {
-      background: black;
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-      --focus-ring-color: var(--highlight-foreground);
-
-      &[data-focus-visible],
-      .react-aria-Cell[data-focus-visible] {
-        outline-offset: -4px;
-      }
-    }
-  }
-  .react-aria-Column,
-  .react-aria-Cell {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 }
