@@ -1,96 +1,24 @@
 {
-<<<<<<< HEAD
-  "build": {
-    "beforeDevCommand": "bun run dev",
-    "beforeBuildCommand": "bun run build",
-    "devPath": "http://localhost:1420",
-<<<<<<< HEAD
-    "distDir": "../dist",
-    "withGlobalTauri": false
-  },
-  "package": {
-    "productName": "sigma",
-=======
-    "distDir": "../dist"
-  },
-  "package": {
-    "productName": "notask-react",
->>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
-    "version": "0.0.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-<<<<<<< HEAD
-      },
-      "http": {
-        "all": true,
-        "request": true
-      }
-    },
-=======
-      }
-    },
-    "windows": [
-      {
-        "title": "notask-react",
-=======
-  "$schema": "https://schema.tauri.app/config/2.0.0-rc",
-  "productName": "notask-app",
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "tauri-app",
   "version": "0.1.0",
-  "identifier": "com.notask.app",
+  "identifier": "com.tauri-app.app",
   "build": {
     "beforeDevCommand": "bun run dev",
-    "devUrl": "http://localhost:1234",
+    "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "bun run build",
     "frontendDist": "../dist"
   },
   "app": {
     "windows": [
       {
-        "title": "notask-app",
->>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
+        "title": "tauri-app",
         "width": 800,
         "height": 600
       }
     ],
     "security": {
       "csp": null
-<<<<<<< HEAD
-    },
->>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "com.tauri.dev",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
-<<<<<<< HEAD
-    },
-    "security": {
-      "csp": null
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "resizable": true,
-        "title": "sigma",
-        "width": 800,
-        "height": 600
-      }
-    ]
-=======
-    }
->>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
-=======
     }
   },
   "bundle": {
@@ -103,6 +31,5 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
->>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
   }
 }

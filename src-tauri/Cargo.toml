@@ -1,73 +1,24 @@
 [package]
-<<<<<<< HEAD
-<<<<<<< HEAD
-name = "sigma"
-version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
-=======
-name = "notask-react"
-version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
->>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
-=======
-name = "notask-app"
+name = "tauri-app"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
->>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-<<<<<<< HEAD
-[build-dependencies]
-<<<<<<< HEAD
-tauri-build = { version = "1.5", features = [] }
-
-[dependencies]
-tauri = { version = "1.5", features = [ "http-all", "shell-open"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-serde_with_macros = "3.4.0"
-surrealdb = { version = "1.0.0", features = ["kv-mem", "kv-tikv"] }
-tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread"] }
-ts-rs = { version = "7" }
-
-[dev-dependencies]
-anyhow="1"
-
-[features]
-# this feature is used for production builds or when `devPath` points to the filesystem
-# DO NOT REMOVE!!
-=======
-tauri-build = { version = "1", features = [] }
-
-[dependencies]
-tauri = { version = "1", features = ["shell-open"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-
-[features]
-# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
->>>>>>> 0ea51447c881a05a778630ad72ed766e4bbbc3e7
-custom-protocol = ["tauri/custom-protocol"]
-=======
 [lib]
-name = "notask_app_lib"
-crate-type = ["lib", "cdylib", "staticlib"]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "tauri_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-rc", features = [] }
-tauri-plugin-shell = "2.0.0-rc"
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tauri-plugin-http = "2"
-
->>>>>>> de5665e1dc9bcf5264705c4dca68b42bf1be34dc
