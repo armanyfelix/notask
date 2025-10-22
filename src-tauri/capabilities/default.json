@@ -4,15 +4,7 @@
   "description": "Capability for the main window",
   "windows": ["main"],
   "permissions": [
-    {
-      "identifier": "http:default",
-      "allow": [
-        { "url": "https://bzuuaakvnexnwcmwpvbk.supabase.co" },
-        { "url": "http://*.tauri.app" }
-      ],
-      "deny": [{ "url": "https://private.tauri.app" }]
-    },
     "core:default",
-    "shell:allow-open"
+    "opener:default"
   ]
 }

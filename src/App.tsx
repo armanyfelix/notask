@@ -132,7 +132,7 @@ export default function App({}: any) {
         <Route
           element={
             <ProtectedRoute
-              isAllowed={(session || isTauri) && account}
+              isAllowed={isTauri || (session && account)}
               redirectTo={
                 !session && !isTauri
                   ? '/signin'
@@ -156,7 +156,7 @@ export default function App({}: any) {
         <Route
           path="/welcome"
           element={
-            <ProtectedRoute isAllowed={(session || isTauri) && !account}>
+            <ProtectedRoute isAllowed={session && isTauri && !account}>
               <Welcome />
             </ProtectedRoute>
           }

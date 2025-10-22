@@ -130,7 +130,7 @@ export default function List() {
         const { data, error } = await supabase
           .from('lists')
           .select('*')
-          .eq('id', id)
+          .eq('id', Number(id))
           .single()
         if (data) {
           list.value = data
@@ -156,7 +156,7 @@ export default function List() {
         const { data, error }: any = await supabase
           .from('items')
           .select('*')
-          .eq('list', id)
+          .eq('list', Number(id))
         if (data) {
           items.value = data
         } else {
