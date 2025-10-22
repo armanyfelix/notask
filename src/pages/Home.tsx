@@ -1,12 +1,12 @@
-import { AccountState, useAccountStore } from '../utils/zustand'
-import SunCloudIcon from '../assets/weather/sunCloud.svg?react'
-import ChevronRightIcon from '../assets/svgs/chevronRight.svg?react'
-import ChevronLeftIcon from '../assets/svgs/chevronLeft.svg?react'
-import CalendarIcon from '../assets/svgs/calendar.svg?react'
-import GoogleCalendarIcon from '../assets/icons/googleCalendar.svg?react'
-import { format } from 'date-fns'
-import { useMemo } from 'react'
-import { signal } from '@preact/signals-react'
+import { AccountState, useAccountStore } from "../utils/zustand";
+import SunCloudIcon from "../assets/weather/sunCloud.svg?react";
+import ChevronRightIcon from "../assets/svgs/chevronRight.svg?react";
+import ChevronLeftIcon from "../assets/svgs/chevronLeft.svg?react";
+import CalendarIcon from "../assets/svgs/calendar.svg?react";
+import GoogleCalendarIcon from "../assets/icons/googleCalendar.svg?react";
+import { format } from "date-fns";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 import {
   Button,
   Calendar,
@@ -17,26 +17,26 @@ import {
   Group,
   Heading,
   Popover,
-} from 'react-aria-components'
+} from "react-aria-components";
 
 const events = signal<any>([
   {
     id: 1,
-    title: 'Shane Gillis Stand-Up Monologue - SNL',
+    title: "Shane Gillis Stand-Up Monologue - SNL",
   },
-])
+]);
 
 export default function Home({}: any) {
   const today = useMemo(() => {
-    return new Date()
-  }, [])
-  const user = useAccountStore((s: AccountState) => s.account)
+    return new Date();
+  }, []);
+  const user = useAccountStore((s: AccountState) => s.account);
   return (
     <div className="h-screen overflow-auto rounded-xl m-1 bg-gradient-to-tr from-primary/20 to-secondary/20">
       <header className="flex items-center justify-between p-6">
         <div className="flex items-center">
           <SunCloudIcon className="h-14 w-14" />
-          <h1 className="ml-8 text-4xl font-extrabold">
+          <h1 className="ml-8 text-4xl font-proto">
             Good afternoon, {user?.name}
           </h1>
         </div>
@@ -52,7 +52,7 @@ export default function Home({}: any) {
       </div>
       {/* <div className="bg-base-20 mt-40 p-10">footer</div> */}
     </div>
-  )
+  );
 }
 
 const Agenda = ({ today }: any) => {
@@ -61,9 +61,9 @@ const Agenda = ({ today }: any) => {
       <div className="card-body">
         <div className="card-title justify-between">
           <div className="flex items-center space-x-1">
-            <div className="text-xl">{format(today, 'MMM')}</div>
-            <div className="text-2xl font-bold">{format(today, 'd')}</div>,
-            <div className="text-xl">{format(today, 'EEEE')}</div>
+            <div className="text-xl">{format(today, "MMM")}</div>
+            <div className="text-2xl font-bold">{format(today, "d")}</div>,
+            <div className="text-xl">{format(today, "EEEE")}</div>
           </div>
           <div className="flex items-center">
             <button className="btn btn-square">
@@ -121,8 +121,8 @@ const Agenda = ({ today }: any) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const Notifications = () => {
   return (
@@ -161,8 +161,8 @@ const Notifications = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const Recent = () => {
   return (
@@ -172,8 +172,8 @@ const Recent = () => {
         <div className="max-h-72 overflow-auto">mine set</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const ToDos = () => {
   return (
@@ -212,5 +212,5 @@ const ToDos = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,15 +1,15 @@
-import Sidebar from './Sidebar'
-import Navbar from './Navbar'
-import { Outlet } from 'react-router-dom'
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
+import { Outlet } from "react-router-dom";
 
 export default function AppLayout() {
   return (
-    <main className="flex h-screen font-futura">
+    <main className="flex h-screen">
       <Sidebar />
       <div className="h-full w-full overflow-hidden bg-base-200 pr-1">
-          <Navbar />
-          <Outlet />
+        <Navbar />
+        <Outlet />
       </div>
     </main>
-  )
+  );
 }

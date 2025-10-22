@@ -1,4 +1,4 @@
-import './styles.css'
+import './App.css'
 import AppLayout from './layout'
 import {
   BrowserRouter,
