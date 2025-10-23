@@ -142,7 +142,7 @@ export default function Sidebar() {
                   <li className="items-center">
                     <Link
                       to="/"
-                      className="hover:bg-opacity-9 tooltip tooltip-right rounded-btn p-2 leading-[0]"
+                      className="hover:bg-opacity-9 tooltip tooltip-right rounded-btn p-2 leading-0"
                       data-tip="planet"
                     >
                       <span className="icon-[solar--star-linear] h-5 w-5"></span>
@@ -207,7 +207,7 @@ export default function Sidebar() {
           className={`${
             WideSidebar && space
               ? "w-56 translate-x-0 scale-100 border-l-2 border-base-300"
-              : "w-0 !-translate-x-96 scale-50"
+              : "w-0 -translate-x-96! scale-50"
           } box-border overflow-auto bg-base-200 py-2`}
         >
           {page === "lists" && <ListsExplorer />}

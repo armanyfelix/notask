@@ -108,13 +108,11 @@ export default function Home({}: any) {
   }, []);
 
   return (
-    <div className="h-screen overflow-auto rounded-xl m-1 bg-linear-to-tr from-primary/20 to-secondary/20">
+    <div className="h-screen overflow-auto rounded-xl m-1 bg-base-300">
       <header className="flex items-center justify-between p-6">
         <div className="flex items-center">
           <SunCloudIcon className="h-14 w-14" />
-          <h1 className="ml-8 text-4xl font-extrabold">
-            Good afternoon, {user?.name}
-          </h1>
+          <h1 className="ml-8 text-4xl">Good afternoon, {user?.name}</h1>
         </div>
         <div>
           <Button className="btn btn-primary">Create</Button>

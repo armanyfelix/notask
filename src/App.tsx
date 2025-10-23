@@ -1,5 +1,5 @@
 import "./App.css";
-import AppLayout from "./layout";
+import AppLayout from "./layout/AppLayout";
 import {
   BrowserRouter,
   Navigate,

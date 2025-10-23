@@ -43,7 +43,7 @@ export default function Navbar() {
             href="#"
             onClick={() => setActiveTab(tab)}
             className={`tab-lg tab tabs-bordered ${
-              activeTab === tab ? "tab-active bg-base-100 !pl-3 !pr-2" : ""
+              activeTab === tab ? "tab-active bg-base-100 pl-3! pr-2!" : ""
             }`}
           >
             <span className="mr-2">{tab}</span>
