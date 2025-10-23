@@ -1,15 +1,21 @@
-import { Signal } from '@preact/signals-react'
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 interface Props {
-  config: Signal<any>
-  savePreset: Signal<string>
+  config: any;
+  setConfig: (value: any) => void;
+  // savePreset: string;
+  setSavePreset: (value: string) => void;
 }
 
-export default function Dates({ config, savePreset }: Props) {
+export default function Dates({
+  config,
+  setConfig,
+  // savePreset,
+  setSavePreset,
+}: Props) {
   useEffect(() => {
-    console.log('config.value :>> ', config.value)
-  }, [config])
+    console.log("config :>> ", config);
+  }, [config]);
 
   return (
     <div className="p-8">
@@ -23,20 +29,20 @@ export default function Dates({ config, savePreset }: Props) {
           <input
             type="checkbox"
             className="toggle toggle-secondary toggle-sm"
-            checked={config.value.schedule.options.start_date}
+            checked={config.schedule.options.start_date}
             onInput={() => {
-              const newValue = !config.value.schedule.options.start_date
-              config.value = {
-                ...config.value,
+              const newValue = !config.schedule.options.start_date;
+              setConfig({
+                ...config,
                 schedule: {
-                  ...config.value.schedule,
+                  ...config.schedule,
                   options: {
-                    ...config.value.schedule.options,
+                    ...config.schedule.options,
                     start_date: newValue,
                   },
                 },
-              }
-              savePreset.value = config.value.name
+              });
+              setSavePreset(config.name);
             }}
           />
         </li>
@@ -45,23 +51,21 @@ export default function Dates({ config, savePreset }: Props) {
           <input
             type="checkbox"
             className="toggle toggle-secondary toggle-sm"
-            checked={config.value.schedule.options.finish_date}
-            // onInput={() => {
-            //   preset.value = {
-            //     ...preset.value,
-            //     attributes: {
-            //       ...preset.value.attributes,
-            //       dates: {
-            //         ...preset.value.attributes.dates,
-            //         values: {
-            //           ...dates,
-            //           end_date: !dates.end_date,
-            //         },
-            //       },
-            //     },
-            //   }
-            //   savePreset.value = preset.value.id
-            // }}
+            checked={config.schedule.options.finish_date}
+            onInput={() => {
+              const newValue = !config.schedule.options.finish_date;
+              setConfig({
+                ...config,
+                schedule: {
+                  ...config.schedule,
+                  options: {
+                    ...config.schedule.options,
+                    finish_date: newValue,
+                  },
+                },
+              });
+              setSavePreset(config.name);
+            }}
           />
         </li>
         <li className="flex items-center justify-between">
@@ -69,23 +73,21 @@ export default function Dates({ config, savePreset }: Props) {
           <input
             type="checkbox"
             className="toggle toggle-secondary toggle-sm"
-            checked={config.value.schedule.options.reminders}
-            // onInput={() => {
-            //   preset.value = {
-            //     ...preset.value,
-            //     attributes: {
-            //       ...preset.value.attributes,
-            //       dates: {
-            //         ...preset.value.attributes.dates,
-            //         values: {
-            //           ...dates,
-            //           reminders: !dates.reminders,
-            //         },
-            //       },
-            //     },
-            //   }
-            //   savePreset.value = preset.value.id
-            // }}
+            checked={config.schedule.options.reminders}
+            onInput={() => {
+              const newValue = !config.schedule.options.reminders;
+              setConfig({
+                ...config,
+                schedule: {
+                  ...config.schedule,
+                  options: {
+                    ...config.schedule.options,
+                    reminders: newValue,
+                  },
+                },
+              });
+              setSavePreset(config.name);
+            }}
           />
         </li>
         <li className="flex items-center justify-between">
@@ -93,26 +95,24 @@ export default function Dates({ config, savePreset }: Props) {
           <input
             type="checkbox"
             className="toggle toggle-secondary toggle-sm"
-            checked={config.value.schedule.options.recurrency}
-            // onInput={() => {
-            //   preset.value = {
-            //     ...preset.value,
-            //     attributes: {
-            //       ...preset.value.attributes,
-            //       dates: {
-            //         ...preset.value.attributes.dates,
-            //         values: {
-            //           ...dates,
-            //           recurrence: !dates.recurrence,
-            //         },
-            //       },
-            //     },
-            //   }
-            //   savePreset.value = preset.value.id
-            // }}
+            checked={config.schedule.options.recurrency}
+            onInput={() => {
+              const newValue = !config.schedule.options.recurrency;
+              setConfig({
+                ...config,
+                schedule: {
+                  ...config.schedule,
+                  options: {
+                    ...config.schedule.options,
+                    recurrency: newValue,
+                  },
+                },
+              });
+              setSavePreset(config.name);
+            }}
           />
         </li>
       </ul>
     </div>
-  )
+  );
 }

@@ -1,51 +1,54 @@
-import PlanetIcon from '../assets/svgs/planet.svg?react'
-import Picker from '@emoji-mart/react'
-import { Signal } from '@preact/signals-react'
-import { Button, Popover } from 'react-aria-components'
-import twemoji from 'twemoji'
+import PlanetIcon from "../assets/svgs/planet.svg?react";
+import Picker from "@emoji-mart/react";
+import { Button, Popover } from "react-aria-components";
+import twemoji from "twemoji";
 
 type Props = {
-  openPicker: Signal<boolean>
-  emoji: Signal<string>
-  emojiCode: Signal<string>
-  color: Signal<string>
-  imageUrl: Signal<string | ArrayBuffer | null>
-  image: Signal<File | null>
-}
+  openPicker: boolean;
+  setOpenPicker: (value: boolean) => void;
+  emoji: string;
+  setEmoji: (value: string) => void;
+  emojiCode: string;
+  setEmojiCode: (value: string) => void;
+  color: string;
+  imageUrl: string | ArrayBuffer | null;
+  setImageUrl: (value: string | ArrayBuffer | null) => void;
+  image: File | null;
+  setImage: (value: File | null) => void;
+};
 
 function EmojiSelector({
   openPicker,
+  setOpenPicker,
   emojiCode,
+  setEmojiCode,
   emoji,
+  setEmoji,
   color,
   imageUrl,
+  setImageUrl,
   image,
+  setImage,
 }: Props) {
   const emojiSelected = async (data: { unified: string }) => {
     const emojiImage = twemoji.parse(
       `https://twemoji.maxcdn.com/v/latest/72x72/${data.unified}.png`,
-    )
-    emojiCode.value = data.unified
-    emoji.value = emojiImage
-    imageUrl.value = null
-    image.value = null
-    openPicker.value = false
-  }
+    );
+    setEmojiCode(data.unified);
+    setEmoji(emojiImage);
+    setImageUrl(null);
+    setImage(null);
+    setOpenPicker(false);
+  };
 
-  if (!openPicker) return null
+  if (!openPicker) return null;
   return (
     <Popover>
-      <Button
-        className={`${
-          color.value && `bg-${color.value}-500`
-        } btn btn-square btn-lg`}
-      >
-        {emoji.value && <img src={emoji.value} width={42} height={42} alt="" />}
-        {!emoji.value && !imageUrl.value && (
-          <PlanetIcon width={42} height={42} />
-        )}
-        {typeof imageUrl.value === 'string' && imageUrl.value && (
-          <img src={imageUrl?.value} width={42} height={42} alt="" />
+      <Button className={`${color && `bg-${color}-500`} btn btn-square btn-lg`}>
+        {emoji && <img src={emoji} width={42} height={42} alt="" />}
+        {!emoji && !imageUrl && <PlanetIcon width={42} height={42} />}
+        {typeof imageUrl === "string" && imageUrl && (
+          <img src={imageUrl} width={42} height={42} alt="" />
         )}
       </Button>
       {/* <Popover.Panel className="absolute z-50">
@@ -64,7 +67,7 @@ function EmojiSelector({
           )}
         </Popover.Panel> */}
     </Popover>
-  )
+  );
 }
 
-export default EmojiSelector
+export default EmojiSelector;

@@ -6,32 +6,34 @@ import {
   MouseSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core'
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { Signal, signal } from '@preact/signals-react'
-import PenIcon from '../assets/svgs/pen.svg?react'
-import CommentIcon from '../assets/svgs/comment.svg?react'
-import ElementMenu from '../components/ItemMenu'
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
+import PenIcon from "../assets/svgs/pen.svg?react";
+import CommentIcon from "../assets/svgs/comment.svg?react";
+import ElementMenu from "../components/ItemMenu";
 
 interface Props {
-  elements: Signal<any>
-  handleOpenTask: any
-  onDeleteElement: any
+  elements: any;
+  setElements: (value: any) => void;
+  handleOpenTask: any;
+  onDeleteElement: any;
 }
 
-const overlay = signal(null)
 export default function ListView({
   elements,
+  setElements,
   handleOpenTask,
   onDeleteElement,
 }: Props) {
+  const [overlay, setOverlay] = useState(null);
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -41,21 +43,22 @@ export default function ListView({
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
-  )
+  );
   function handleDragStart(event: any) {
-    const { active } = event
-    overlay.value = active.data.current.sortable.items.find(
-      (i: any) => i.$id === active.id,
-    ).name
+    const { active } = event;
+    setOverlay(
+      active.data.current.sortable.items.find((i: any) => i.$id === active.id)
+        .name,
+    );
   }
   function handleDragEnd(event: any) {
-    const { active, over } = event
+    const { active, over } = event;
     if (active.id !== over.id) {
-      const oldIndex = elements.value.findIndex((t: any) => t.$id === active.id)
-      const newIndex = elements.value.findIndex((t: any) => t.$id === over.id)
-      elements.value = arrayMove(elements.value, oldIndex, newIndex)
+      const oldIndex = elements.findIndex((t: any) => t.$id === active.id);
+      const newIndex = elements.findIndex((t: any) => t.$id === over.id);
+      setElements(arrayMove(elements, oldIndex, newIndex));
     }
-    overlay.value = null
+    setOverlay(null);
   }
 
   return (
@@ -98,24 +101,24 @@ export default function ListView({
         </table>
       </div>
     </DndContext>
-  )
+  );
 }
 
 function SortableItem({ element, onClick, onDeleteElement }: any) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
       id: element?.$id,
-    })
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  }
-  const role: string = 'button'
+  };
+  const role: string = "button";
   const attributesFixed = {
     ...attributes,
     role: role as any,
-  }
+  };
 
   return (
     <tr
@@ -152,7 +155,7 @@ function SortableItem({ element, onClick, onDeleteElement }: any) {
         </div>
       </td>
     </tr>
-  )
+  );
 }
 
 function ItemOverlay({ name }: any) {
@@ -167,5 +170,5 @@ function ItemOverlay({ name }: any) {
         <div className="font-bold">{name}</div>
       </div>
     </div>
-  )
+  );
 }

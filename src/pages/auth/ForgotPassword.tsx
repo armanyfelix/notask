@@ -1,27 +1,27 @@
-import supabase from '../../utils/supabase'
-import { z } from 'zod'
-import { Link } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { signal } from '@preact/signals-react'
+import supabase from "../../utils/supabase";
+import { z } from "zod";
+import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 const schema = z
   .object({
     email: z.string().email(),
   })
-  .required()
-type Inputs = z.infer<typeof schema>
-
-const submit = signal<any>({})
+  .required();
+type Inputs = z.infer<typeof schema>;
 
 export default function ForgotPassword() {
+  const [submit, setSubmit] = useState<any>({});
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
-  })
+  });
 
   const onSubmit = async (values: Inputs) => {
     try {
@@ -30,20 +30,26 @@ export default function ForgotPassword() {
         {
           redirectTo: `${import.meta.env.url}/password/reset`,
         },
-      )
+      );
       if (error) {
-        submit.value.error = error.message
+        setSubmit({
+          ...submit,
+          error: error.message,
+        });
       } else {
-        submit.value.success = true
+        setSubmit({
+          ...submit,
+          success: true,
+        });
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   return (
-    <section className="h-screen bg-gradient-to-tl from-secondary/10 to-accent/10">
-      {submit.value.success ? (
+    <section className="h-screen bg-linear-to-tl from-secondary/10 to-accent/10">
+      {submit.success ? (
         <div className="relative top-1/2 flex -translate-y-1/2 flex-col space-y-5 p-5 text-center">
           <h1 className="font-mono text-4xl font-bold tracking-tighter text-primary">
             Email Verification
@@ -68,16 +74,18 @@ export default function ForgotPassword() {
             >
               <div>
                 <label
-                  className={`input input-bordered flex items-center pl-3 ${errors.email && 'border-error'}`}
+                  className={`input input-bordered flex items-center pl-3 ${
+                    errors.email && "border-error"
+                  }`}
                 >
                   <span className="icon-[solar--letter-bold-duotone] h-6 w-6"></span>
                   <input
                     className="ml-3 grow"
                     placeholder="Email"
-                    {...register('email', {
-                      required: 'Email address is required',
+                    {...register("email", {
+                      required: "Email address is required",
                     })}
-                    aria-invalid={errors.email ? 'true' : 'false'}
+                    aria-invalid={errors.email ? "true" : "false"}
                   />
                 </label>
                 {errors.email && (
@@ -87,16 +95,16 @@ export default function ForgotPassword() {
                 )}
               </div>
               <p className="text-center text-sm font-semibold text-error">
-                {submit.value.error && submit.value.error}
+                {submit.error && submit.error}
               </p>
               <button
                 type="submit"
                 className="btn btn-primary shadow-lg shadow-primary/50"
               >
-                {submit.value.pending ? (
+                {submit.pending ? (
                   <span className="loading loading-dots"></span>
                 ) : (
-                  'send mail'
+                  "send mail"
                 )}
               </button>
               <p className="inline-flex justify-center pt-2 text-sm">
@@ -113,5 +121,5 @@ export default function ForgotPassword() {
         </div>
       )}
     </section>
-  )
+  );
 }

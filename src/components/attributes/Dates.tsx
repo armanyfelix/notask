@@ -1,12 +1,11 @@
-import { Signal } from '@preact/signals-react'
-
 interface Props {
-  preset: any
-  savePreset: Signal<number>
+  preset: any;
+  savePreset: number;
+  setSavePreset: (value: number) => void;
 }
 
-export default function Dates({ preset, savePreset }: Props) {
-  const dates = preset.value.attributes.dates.values
+export default function Dates({ preset, savePreset, setSavePreset }: Props) {
+  const dates = preset.attributes.dates.values;
 
   return (
     <div className="mb-5">
@@ -15,7 +14,7 @@ export default function Dates({ preset, savePreset }: Props) {
         on a calendar, set recurring tasks, and sort tasks by due date.
       </p>
       <ul className="mx-8 space-y-3 text-lg">
-        {' '}
+        {" "}
         <li className="flex items-center justify-between">
           Date
           <input
@@ -23,20 +22,20 @@ export default function Dates({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={dates.start_date}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   dates: {
-                    ...preset.value.attributes.dates,
+                    ...preset.attributes.dates,
                     values: {
                       ...dates,
                       start_date: !dates.start_date,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -47,20 +46,20 @@ export default function Dates({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={dates.end_date}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   dates: {
-                    ...preset.value.attributes.dates,
+                    ...preset.attributes.dates,
                     values: {
                       ...dates,
                       end_date: !dates.end_date,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -71,20 +70,20 @@ export default function Dates({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={dates.reminders}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   dates: {
-                    ...preset.value.attributes.dates,
+                    ...preset.attributes.dates,
                     values: {
                       ...dates,
                       reminders: !dates.reminders,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -95,24 +94,24 @@ export default function Dates({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={dates.recurrence}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   dates: {
-                    ...preset.value.attributes.dates,
+                    ...preset.attributes.dates,
                     values: {
                       ...dates,
                       recurrence: !dates.recurrence,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
       </ul>
     </div>
-  )
+  );
 }

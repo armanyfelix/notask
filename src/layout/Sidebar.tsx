@@ -1,112 +1,111 @@
-import { signal } from '@preact/signals-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from "react";
 import {
   useAccountStore,
   useSidebarStore,
   useSpacesStore,
   useUIStore,
-} from '../utils/zustand'
-import supabase from '../utils/supabase'
-import { addImageUrl } from '../helpers/images'
-import { Button } from 'react-aria-components'
-import { Link } from 'react-router-dom'
-import ListsExplorer from './ListsExplorer'
-import SpaceExplorer from './SpaceExplorer'
-import { Icon } from '@iconify-icon/react/dist/iconify.mjs'
-
-const space = signal<any>(null)
-const page = signal<string>('')
-// const favorites = signal<any>([])
+} from "../utils/zustand";
+import supabase from "../utils/supabase";
+import { addImageUrl } from "../helpers/images";
+import { Button } from "react-aria-components";
+import { Link } from "react-router-dom";
+import ListsExplorer from "./ListsExplorer";
+import SpaceExplorer from "./SpaceExplorer";
+import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 
 export default function Sidebar() {
-  const { account, setAccount } = useAccountStore()
+  const [space, setSpace] = useState<any>(null);
+  const [page, setPage] = useState<string>("");
+  // const favorites = signal<any>([])
+
+  const { account, setAccount } = useAccountStore();
   // const session = useSessionStore()
-  const { spaces } = useSpacesStore()
-  const { WideSidebar, setWideSidebar } = useSidebarStore()
+  const { spaces } = useSpacesStore();
+  const { WideSidebar, setWideSidebar } = useSidebarStore();
   const {
     setOpenFavoritesSidebar,
     openFavoritesSidebar,
     setOpenSpacesSidebar,
     openSpacesSidebar,
-  } = useUIStore()
+  } = useUIStore();
 
-  const refBox = useRef(null)
-  const refRight = useRef(null)
+  const refBox = useRef(null);
+  const refRight = useRef(null);
 
   const routes = [
     {
-      name: 'lists',
+      name: "lists",
       icon: (
         <span className="icon-[solar--checklist-minimalistic-bold-duotone] h-7 w-7"></span>
       ),
     },
     {
-      name: 'notes',
+      name: "notes",
       icon: <span className="icon-[solar--book-2-bold-duotone] h-7 w-7"></span>,
     },
-  ]
+  ];
 
   const onOpenSpace = (s: any) => {
-    setWideSidebar(page.value === s.name ? !WideSidebar : true)
-    space.value = s
-    page.value = s.name
-  }
+    setWideSidebar(page === s.name ? !WideSidebar : true);
+    setSpace(s);
+    setPage(s.name);
+  };
 
   const onToggle = (p: string, a: string) => {
-    setWideSidebar(page.value === a ? !WideSidebar : true)
-    space.value = null
-    page.value = p
-  }
+    setWideSidebar(page === a ? !WideSidebar : true);
+    setSpace(null);
+    setPage(p);
+  };
 
   async function getFavorites() {
     if (account) {
       const { data } = await supabase
-        .from('lists')
-        .select('*')
-        .eq('favorite', true)
+        .from("lists")
+        .select("*")
+        .eq("favorite", true);
       if (data) {
-        const withImages = await addImageUrl(data)
-        return withImages
+        const withImages = await addImageUrl(data);
+        return withImages;
       }
     }
   }
 
   useEffect(() => {
-    const resizeableElement = refBox.current as unknown as HTMLElement
+    const resizeableElement = refBox.current as unknown as HTMLElement;
     if (resizeableElement) {
-      const styles = window.getComputedStyle(resizeableElement)
-      let width = parseInt(styles.width, 10)
-      let xCord = 0
+      const styles = window.getComputedStyle(resizeableElement);
+      let width = parseInt(styles.width, 10);
+      let xCord = 0;
       const onMouseMoveRightResize = (e: any) => {
-        const dx = e.clientX - xCord
-        xCord = e.clientX
-        width += dx
+        const dx = e.clientX - xCord;
+        xCord = e.clientX;
+        width += dx;
         if (width > 200 && width < 700) {
-          resizeableElement.style.width = `${width}px`
+          resizeableElement.style.width = `${width}px`;
         }
-      }
+      };
       const onMouseUpRightResize = () => {
-        document.removeEventListener('mousemove', onMouseMoveRightResize)
-      }
+        document.removeEventListener("mousemove", onMouseMoveRightResize);
+      };
       const onMouseDownRightResize = (e: any) => {
-        xCord = e.clientX
-        resizeableElement.style.left = styles.left
-        resizeableElement.style.right = '0'
-        document.addEventListener('mouseup', onMouseUpRightResize)
-        document.addEventListener('mousemove', onMouseMoveRightResize)
-      }
-      const resizerRight = refRight.current as any
-      resizerRight.addEventListener('mousedown', onMouseDownRightResize)
+        xCord = e.clientX;
+        resizeableElement.style.left = styles.left;
+        resizeableElement.style.right = "0";
+        document.addEventListener("mouseup", onMouseUpRightResize);
+        document.addEventListener("mousemove", onMouseMoveRightResize);
+      };
+      const resizerRight = refRight.current as any;
+      resizerRight.addEventListener("mousedown", onMouseDownRightResize);
 
       return () => {
-        resizerRight.removeEventListener('mousedown', onMouseDownRightResize)
-      }
+        resizerRight.removeEventListener("mousedown", onMouseDownRightResize);
+      };
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    getFavorites()
-  }, [])
+    getFavorites();
+  }, []);
 
   return (
     <>
@@ -117,10 +116,10 @@ export default function Sidebar() {
               <li key={i}>
                 <Button
                   onPress={() => onToggle(r.name, r.name)}
-                  className={`btn btn-ghost flex-nowrap font-sans text-lg transition-all duration-500 ${WideSidebar && !space.value ? 'btn-wide justify-start' : 'btn-circle'}`}
+                  className={`btn btn-ghost flex-nowrap font-sans text-lg transition-all duration-500 ${WideSidebar && !space ? "btn-wide justify-start" : "btn-circle"}`}
                 >
                   {r.icon}
-                  {WideSidebar && !space.value ? <span>{r.name}</span> : ''}
+                  {WideSidebar && !space ? <span>{r.name}</span> : ""}
                 </Button>
               </li>
             ))}
@@ -129,12 +128,12 @@ export default function Sidebar() {
           <div>
             <Button
               onPress={() => setOpenFavoritesSidebar(!openFavoritesSidebar)}
-              className={`group btn btn-ghost btn-xs justify-between text-xs font-medium tracking-tighter opacity-50 ${WideSidebar && !space.value ? 'btn-wide' : 'px-1'}`}
+              className={`group btn btn-ghost btn-xs justify-between text-xs font-medium tracking-tighter opacity-50 ${WideSidebar && !space ? "btn-wide" : "px-1"}`}
             >
               <span className="icon-[solar--star-fall-bold] h-4 w-4"></span>
-              {WideSidebar && !space.value && 'Favorites'}
+              {WideSidebar && !space && "Favorites"}
               <span
-                className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${WideSidebar && !space.value ? 'h-5 w-5' : 'h-3 w-3'} ${openFavoritesSidebar && 'rotate-180'}`}
+                className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${WideSidebar && !space ? "h-5 w-5" : "h-3 w-3"} ${openFavoritesSidebar && "rotate-180"}`}
               ></span>
             </Button>
             <div>
@@ -156,12 +155,12 @@ export default function Sidebar() {
           <div>
             <Button
               onPress={() => setOpenSpacesSidebar(!openSpacesSidebar)}
-              className={`group btn btn-ghost btn-xs justify-between text-xs font-medium tracking-tighter opacity-50 ${WideSidebar && !space.value ? 'btn-wide' : 'px-1'}`}
+              className={`group btn btn-ghost btn-xs justify-between text-xs font-medium tracking-tighter opacity-50 ${WideSidebar && !space ? "btn-wide" : "px-1"}`}
             >
               <span className="icon-[solar--planet-4-bold] h-4 w-4"></span>
-              {WideSidebar && !space.value && 'Spaces'}
+              {WideSidebar && !space && "Spaces"}
               <span
-                className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${WideSidebar && !space.value ? 'h-5 w-5' : 'h-3 w-3'} ${openSpacesSidebar && 'rotate-180'}`}
+                className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${WideSidebar && !space ? "h-5 w-5" : "h-3 w-3"} ${openSpacesSidebar && "rotate-180"}`}
               ></span>
             </Button>
             <div>
@@ -173,9 +172,9 @@ export default function Sidebar() {
                         <Button
                           className={`btn flex items-center p-2.5 ${
                             s?.icon?.color && `hover:bg-opacity-60`
-                          } ${WideSidebar && !space.value ? 'btn-wide justify-start' : 'btn-circle justify-center'}`}
+                          } ${WideSidebar && !space ? "btn-wide justify-start" : "btn-circle justify-center"}`}
                           onPress={() => {
-                            onOpenSpace(s)
+                            onOpenSpace(s);
                           }}
                         >
                           {!s.image && !s.icon && (
@@ -192,11 +191,7 @@ export default function Sidebar() {
                               height={24}
                             />
                           )}
-                          {WideSidebar && !space.value ? (
-                            <span>{s.name}</span>
-                          ) : (
-                            ''
-                          )}
+                          {WideSidebar && !space ? <span>{s.name}</span> : ""}
                         </Button>
                       </li>
                     ))}
@@ -210,13 +205,13 @@ export default function Sidebar() {
         <section
           ref={refBox}
           className={`${
-            WideSidebar && space.value
-              ? 'w-56 translate-x-0 scale-100 border-l-2 border-base-300'
-              : 'w-0 !-translate-x-96 scale-50'
+            WideSidebar && space
+              ? "w-56 translate-x-0 scale-100 border-l-2 border-base-300"
+              : "w-0 !-translate-x-96 scale-50"
           } box-border overflow-auto bg-base-200 py-2`}
         >
-          {page.value === 'lists' && <ListsExplorer />}
-          {WideSidebar && space.value && (
+          {page === "lists" && <ListsExplorer />}
+          {WideSidebar && space && (
             <SpaceExplorer
               space={space}
               account={account}
@@ -282,5 +277,5 @@ export default function Sidebar() {
         </button>
       </div>
     </>
-  )
+  );
 }

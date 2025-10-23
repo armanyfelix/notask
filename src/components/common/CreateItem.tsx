@@ -1,4 +1,4 @@
-import { signal } from '@preact/signals-react'
+import { useState } from "react";
 import {
   Button,
   Dialog,
@@ -8,10 +8,10 @@ import {
   Popover,
   TextArea,
   TextField,
-} from 'react-aria-components'
+} from "react-aria-components";
 
-const loading = signal<boolean>(false)
 export default function CreateItem() {
+  const [loading, setLoading] = useState<boolean>(false);
   return (
     <form onSubmit={(e) => console.log(e)} className="space-y-3">
       {/* <h1 className="card-title">Item</h1> */}
@@ -57,15 +57,11 @@ export default function CreateItem() {
           Cancel
         </Button>
         <Button type="submit" className="btn btn-primary">
-          {loading.value ? (
-            <span className="loading loading-dots"></span>
-          ) : (
-            'Save'
-          )}
+          {loading ? <span className="loading loading-dots"></span> : "Save"}
         </Button>
       </div>
     </form>
-  )
+  );
 }
 
 function LocationSelect() {
@@ -85,5 +81,5 @@ function LocationSelect() {
         </Dialog>
       </Popover>
     </DialogTrigger>
-  )
+  );
 }

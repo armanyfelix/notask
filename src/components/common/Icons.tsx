@@ -1,4 +1,4 @@
-import { Icon } from '@iconify-icon/react/dist/iconify.mjs'
+import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import {
   Button,
   Input,
@@ -6,43 +6,40 @@ import {
   TabPanel,
   Tooltip,
   TooltipTrigger,
-} from 'react-aria-components'
-import { Signal, signal } from '@preact/signals-react'
-import { useEffect } from 'react'
-import { AutoSizer, Grid } from 'react-virtualized'
-import colors from '@/data/colors.json'
+} from "react-aria-components";
+import { useEffect, useState } from "react";
+import { AutoSizer, Grid } from "react-virtualized";
+import colors from "@/data/colors.json";
 
-// const color = signal<string>('')
-const icons = signal<any>(null)
-const allIcons = signal<any>([])
-
-export default function Icons({ selectedIcon }: any) {
+export default function Icons({ selectedIcon, setSelectedIcon }: any) {
+  const [icons, setIcons] = useState<any>(null);
+  const [allIcons, setAllIcons] = useState<any>([]);
   const getIcons = async () => {
-    fetch('/src/data/icons-tabler.json')
+    fetch("/src/data/icons-tabler.json")
       .then((response) => response.json())
       .then((data) => {
-        icons.value = data
-        allIcons.value = data
-      })
-  }
+        setIcons(data);
+        setAllIcons(data);
+      });
+  };
 
   const onSearch = (e: any) => {
-    const value = e.target.value
-    if (value === '') {
-      icons.value = allIcons.value
+    const value = e.target.value;
+    if (value === "") {
+      setIcons(allIcons);
     }
-    const filteredData = icons.value.filter((icon: any) => {
-      if (value === '') {
-        return icon
+    const filteredData = icons?.filter((icon: any) => {
+      if (value === "") {
+        return icon;
       } else {
-        return icon.toLowerCase().includes(value)
+        return icon.toLowerCase().includes(value);
       }
-    })
-    icons.value = filteredData
-  }
+    });
+    setIcons(filteredData);
+  };
   useEffect(() => {
-    getIcons()
-  }, [])
+    getIcons();
+  }, []);
 
   return (
     <TabPanel id="icon" className="min-h-72">
@@ -52,7 +49,7 @@ export default function Icons({ selectedIcon }: any) {
             <Button
               className="m-1 h-6 w-6 rounded-full"
               style={{ backgroundColor: c }}
-              onPress={() => (selectedIcon.value = { ...selectedIcon.value, color: c })}
+              onPress={() => setSelectedIcon({ ...selectedIcon, color: c })}
             ></Button>
           ))}
         </div>
@@ -66,12 +63,12 @@ export default function Icons({ selectedIcon }: any) {
         <AutoSizer>
           {({ width, height }: any) => (
             <Grid
-              cellRenderer={cellRenderer(selectedIcon)}
+              cellRenderer={cellRenderer(icons, selectedIcon, setSelectedIcon)}
               columnCount={10}
               columnWidth={38}
-              style={{ color: selectedIcon.value.color }}
+              style={{ color: selectedIcon.color }}
               height={height}
-              rowCount={icons.value?.length}
+              rowCount={icons?.length}
               rowHeight={38}
               width={width}
               selectedIcon={selectedIcon}
@@ -80,33 +77,34 @@ export default function Icons({ selectedIcon }: any) {
         </AutoSizer>
       )}
     </TabPanel>
-  )
+  );
 }
 
 const cellRenderer =
-  (selectedIcon: any) =>
+  (icons: any, selectedIcon: any, setSelectedIcon: any) =>
   ({ key, rowIndex, columnIndex, style }: any) => {
-    const index = rowIndex * 10 + columnIndex
+    const index = rowIndex * 10 + columnIndex;
 
     return (
       <div key={key} style={style}>
         <IconItem
-          icon={icons.value[index]}
+          icon={icons?.[index]}
           selectedIcon={selectedIcon}
+          setSelectedIcon={setSelectedIcon}
         />
       </div>
-    )
-  }
+    );
+  };
 
-const IconItem = ({ icon, selectedIcon }: any) => {
+const IconItem = ({ icon, selectedIcon, setSelectedIcon }: any) => {
   return (
     <TooltipTrigger>
       <Button
         className="btn btn-square btn-ghost btn-sm"
-        style={{ color: selectedIcon.value.color }}
+        style={{ color: selectedIcon.color }}
         onPress={() =>
-          (selectedIcon.value = {
-            color: selectedIcon.value.color,
+          setSelectedIcon({
+            color: selectedIcon.color,
             name: icon,
           })
         }
@@ -122,5 +120,5 @@ const IconItem = ({ icon, selectedIcon }: any) => {
         {icon}
       </Tooltip>
     </TooltipTrigger>
-  )
-}
+  );
+};

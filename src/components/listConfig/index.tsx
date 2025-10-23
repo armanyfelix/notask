@@ -1,205 +1,201 @@
-import { signal } from '@preact/signals-react'
-import { useContext, useEffect, useRef } from 'react'
-import PlusIcon from '../../assets/svgs/plus.svg?react'
-import DotsIcon from '../../assets/svgs/dotsBold.svg?react'
-import CheckIcon from '../../assets/svgs/checkCircle.svg?react'
-import CloseIcon from '../../assets/svgs/closeCircle.svg?react'
-import supabase from '../../utils/supabase'
-import { AlertContext } from '../../context/AlertContext'
+import { useContext, useEffect, useRef, useState } from "react";
+import PlusIcon from "../../assets/svgs/plus.svg?react";
+import DotsIcon from "../../assets/svgs/dotsBold.svg?react";
+import CheckIcon from "../../assets/svgs/checkCircle.svg?react";
+import CloseIcon from "../../assets/svgs/closeCircle.svg?react";
+import supabase from "../../utils/supabase";
+import { AlertContext } from "../../context/AlertContext";
 // import Confirm from '../common/Confirm'
-import defaultPreset from '../../data/default_list_setting.json'
+import defaultPreset from "../../data/default_list_setting.json";
 import {
   Button,
   Menu,
   MenuItem,
   MenuTrigger,
   Popover,
-} from 'react-aria-components'
-import Statuses from './Statuses'
-import Dates from './Dates'
+} from "react-aria-components";
+import Statuses from "./Statuses";
+import Dates from "./Dates";
 
 interface Props {
-  config: any
-  // setConfig: (config: any) => void
-  account: any
-  setAccount: any
+  config: any;
+  setConfig: (config: any) => void;
+  account: any;
+  setAccount: any;
 }
-
-const editPresetName = signal<number>(-1)
-const newPresetName = signal<string>('')
-const setNewPreset = signal<boolean>(false)
-const editPresetError = signal<string>('')
-const newPresetError = signal<string>('')
-const openConfirm = signal<boolean>(false)
-const savePreset = signal<string>('')
-const confirmDeletePreset = signal<any>({
-  title: '',
-  element: '',
-})
-const presets = signal<any>([])
-const statusesOpen = signal<boolean>(false)
-const datesOpen = signal<boolean>(false)
 
 export default function ListConfig({
   config,
-  // setConfig,
+  setConfig,
   account,
   setAccount,
 }: Props) {
-  const notify = useContext(AlertContext)
-  const presetRefs: any = [] // presets.value?.map(() => useRef())
-  const newPresetRef = useRef<any>(null)
+  const notify = useContext(AlertContext);
+  const presetRefs: any = []; // presets.value?.map(() => useRef())
+  const newPresetRef = useRef<any>(null);
+
+  const [editPresetName, setEditPresetName] = useState<number>(-1);
+  const [newPresetName, setNewPresetName] = useState<string>("");
+  const [setNewPreset, setSetNewPreset] = useState<boolean>(false);
+  const [editPresetError, setEditPresetError] = useState<string>("");
+  const [newPresetError, setNewPresetError] = useState<string>("");
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+  const [savePreset, setSavePreset] = useState<string>("");
+  const [confirmDeletePreset, setConfirmDeletePreset] = useState<any>({
+    title: "",
+    element: "",
+  });
+  const [presets, setPresets] = useState<any>([]);
+  const [statusesOpen, setStatusesOpen] = useState<boolean>(false);
+  const [datesOpen, setDatesOpen] = useState<boolean>(false);
 
   const onRenamePreset = async (index: number) => {
     if (
-      presets.value.some(
+      presets.some(
         (p: any) =>
-          p.name.trim().toLowerCase() ===
-          newPresetName.value.trim().toLowerCase(),
+          p.name.trim().toLowerCase() === newPresetName.trim().toLowerCase(),
       )
     ) {
-      editPresetError.value = 'Preset name already exists'
-      return
+      setEditPresetError("Preset name already exists");
+      return;
     }
-    if (newPresetName.value.length === 0) {
-      editPresetError.value = 'Preset name cannot be empty'
-      return
+    if (newPresetName.length === 0) {
+      setEditPresetError("Preset name cannot be empty");
+      return;
     }
-    if (newPresetName.value.length >= 20) {
-      editPresetError.value = "The Preset name it's too long."
-      return
+    if (newPresetName.length >= 20) {
+      setEditPresetError("The Preset name it's too long.");
+      return;
     }
-    presets.value[index].name = newPresetName.value
+    const updatedPresets = [...presets];
+    updatedPresets[index].name = newPresetName;
+    setPresets(updatedPresets);
     const { data, error } = await supabase
-      .from('accounts')
-      .update({ list_presets: presets.value })
-      .eq('id', account.id)
-      .select()
+      .from("accounts")
+      .update({ list_presets: presets })
+      .eq("id", account.id)
+      .select();
     if (error) {
-      editPresetError.value = 'Error updating preset name, try again later'
+      setEditPresetError("Error updating preset name, try again later");
     } else {
-      editPresetError.value = ''
-      notify('success', 'Preset name updated')
-      setAccount(data[0])
+      setEditPresetError("");
+      notify("success", "Preset name updated");
+      setAccount(data[0]);
     }
-    editPresetName.value = -1
-  }
+    setEditPresetName(-1);
+  };
 
   const onDeletePreset = async (_preset: any, index: number) => {
-    const newPresets = presets.value
-    newPresets.splice(index, 1)
+    const newPresets = presets;
+    newPresets.splice(index, 1);
     const { data, error }: any = await supabase
-      .from('accounts')
+      .from("accounts")
       .update({ list_presets: newPresets })
-      .eq('id', account.id)
-      .select()
+      .eq("id", account.id)
+      .select();
     if (error) {
-      notify('error', 'Error deleting the preset, try again later')
+      notify("error", "Error deleting the preset, try again later");
     } else {
-      notify('success', 'Preset deleted')
-      setAccount(data[0])
-      presets.value = data[0].list_presets
+      notify("success", "Preset deleted");
+      setAccount(data[0]);
+      setPresets(data[0].list_presets);
     }
-    openConfirm.value = false
-    confirmDeletePreset.value = null
-  }
+    setOpenConfirm(false);
+    setConfirmDeletePreset(null);
+  };
 
   const onAddPreset = async () => {
     if (
-      presets.value.some(
+      presets.some(
         (p: any) =>
-          p.name.trim().toLowerCase() ===
-          newPresetName.value.trim().toLowerCase(),
+          p.name.trim().toLowerCase() === newPresetName.trim().toLowerCase(),
       )
     ) {
-      newPresetError.value = 'Preset name already exists'
-      return
+      setNewPresetError("Preset name already exists");
+      return;
     }
-    if (newPresetName.value.length === 0) {
-      newPresetError.value = 'Preset name cannot be empty'
-      return
+    if (newPresetName.length === 0) {
+      setNewPresetError("Preset name cannot be empty");
+      return;
     }
-    if (newPresetName.value.length >= 20) {
-      newPresetError.value = "The Preset name it's too long."
-      return
+    if (newPresetName.length >= 20) {
+      setNewPresetError("The Preset name it's too long.");
+      return;
     }
     const newPreset = {
       ...defaultPreset,
       id: Date.now(),
-      name: newPresetName.value,
-    }
-    const newPresets = [...presets.value, newPreset]
-    presets.value = newPresets
-    setNewPreset.value = false
+      name: newPresetName,
+    };
+    const newPresets = [...presets, newPreset];
+    setPresets(newPresets);
+    setSetNewPreset(false);
     const { data, error } = await supabase
-      .from('accounts')
+      .from("accounts")
       .update({ list_presets: newPresets })
-      .eq('id', account.id)
+      .eq("id", account.id)
       .select()
-      .single()
+      .single();
     if (error) {
-      newPresetError.value = 'Error creating the preset, try again later'
+      setNewPresetError("Error creating the preset, try again later");
     } else {
-      newPresetError.value = ''
-      notify('success', `Preset ${newPresetName.value} created`)
-      presets.value = data.list_presets
-      setAccount(data)
+      setNewPresetError("");
+      notify("success", `Preset ${newPresetName} created`);
+      setPresets(data.list_presets);
+      setAccount(data);
     }
-    newPresetName.value = ''
-  }
+    setNewPresetError("");
+  };
 
   const onUpdatePreset = async () => {
-    const presetIndex = presets.value.findIndex(
-      (p: any) => p.name === config.name,
-    )
-    const updatedPresets = presets.value
-    updatedPresets.splice(presetIndex, 1, config)
+    const presetIndex = presets.findIndex((p: any) => p.name === config.name);
+    const updatedPresets = presets;
+    updatedPresets.splice(presetIndex, 1, config);
     const { data, error } = await supabase
-      .from('accounts')
+      .from("accounts")
       .update({ list_presets: updatedPresets })
-      .eq('id', account.id)
-      .select()
+      .eq("id", account.id)
+      .select();
 
     if (error) {
-      notify('error', 'Error updating the preset, try again later')
+      notify("error", "Error updating the preset, try again later");
     } else {
-      notify('success', 'Preset updated')
-      presets.value = data[0].list_presets
-      setAccount(data[0])
+      notify("success", "Preset updated");
+      setPresets(data[0].list_presets);
+      setAccount(data[0]);
       // savePreset.value = -1
     }
-  }
+  };
 
   useEffect(() => {
-    if (setNewPreset.value && newPresetRef.current) {
-      newPresetRef.current.focus()
+    if (setNewPreset && newPresetRef.current) {
+      newPresetRef.current.focus();
     }
-  }, [setNewPreset.value])
+  }, [setNewPreset]);
 
   useEffect(() => {
-    if (editPresetName.value >= 0 && presetRefs[editPresetName.value].current) {
-      presetRefs[editPresetName.value].current.focus()
-      const range = document.createRange()
-      range.selectNodeContents(presetRefs[editPresetName.value].current)
-      const sel = window.getSelection()
+    if (editPresetName >= 0 && presetRefs[editPresetName].current) {
+      presetRefs[editPresetName].current.focus();
+      const range = document.createRange();
+      range.selectNodeContents(presetRefs[editPresetName].current);
+      const sel = window.getSelection();
       if (sel) {
-        sel.removeAllRanges()
-        sel.addRange(range)
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
     }
-  }, [editPresetName.value])
+  }, [editPresetName]);
 
   useEffect(() => {
     if (account && account.list_presets) {
-      presets.value = account.list_presets
+      setPresets(account.list_presets);
     }
-    // setConfig(defaultPreset)
-    config.value = defaultPreset
-  }, [])
+    setConfig(defaultPreset);
+  }, []);
 
   return (
     <div className="max-h-[60vh] overflow-y-auto">
-      {config.value ? (
+      {config ? (
         <div>
           <div className="flex w-full justify-between">
             <div className="min-w-[200px] text-center">
@@ -208,9 +204,9 @@ export default function ListConfig({
                 <li>
                   <Button
                     className={`group flex-nowrap text-xl ${
-                      config && config.name === 'Default' && 'active'
+                      config && config.name === "Default" && "active"
                     }`}
-                    onPress={() => config.value = defaultPreset}
+                    onPress={() => setConfig(defaultPreset)}
                   >
                     Default
                   </Button>
@@ -219,15 +215,26 @@ export default function ListConfig({
                   presets.value.map((p: any, i: number) => (
                     <Preset
                       config={config}
-                      // setConfig={setConfig}
+                      setConfig={setConfig}
+                      presets={presets}
                       p={p}
                       i={i}
                       presetRefs={presetRefs}
                       onRenamePreset={onRenamePreset}
                       onUpdatePreset={onUpdatePreset}
+                      editPresetError={editPresetError}
+                      editPresetName={editPresetName}
+                      setSavePreset={setSavePreset}
+                      setNewPresetName={setNewPresetName}
+                      newPresetName={newPresetName}
+                      setEditPresetName={setEditPresetName}
+                      setEditPresetError={setEditPresetError}
+                      savePreset={savePreset}
+                      setConfirmDeletePreset={setConfirmDeletePreset}
+                      setOpenConfirm={setOpenConfirm}
                     />
                   ))}
-                {setNewPreset.value ? (
+                {setNewPreset ? (
                   <>
                     <li>
                       <div>
@@ -237,9 +244,9 @@ export default function ListConfig({
                           ref={newPresetRef}
                           className="w-24 bg-transparent text-lg outline-none"
                           onInput={(e: any) =>
-                            (newPresetName.value = e.currentTarget.value)
+                            setNewPresetName(e.currentTarget.value)
                           }
-                          onKeyUp={(e) => e.key === 'Enter' && onAddPreset()}
+                          onKeyUp={(e) => e.key === "Enter" && onAddPreset()}
                         />
                         <button
                           className="text-xs text-primary"
@@ -250,17 +257,17 @@ export default function ListConfig({
                         <button
                           className="text-xs text-error"
                           onClick={() => {
-                            setNewPreset.value = false
-                            newPresetName.value = ''
+                            setSetNewPreset(false);
+                            setNewPresetName("");
                           }}
                         >
                           <CloseIcon />
                         </button>
                       </div>
                     </li>
-                    {newPresetError.value && (
+                    {newPresetError && (
                       <span className="pt- text-center text-xs font-semibold text-error">
-                        {newPresetError.value}
+                        {newPresetError}
                       </span>
                     )}
                   </>
@@ -268,7 +275,7 @@ export default function ListConfig({
                   <li>
                     <button
                       className="py-3"
-                      onClick={() => (setNewPreset.value = true)}
+                      onClick={() => setSetNewPreset(true)}
                     >
                       <PlusIcon className="h-5 w-5" />
                       Add preset
@@ -277,11 +284,19 @@ export default function ListConfig({
                 )}
               </ul>
             </div>
-            <Configurations config={config} />
+            <Configurations
+              config={config}
+              setConfig={setConfig}
+              setSavePreset={setSavePreset}
+              statusesOpen={statusesOpen}
+              setStatusesOpen={setStatusesOpen}
+              setDatesOpen={setDatesOpen}
+              datesOpen={datesOpen}
+            />
           </div>
         </div>
       ) : (
-        ''
+        ""
       )}
       {/* <Confirm
       data={confirmDeletePreset}
@@ -289,72 +304,82 @@ export default function ListConfig({
       handleConfirm={onDeletePreset}
       /> */}
     </div>
-  )
+  );
 }
 
 const Preset = ({
   config,
+  setConfig,
   presets,
   p,
   i,
   presetRefs,
   onRenamePreset,
   onUpdatePreset,
+  editPresetError,
+  editPresetName,
+  setSavePreset,
+  setNewPresetName,
+  newPresetName,
+  setEditPresetName,
+  setEditPresetError,
+  savePreset,
+  setConfirmDeletePreset,
+  setOpenConfirm,
 }: any) => {
   return (
     <>
-      {editPresetError.value && editPresetName.value === i && (
+      {editPresetError && editPresetName === i && (
         <span className="pt-3 text-center font-semibold text-error">
-          {editPresetError.value}
+          {editPresetError}
         </span>
       )}
       <li>
         <button
           className={`group flex w-full flex-nowrap items-center justify-between text-xl ${
-            config.value?.name === p.name && 'active'
+            config?.name === p.name && "active"
           } `}
           onClick={() => {
-            // setConfig(p)
-            config.value = p
-            savePreset.value = ''
+            setConfig(p);
+            setSavePreset("");
           }}
         >
           <span
             role="textbox"
-            contentEditable={editPresetName.value === i ? 'true' : 'false'}
+            contentEditable={editPresetName === i ? "true" : "false"}
             ref={presetRefs[i]}
             className="w-full whitespace-nowrap outline-none"
-            onInput={(e: any) => (newPresetName.value = e.target.textContent)}
+            onInput={(e: any) => setNewPresetName(e.target.textContent)}
           >
             {p.name}
           </span>
-          {editPresetName.value === i ? (
+          {editPresetName === i ? (
             <>
               <button
                 className="p-0.5 text-xs text-primary"
                 onClick={() => onRenamePreset(i)}
-                onKeyUp={(e) => e.key === 'Enter' && onRenamePreset(i)}
+                onKeyUp={(e) => e.key === "Enter" && onRenamePreset(i)}
               >
                 <CheckIcon />
               </button>
               <button
                 className="p-0.5 text-xs text-error"
                 onClick={() => {
-                  editPresetName.value = -1
-                  presetRefs[i].current.textContent = presets.value[i].name
-                  newPresetName.value = ''
-                  editPresetError.value = ''
+                  setEditPresetName(-1);
+                  presetRefs[i].current.textContent = presets[i].name;
+                  setNewPresetName("");
+                  setEditPresetError("");
                 }}
               >
                 <CloseIcon />
               </button>
             </>
-          ) : savePreset.value === p.name ? (
+          ) : savePreset === p.name ? (
             <button
               className="btn btn-accent btn-xs"
               onClick={(e: any) => {
-                e.stopPropagation()
-                onUpdatePreset()
+                e.stopPropagation();
+                onUpdatePreset();
               }}
             >
               save changes
@@ -364,7 +389,7 @@ const Preset = ({
               <Button
                 onPress={(e: any) => e.stopPropagation()}
                 className={`btn btn-square btn-ghost btn-xs group-hover:visible ${
-                  true ? 'visible' : 'invisible'
+                  true ? "visible" : "invisible"
                 }`}
               >
                 <DotsIcon className="h-5 w-5" />
@@ -375,7 +400,7 @@ const Preset = ({
                     <li>
                       <button
                         className="whitespace-nowrap"
-                        onClick={() => (editPresetName.value = i)}
+                        onClick={() => setEditPresetName(i)}
                       >
                         {/* <EditIcon className="h-5 w-5" /> */}
                         Edit name
@@ -387,13 +412,13 @@ const Preset = ({
                       <button
                         className="text-error"
                         onClick={() => {
-                          confirmDeletePreset.value = {
-                            type: 'delete',
-                            title: 'Delete Preset',
+                          setConfirmDeletePreset({
+                            type: "delete",
+                            title: "Delete Preset",
                             element: p,
                             index: i,
-                          }
-                          openConfirm.value = true
+                          });
+                          setOpenConfirm(true);
                         }}
                       >
                         {/* <TrashIcon className="h-5 w-5" /> */}
@@ -408,10 +433,18 @@ const Preset = ({
         </button>
       </li>
     </>
-  )
-}
+  );
+};
 
-const Configurations = ({ config }: any) => {
+const Configurations = ({
+  config,
+  setConfig,
+  setSavePreset,
+  statusesOpen,
+  setStatusesOpen,
+  setDatesOpen,
+  datesOpen,
+}: any) => {
   // const options: any = [
   //   {
   //     name: 'Schedule',
@@ -428,14 +461,14 @@ const Configurations = ({ config }: any) => {
         <input
           type="text"
           placeholder="ex. task, post, client, contact, income..."
-          className="input w-full !outline-none placeholder:opacity-50"
-          value={config.value?.items_name || ''}
+          className="input w-full outline-none! placeholder:opacity-50"
+          value={config?.items_name || ""}
           onInput={(e: any) => {
-            config.value = {
-              ...config.value,
+            setConfig({
+              ...config,
               items_name: e.target.value,
-            }
-            savePreset.value = config.value.name
+            });
+            setSavePreset(config.name);
           }}
         />
       </div>
@@ -443,9 +476,9 @@ const Configurations = ({ config }: any) => {
       <div>
         <Button
           className={`btn no-animation mt-1 w-full items-center justify-between text-xl font-semibold ${
-            statusesOpen.value && 'btn-active'
+            statusesOpen && "btn-active"
           }`}
-          onPress={() => (statusesOpen.value = !statusesOpen.value)}
+          onPress={() => setStatusesOpen(!statusesOpen)}
         >
           <div className="flex items-center">
             <span className="icon-[solar--check-square-broken] mr-3 h-7 w-7"></span>
@@ -473,11 +506,11 @@ const Configurations = ({ config }: any) => {
               // }}
             />
             <span
-              className={`icon-[solar--alt-arrow-down-outline] ${statusesOpen.value && 'rotate-180 transform'}`}
+              className={`icon-[solar--alt-arrow-down-outline] ${statusesOpen && "rotate-180 transform"}`}
             ></span>
           </div>
         </Button>
-        {statusesOpen.value && (
+        {statusesOpen && (
           <Statuses
             // savePreset={savePreset}
             config={config}
@@ -486,9 +519,9 @@ const Configurations = ({ config }: any) => {
       </div>
       <div>
         <Button
-          onPress={() => (datesOpen.value = !datesOpen.value)}
+          onPress={() => setDatesOpen(!datesOpen)}
           className={`btn no-animation mt-1 w-full justify-between text-xl font-semibold ${
-            datesOpen.value && 'btn-active'
+            datesOpen && "btn-active"
           }`}
         >
           <div className="flex items-center">
@@ -517,15 +550,16 @@ const Configurations = ({ config }: any) => {
               // }}
             />
             <span
-              className={`icon-[solar--alt-arrow-down-outline] ${datesOpen.value && 'rotate-180 transform'}`}
+              className={`icon-[solar--alt-arrow-down-outline] ${datesOpen && "rotate-180 transform"}`}
             ></span>
           </div>
         </Button>
-        {datesOpen.value && config.value && (
+        {datesOpen && config && (
           <Dates
-            savePreset={savePreset}
+            // savePreset={savePreset}
             config={config}
-            // setConfig={setConfig}
+            setConfig={setConfig}
+            setSavePreset={setSavePreset}
           />
         )}
       </div>
@@ -741,5 +775,5 @@ const Configurations = ({ config }: any) => {
         </Button>
       </div> */}
     </div>
-  )
-}
+  );
+};

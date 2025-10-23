@@ -1,37 +1,40 @@
-import ChevronRightIcon from '../../assets/svgs/chevronRight.svg?react'
-import AlarmIcon from '../../assets/svgs/alarm.svg?react'
-import CheckIcon from '../../assets/svgs/check.svg?react'
-import CloseIcon from '../../assets/svgs/close.svg?react'
-import { Fragment } from 'react'
-import { Signal, signal } from '@preact/signals-react'
-import { Button, ListBox } from 'react-aria-components'
+import ChevronRightIcon from "../../assets/svgs/chevronRight.svg?react";
+import AlarmIcon from "../../assets/svgs/alarm.svg?react";
+import CheckIcon from "../../assets/svgs/check.svg?react";
+import CloseIcon from "../../assets/svgs/close.svg?react";
+import { Fragment } from "react";
+import { Button, ListBox } from "react-aria-components";
 
 interface Props {
-  selectedReminders: Signal<any>
-  createReminderOpen: Signal<boolean>
+  selectedReminders: any;
+  setSelectedReminders: (value: any) => void;
+  createReminderOpen: boolean;
+  setCreateReminderOpen: (value: boolean) => void;
 }
 
-const reminders = signal<any>([
+const reminders = [
   {
-    label: 'On 1 Day',
+    label: "On 1 Day",
     value: new Date().setDate(new Date().getDate() + 1),
   },
   {
-    label: 'On 3 Days',
+    label: "On 3 Days",
     value: new Date().setDate(new Date().getDate() + 2),
   },
   {
-    label: 'On 1 Week',
+    label: "On 1 Week",
     value: new Date().setDate(new Date().getDate() + 7),
   },
   {
-    label: 'On 1 Month',
+    label: "On 1 Month",
     value: new Date().setMonth(new Date().getMonth() + 1),
   },
-])
+];
 export default function Reminders({
   selectedReminders,
+  setSelectedReminders,
   createReminderOpen,
+  setCreateReminderOpen,
 }: Props) {
   return (
     <ListBox
@@ -45,34 +48,32 @@ export default function Reminders({
       >
         <div
           className={`${
-            selectedReminders.value.length && 'text-secondary'
+            selectedReminders.length && "text-secondary"
           } inline-flex items-center overflow-hidden`}
         >
           <AlarmIcon />
           <span className="max-w-40 truncate text-nowrap pl-3">
-            {selectedReminders.value.length
-              ? selectedReminders.value.map((r: any) => r.label).join(', ')
-              : 'Reminder'}
+            {selectedReminders.length
+              ? selectedReminders.map((r: any) => r.label).join(", ")
+              : "Reminder"}
           </span>
         </div>
-        {selectedReminders.value.length ? (
+        {selectedReminders.length ? (
           <button
             className="btn btn-square btn-ghost btn-xs"
             onClick={(e: any) => {
-              e.stopPropagation()
-              selectedReminders.value = []
+              e.stopPropagation();
+              setSelectedReminders([]);
             }}
           >
-            <CloseIcon className="h-3 w-3" />
+            <CloseIcon />
           </button>
         ) : (
-          <ChevronRightIcon
-            className={`${true ? 'rotate-91 transform' : ''} h-4 w-4`}
-          />
+          ""
         )}
       </Button>
       {/* <Listbox.Options>
-            {createReminderOpen.value ? (
+            {createReminderOpen ? (
               <div>
                 <Listbox>
                   {({ open: customOpen }) => (
@@ -101,18 +102,18 @@ export default function Reminders({
               </div>
             ) : (
               <ul className="menu menu-sm">
-                {reminders.value.map((r: { label: string; value: number }) => (
+                {reminders.map((r: { label: string; value: number }) => (
                   <li key={r.value}>
                     <Listbox.Option as={Fragment} value={r}>
                       <div
                         className={`w-full justify-between ${
-                          selectedReminders.value.some(
+                          selectedReminders.some(
                             (sr: any) => sr.value === r.value,
                           ) && 'bg-base-300 !text-secondary'
                         }`}
                       >
                         {r.label}
-                        {selectedReminders.value.some(
+                        {selectedReminders.some(
                           (sr: any) => sr.value === r.value,
                         ) && <CheckIcon />}
                       </div>
@@ -122,7 +123,7 @@ export default function Reminders({
                 <li />
                 <li>
                   <Listbox.Option as={Fragment} value="custom">
-                    <button onClick={() => (createReminderOpen.value = true)}>
+                    <button onClick={() => setCreateReminderOpen(true)}>
                       Custom
                     </button>
                   </Listbox.Option>
@@ -131,5 +132,5 @@ export default function Reminders({
             )}
           </Listbox.Options> */}
     </ListBox>
-  )
+  );
 }

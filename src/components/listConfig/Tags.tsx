@@ -1,57 +1,57 @@
-import { useEffect, useRef } from 'react'
-import { Signal, signal } from '@preact/signals-react'
-import DotsIcon from '../../assets/svgs/dotsBold.svg?react'
-import EditIcon from '../../assets/svgs/edit.svg?react'
-import TrashIcon from '../../assets/svgs/trash.svg?react'
-import ColorsIcon from '../../assets/svgs/colors.svg?react'
-import CheckIcon from '../../assets/svgs/checkCircle.svg?react'
-import CloseIcon from '../../assets/svgs/closeCircle.svg?react'
-import colors from '../../data/colors.json'
-import Confirm from '../common/Confirm'
-import { Button, Menu } from 'react-aria-components'
+import { useEffect, useRef } from "react";
+import { Signal, signal } from "@preact/signals-react";
+import DotsIcon from "../../assets/svgs/dotsBold.svg?react";
+import EditIcon from "../../assets/svgs/edit.svg?react";
+import TrashIcon from "../../assets/svgs/trash.svg?react";
+import ColorsIcon from "../../assets/svgs/colors.svg?react";
+import CheckIcon from "../../assets/svgs/checkCircle.svg?react";
+import CloseIcon from "../../assets/svgs/closeCircle.svg?react";
+import colors from "../../data/colors.json";
+import Confirm from "../common/Confirm";
+import { Button, Menu } from "react-aria-components";
 
 interface Props {
-  preset: any
-  savePreset: Signal<number>
+  preset: any;
+  savePreset: Signal<number>;
 }
 
-const renameRef = signal<number>(-1)
-const newName = signal<string>('')
-const add = signal<boolean>(false)
+const renameRef = signal<number>(-1);
+const newName = signal<string>("");
+const add = signal<boolean>(false);
 const newColor = signal<string>(
   colors[Math.floor(Math.random() * colors.length)],
-)
-const error = signal<string>('')
-const confirmDelete = signal<any>(null)
-const openConfirm = signal<boolean>(false)
+);
+const error = signal<string>("");
+const confirmDelete = signal<any>(null);
+const openConfirm = signal<boolean>(false);
 
 export default function Tags({ preset, savePreset }: Props) {
-  const tags = preset.value.attributes.tags.values
-  const refs = tags.map(() => useRef())
+  const tags = preset.value.attributes.tags.values;
+  const refs = tags.map(() => useRef(undefined));
 
   const onRename = (tag: any, index: number) => {
     if (!newName.value) {
-      error.value = 'Tag name cannot be empty'
-      return
+      error.value = "Tag name cannot be empty";
+      return;
     }
     if (
       tags.some(
         (p: any) => p.name.toLowerCase() === newName.value.toLowerCase(),
       )
     ) {
-      error.value = 'Tag already exist'
-      return
+      error.value = "Tag already exist";
+      return;
     }
     if (newName.value.length >= 20) {
-      error.value = "The tag name it's too long."
-      return
+      error.value = "The tag name it's too long.";
+      return;
     }
     const renamedTag = {
       ...tag,
       name: newName.value,
-    }
-    const newTagsValues = tags
-    newTagsValues.splice(index, 1, renamedTag)
+    };
+    const newTagsValues = tags;
+    newTagsValues.splice(index, 1, renamedTag);
     preset.value = {
       ...preset.value,
       attributes: {
@@ -61,38 +61,38 @@ export default function Tags({ preset, savePreset }: Props) {
           values: newTagsValues,
         },
       },
-    }
-    error.value = ''
-    newName.value = ''
-    renameRef.value = -1
-    savePreset.value = preset.value.id
-  }
+    };
+    error.value = "";
+    newName.value = "";
+    renameRef.value = -1;
+    savePreset.value = preset.value.id;
+  };
 
   const onAddTag = (e: any) => {
-    e.preventDefault()
-    const name = e.target.name.value
+    e.preventDefault();
+    const name = e.target.name.value;
     if (!name) {
-      error.value = 'Tag name cannot be empty'
-      return
+      error.value = "Tag name cannot be empty";
+      return;
     }
     if (tags.some((p: any) => p.name.toLowerCase() === name.toLowerCase())) {
-      error.value = 'Tag already exist'
-      return
+      error.value = "Tag already exist";
+      return;
     }
     if (tags.some((p: any) => p.color === newColor.value)) {
-      error.value = 'Color already used.'
-      return
+      error.value = "Color already used.";
+      return;
     }
     if (name.length >= 20) {
-      error.value = "The tag name it's too long."
-      return
+      error.value = "The tag name it's too long.";
+      return;
     }
-    const newTags = tags
+    const newTags = tags;
     newTags.push({
       id: Date.now(),
       name,
       color: newColor.value,
-    })
+    });
     preset.value = {
       ...preset.value,
       attributes: {
@@ -102,28 +102,28 @@ export default function Tags({ preset, savePreset }: Props) {
           values: newTags,
         },
       },
-    }
-    error.value = ''
-    savePreset.value = preset.value.id
-    add.value = false
-    newColor.value = colors[Math.floor(Math.random() * colors.length)]
-  }
+    };
+    error.value = "";
+    savePreset.value = preset.value.id;
+    add.value = false;
+    newColor.value = colors[Math.floor(Math.random() * colors.length)];
+  };
 
   const onChangeColor = (color: string, tag: any, index: number) => {
     if (!color) {
-      error.value = 'Please, select a valid color'
-      return
+      error.value = "Please, select a valid color";
+      return;
     }
     if (tags.some((p: any) => p.color === color)) {
-      error.value = 'Color already used.'
-      return
+      error.value = "Color already used.";
+      return;
     }
     const newColor = {
       ...tag,
       color,
-    }
-    const newTags = tags
-    newTags.splice(index, 1, newColor)
+    };
+    const newTags = tags;
+    newTags.splice(index, 1, newColor);
     preset.value = {
       ...preset.value,
       attributes: {
@@ -133,14 +133,14 @@ export default function Tags({ preset, savePreset }: Props) {
           values: newTags,
         },
       },
-    }
-    error.value = ''
-    savePreset.value = preset.value.id
-  }
+    };
+    error.value = "";
+    savePreset.value = preset.value.id;
+  };
 
   const onDelete = (_tag: any, index: number) => {
-    const newTags = tags
-    newTags.splice(index, 1)
+    const newTags = tags;
+    newTags.splice(index, 1);
     preset.value = {
       ...preset.value,
       attributes: {
@@ -150,24 +150,24 @@ export default function Tags({ preset, savePreset }: Props) {
           values: newTags,
         },
       },
-    }
-    savePreset.value = preset.value.id
-    openConfirm.value = false
-    confirmDelete.value = null
-  }
+    };
+    savePreset.value = preset.value.id;
+    openConfirm.value = false;
+    confirmDelete.value = null;
+  };
 
   useEffect(() => {
     if (renameRef.value >= 0 && refs[renameRef.value]?.current) {
-      refs[renameRef.value].current.focus()
-      const range = document.createRange()
-      range.selectNodeContents(refs[renameRef.value].current)
-      const sel = window.getSelection()
+      refs[renameRef.value].current.focus();
+      const range = document.createRange();
+      range.selectNodeContents(refs[renameRef.value].current);
+      const sel = window.getSelection();
       if (sel) {
-        sel.removeAllRanges()
-        sel.addRange(range)
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
     }
-  }, [renameRef.value])
+  }, [renameRef.value]);
 
   return (
     <div className="relative text-center">
@@ -188,12 +188,12 @@ export default function Tags({ preset, savePreset }: Props) {
             <span
               role="textbox"
               ref={refs[i]}
-              contentEditable={renameRef.value === i ? 'true' : 'false'}
+              contentEditable={renameRef.value === i ? "true" : "false"}
               className={`min-w-[30px] whitespace-nowrap outline-none ${
                 renameRef.value === i && `bg-${t.color}-800`
               }`}
               onInput={(e: any) => (newName.value = e.target.textContent)}
-              onKeyPress={(e) => e.key === 'Enter' && onRename(t, i)}
+              onKeyPress={(e) => e.key === "Enter" && onRename(t, i)}
             >
               {t.name}
             </span>
@@ -205,8 +205,8 @@ export default function Tags({ preset, savePreset }: Props) {
                 <button
                   className=""
                   onClick={() => {
-                    renameRef.value = -1
-                    refs[i].current.textContent = tags[i].name
+                    renameRef.value = -1;
+                    refs[i].current.textContent = tags[i].name;
                   }}
                 >
                   <CloseIcon />
@@ -217,7 +217,7 @@ export default function Tags({ preset, savePreset }: Props) {
                 <Menu>
                   <Button
                     className={`btn btn-square btn-ghost btn-xs ml-1 hidden group-hover:block ${
-                      true ? '!block' : ''
+                      true ? "!block" : ""
                     }`}
                   >
                     <DotsIcon />
@@ -335,5 +335,5 @@ export default function Tags({ preset, savePreset }: Props) {
       // handleConfirm={onDelete}
       />
     </div>
-  )
+  );
 }

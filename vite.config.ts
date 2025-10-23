@@ -7,15 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig(async () => ({
-  plugins: [
-    react({
-      babel: {
-        plugins: [["module:@preact/signals-react-transform"]],
-      },
-    }),
-    tailwindcss(),
-    svgr(),
-  ],
+  plugins: [react(), tailwindcss(), svgr()],
   define: {
     "process.env.VITE_SUPABASE_URL": JSON.stringify(
       process.env.VITE_SUPABASE_URL,

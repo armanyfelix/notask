@@ -1,26 +1,25 @@
-import { signal } from '@preact/signals-react'
-import { createContext } from 'react'
-
-const alert = signal<any>(null)
+import { createContext, useState } from "react";
 
 export const AlertContext = createContext(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (_type: string, _message: string, _timeout?: number) => {},
-)
+);
 export default function AlertProvider({ children }: any) {
+  const [alert, setAlert] = useState<any>(null);
+
   const notify = (type: string, message: string, timeout = 5000) => {
-    alert.value = { type, message }
-    setTimeout(() => (alert.value = null), timeout)
-  }
+    setAlert({ type, message });
+    setTimeout(() => setAlert(null), timeout);
+  };
 
   return (
     <AlertContext.Provider value={notify}>
       {children}
-      {alert.value && (
+      {alert && (
         <div
-          className={`alert alvert-${alert.value.type} absolute bottom-4 left-4 z-[99999999] w-fit`}
+          className={`alert alvert-${alert.type} absolute bottom-4 left-4 z-[99999999] w-fit`}
         >
-          {!alert.value.type && (
+          {!alert.type && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -35,7 +34,7 @@ export default function AlertProvider({ children }: any) {
               ></path>
             </svg>
           )}
-          {alert.value.type === 'info' && (
+          {alert.type === "info" && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -50,7 +49,7 @@ export default function AlertProvider({ children }: any) {
               ></path>
             </svg>
           )}
-          {alert.value.type === 'success' && (
+          {alert.type === "success" && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 shrink-0 stroke-current"
@@ -65,7 +64,7 @@ export default function AlertProvider({ children }: any) {
               />
             </svg>
           )}
-          {alert.value.type === 'warning' && (
+          {alert.type === "warning" && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 shrink-0 stroke-current"
@@ -80,7 +79,7 @@ export default function AlertProvider({ children }: any) {
               />
             </svg>
           )}
-          {alert.value.type === 'error' && (
+          {alert.type === "error" && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 shrink-0 stroke-current"
@@ -95,9 +94,9 @@ export default function AlertProvider({ children }: any) {
               />
             </svg>
           )}
-          <span>{alert.value.message}</span>
+          <span>{alert.message}</span>
         </div>
       )}
     </AlertContext.Provider>
-  )
+  );
 }

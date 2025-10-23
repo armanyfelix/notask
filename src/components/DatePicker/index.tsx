@@ -1,47 +1,33 @@
-import SunIcon from '../../assets/svgs/sun.svg?react'
+import SunIcon from "../../assets/svgs/sun.svg?react";
 // import AddCalendarIcon from '../assets/svgs/addCalendar.svg?react'
-import ChevronRightIcon from '../../assets/svgs/chevronRight.svg?react'
-import TomorrowIcon from '../../assets/svgs/tomorrow.svg?react'
-import NextWeekIcon from '../../assets/svgs/nextWeek.svg?react'
-import ClockIcon from '../../assets/svgs/clock.svg?react'
-import MoonIcon from '../../assets/svgs/moon.svg?react'
-import CloseIcon from '../../assets/svgs/close.svg?react'
-import { signal } from '@preact/signals-react'
-import Recurrence from './Recurrence'
-import Calendar from './Calendar'
+import ChevronRightIcon from "../../assets/svgs/chevronRight.svg?react";
+import TomorrowIcon from "../../assets/svgs/tomorrow.svg?react";
+import NextWeekIcon from "../../assets/svgs/nextWeek.svg?react";
+import ClockIcon from "../../assets/svgs/clock.svg?react";
+import MoonIcon from "../../assets/svgs/moon.svg?react";
+import CloseIcon from "../../assets/svgs/close.svg?react";
+import { useState } from "react";
+import Recurrence from "./Recurrence";
+import Calendar from "./Calendar";
 import {
   addDays,
   addMonths,
   format,
   startOfToday,
   startOfTomorrow,
-} from 'date-fns'
-import Reminders from './Reminders'
-import { Button, Popover } from 'react-aria-components'
+} from "date-fns";
+import Reminders from "./Reminders";
+import { Button, Popover } from "react-aria-components";
 
 interface Props {
-  children: any
-  btnStyles?: string
-  position?: string
-  dates: any
-  setDates: any
+  children: any;
+  btnStyles?: string;
+  position?: string;
+  dates: any;
+  setDates: any;
   // settings: any
 }
 
-const duration = signal<boolean>(false)
-
-const selectedReminders = signal<any>([])
-const selectedRecurrence = signal<any>(null)
-const selectedTime = signal<any>(null)
-const createReminderOpen = signal<boolean>(false)
-const createRecurrenceOpen = signal<boolean>(false)
-const customRecurrence = signal<any>({
-  every: 1,
-  by: 'day',
-  on_date: 1,
-  by_week: null,
-  by_week_day: null,
-})
 export default function DatePicker({
   children,
   btnStyles,
@@ -50,26 +36,41 @@ export default function DatePicker({
   setDates,
   // settings,
 }: Props) {
-  const today = startOfToday()
+  const [duration, setDuration] = useState<boolean>(false);
+  const [selectedReminders, setSelectedReminders] = useState<any>([]);
+  const [selectedRecurrence, setSelectedRecurrence] = useState<any>(null);
+  const [selectedTime, setSelectedTime] = useState<any>(null);
+  const [createReminderOpen, setCreateReminderOpen] = useState<boolean>(false);
+  const [createRecurrenceOpen, setCreateRecurrenceOpen] =
+    useState<boolean>(false);
+  const [customRecurrence, setCustomRecurrence] = useState<any>({
+    every: 1,
+    by: "day",
+    on_date: 1,
+    by_week: null,
+    by_week_day: null,
+  });
+
+  const today = startOfToday();
   const times: { id: number; hour: string; minutes: string; period: string }[] =
-    []
+    [];
   for (let i = 0; i < 24; i++) {
     for (let j = 0; j < 60; j += 30) {
       const hour =
-        i < 10 ? `0${i < 12 ? i : i - 12}` : `${i <= 12 ? i : i - 12}`
-      const minutes = j === 0 ? '00' : `${j}`
-      const period = i >= 12 ? 'PM' : 'AM'
+        i < 10 ? `0${i < 12 ? i : i - 12}` : `${i <= 12 ? i : i - 12}`;
+      const minutes = j === 0 ? "00" : `${j}`;
+      const period = i >= 12 ? "PM" : "AM";
       times.push({
         id: i,
         hour,
         minutes,
         period,
-      })
+      });
     }
   }
   return (
     <Popover className="relative">
-      <Button className={btnStyles || ''}>{children}</Button>
+      <Button className={btnStyles || ""}>{children}</Button>
       {/* <Popover.Panel
           className={`absolute rounded-box ${
             position ? position : 'bottom-12 right-0'
@@ -79,21 +80,21 @@ export default function DatePicker({
             <div className="tabs-boxed tabs tabs-sm flex-nowrap">
               <button
                 onClick={() => {
-                  duration.value = false
+                  setDuration(false)
                   setDates({ ...dates, end_date: null })
                 }}
-                className={`tab ${!duration.value && 'tab-active'}`}
+                className={`tab ${!duration && 'tab-active'}`}
               >
                 Date
               </button>
               <button
-                onClick={() => (duration.value = true)}
-                className={`tab ${duration.value && 'tab-active'}`}
+                onClick={() => setDuration(true)}
+                className={`tab ${duration && 'tab-active'}`}
               >
                 Duration
               </button>
             </div>
-            {duration.value ? (
+            {duration ? (
               <div>
                 <div className="form-control mt-2">
                   <label className="label">
@@ -111,7 +112,7 @@ export default function DatePicker({
                       <input
                         type="time"
                         className="input input-xs join-item input-bordered"
-                        value={selectedTime.value}
+                        value={selectedTime}
                       />
                     </div>
                   </label>
@@ -209,10 +210,10 @@ export default function DatePicker({
             <Calendar dates={dates} setDates={setDates} duration={duration} />
           </div>
           <div className="space-y-1 pl-3">
-            {!duration.value && (
+            {!duration && (
               <Listbox
-                value={selectedTime.value}
-                onChange={(e: any) => (selectedTime.value = e)}
+                value={selectedTime}
+                onChange={(e: any) => setSelectedTime(e)}
               >
                 {({ open }) => (
                   <>
@@ -222,19 +223,19 @@ export default function DatePicker({
                     >
                       <div
                         className={`${
-                          selectedTime.value && 'text-secondary'
+                          selectedTime && 'text-secondary'
                         } inline-flex items-center`}
                       >
                         <ClockIcon />
                         <span className="max-w-40 pl-3">
-                          {selectedTime.value || open ? (
+                          {selectedTime || open ? (
                             <>
                               <input
                                 type="time"
                                 className="appearance-none bg-transparent outline-none"
-                                value={selectedTime.value || '00:00'}
+                                value={selectedTime || '00:00'}
                                 onInput={(e: any) => {
-                                  selectedTime.value = e.target.value
+                                  setSelectedTime(e.target.value)
                                   // console.log(set)
                                 }}
                                 onClick={(e: any) => e.stopPropagation()}
@@ -245,12 +246,12 @@ export default function DatePicker({
                           )}
                         </span>
                       </div>
-                      {selectedTime.value ? (
+                      {selectedTime ? (
                         <button
                           className="btn btn-square btn-ghost btn-xs"
                           onClick={(e: any) => {
                             e.stopPropagation()
-                            selectedTime.value = null
+                            setSelectedTime(null)
                           }}
                         >
                           <CloseIcon className="h-3 w-3" />
@@ -267,7 +268,7 @@ export default function DatePicker({
                           <li key={index}>
                             <Listbox.Option
                               className={`${
-                                selectedTime.value ===
+                                selectedTime ===
                                   `${
                                     time?.period === 'AM'
                                       ? time?.hour
@@ -308,5 +309,5 @@ export default function DatePicker({
           </div>
         </Popover.Panel> */}
     </Popover>
-  )
+  );
 }

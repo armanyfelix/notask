@@ -6,55 +6,59 @@ import {
   Tab,
   TabList,
   Tabs,
-} from 'react-aria-components'
-import CloseIcon from '@/assets/svgs/close.svg?react'
-import { lazy, Suspense } from 'react'
-import { Icon } from '@iconify-icon/react'
-const UploadImage = lazy(() => import('./UploadImage'))
-const Icons = lazy(() => import('./Icons'))
+} from "react-aria-components";
+import CloseIcon from "@/assets/svgs/close.svg?react";
+import { lazy, Suspense } from "react";
+import { Icon } from "@iconify-icon/react";
+const UploadImage = lazy(() => import("./UploadImage"));
+const Icons = lazy(() => import("./Icons"));
 
-interface Props extends Omit<PopoverProps, 'children'> {
-  selectedIcon: any
+interface Props extends Omit<PopoverProps, "children"> {
+  selectedIcon: any;
+  setSelectedIcon: (value: any) => void;
 }
 
-export default function AddIconPopover({ selectedIcon, ...props }: Props) {
+export default function AddIconPopover({
+  selectedIcon,
+  setSelectedIcon,
+  ...props
+}: Props) {
   return (
     <DialogTrigger {...props}>
       <Button
         className={`btn btn-square join-item border border-base-content/20`}
-        style={{ color: selectedIcon.value.color }}
+        style={{ color: selectedIcon.color }}
       >
-        {selectedIcon.value?.image &&
-          selectedIcon.value?.url && (
-            <div className="indicator">
-              <Button
-                className="btn btn-circle btn-error indicator-item btn-xs text-error-content"
-                onPress={() => {
-                  selectedIcon.value = {}
-                }}
-              >
-                <CloseIcon className="h-3 w-3" />
-              </Button>
-              <div className="w-8 h-8">
-                <img
-                  src={selectedIcon.value.url}
-                  width={48}
-                  height={48}
-                  alt=""
-                  className="rounded-btn w-8 h-8"
-                />
-              </div>
+        {selectedIcon?.image && selectedIcon?.url && (
+          <div className="indicator">
+            <Button
+              className="btn btn-circle btn-error indicator-item btn-xs text-error-content"
+              onPress={() => {
+                setSelectedIcon({});
+              }}
+            >
+              <CloseIcon className="h-3 w-3" />
+            </Button>
+            <div className="w-8 h-8">
+              <img
+                src={selectedIcon.url}
+                width={48}
+                height={48}
+                alt=""
+                className="rounded-btn w-8 h-8"
+              />
             </div>
-          )}
-        {selectedIcon.value?.name && (
+          </div>
+        )}
+        {selectedIcon?.name && (
           <Icon
-            icon={`tabler:${selectedIcon.value.name}`}
+            icon={`tabler:${selectedIcon.name}`}
             width="2em"
             height="2em"
             // style={{ backgroundColor: selectedIcon.value?.color }}
           ></Icon>
         )}
-        {!selectedIcon.value?.name && !selectedIcon.value?.url && (
+        {!selectedIcon?.name && !selectedIcon?.url && (
           <span className="icon-[solar--planet-bold-duotone] h-7 w-7"></span>
         )}
       </Button>
@@ -79,12 +83,18 @@ export default function AddIconPopover({ selectedIcon, ...props }: Props) {
                 </div>
               }
             >
-              <Icons selectedIcon={selectedIcon} />
+              <Icons
+                selectedIcon={selectedIcon}
+                setSelectedIcon={setSelectedIcon}
+              />
             </Suspense>
-            <UploadImage selectedIcon={selectedIcon} />
+            <UploadImage
+              selectedIcon={selectedIcon}
+              setSelectedIcon={setSelectedIcon}
+            />
           </Tabs>
         </div>
       </Popover>
     </DialogTrigger>
-  )
+  );
 }

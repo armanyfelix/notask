@@ -14,64 +14,68 @@ import {
   parse,
   startOfToday,
   startOfWeek,
-} from 'date-fns'
-import { useEffect } from 'react'
-import ChevronLeftIcon from '../../assets/svgs/chevronLeft.svg?react'
-import ChevronRightIcon from '../../assets/svgs/chevronRight.svg?react'
-import { Signal, signal } from '@preact/signals-react'
-import { enUS } from 'date-fns/locale'
-import { classNames } from '../../utils'
+} from "date-fns";
+import { useEffect } from "react";
+import ChevronLeftIcon from "../../assets/svgs/chevronLeft.svg?react";
+import ChevronRightIcon from "../../assets/svgs/chevronRight.svg?react";
+import { useState } from "react";
+import { enUS } from "date-fns/locale";
+import { classNames } from "../../utils";
 
-const years: number[] = []
+const years: number[] = [];
 
 for (let year = 2038; year >= 1980; year--) {
-  years.push(year)
+  years.push(year);
 }
 
 interface Props {
-  dates: any
-  setDates: any
-  duration: Signal<boolean>
+  dates: any;
+  setDates: any;
+  duration: boolean;
 }
-const today = startOfToday()
-const pickMonthOpen = signal<boolean>(false)
-const currentMonth = signal<any>(format(today, 'MMM-yyyy'))
-const pickYearOpen = signal<boolean>(false)
+const today = startOfToday();
+
 export default function Calendar({ dates, setDates, duration }: Props) {
-  const firstDayCurrentMonth = parse(currentMonth.value, 'MMM-yyyy', new Date())
+  const [pickMonthOpen, setPickMonthOpen] = useState<boolean>(false);
+  const [currentMonth, setCurrentMonth] = useState<any>(
+    format(today, "MMM-yyyy"),
+  );
+  const [pickYearOpen, setPickYearOpen] = useState<boolean>(false);
+
+  const firstDayCurrentMonth = parse(currentMonth, "MMM-yyyy", new Date());
 
   const days = eachDayOfInterval({
     start: startOfWeek(firstDayCurrentMonth),
     end: endOfWeek(endOfMonth(firstDayCurrentMonth)),
-  })
+  });
 
   function previousMonth() {
-    const firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 })
-    currentMonth.value = format(firstDayNextMonth, 'MMM-yyyy')
+    const firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 });
+    setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
   }
 
   function nextMonth() {
-    const firstDayNextMonth = add(firstDayCurrentMonth, { months: 1 })
-    currentMonth.value = format(firstDayNextMonth, 'MMM-yyyy')
+    const firstDayNextMonth = add(firstDayCurrentMonth, { months: 1 });
+    setCurrentMonth(format(firstDayNextMonth, "MMM-yyyy"));
   }
   function previousYear() {
-    const firstDayNextYear = add(firstDayCurrentMonth, { years: -1 })
-    currentMonth.value = format(firstDayNextYear, 'MMM-yyyy')
+    const firstDayNextYear = add(firstDayCurrentMonth, { years: -1 });
+    setCurrentMonth(format(firstDayNextYear, "MMM-yyyy"));
   }
 
   function nextYear() {
-    const firstDayNextYear = add(firstDayCurrentMonth, { years: 1 })
-    currentMonth.value = format(firstDayNextYear, 'MMM-yyyy')
+    const firstDayNextYear = add(firstDayCurrentMonth, { years: 1 });
+    setCurrentMonth(format(firstDayNextYear, "MMM-yyyy"));
   }
 
   function setMonth(m: number) {
-    const month = set(firstDayCurrentMonth, { month: m })
-    currentMonth.value = format(month, 'MMM-yyyy')
+    const month = set(firstDayCurrentMonth, { month: m });
+    setCurrentMonth(format(month, "MMM-yyyy"));
   }
 
   function setYear(y: number) {
-    const year = set(firstDayCurrentMonth, { year: y })
-    currentMonth.value = format(year, 'MMM-yyyy')
+    const year = set(firstDayCurrentMonth, { year: y });
+    setCurrentMonth(format(year, "MMM-yyyy"));
   }
 
   // const selectedDayMeetings = meetings.filter((meeting) =>
@@ -79,26 +83,26 @@ export default function Calendar({ dates, setDates, duration }: Props) {
   // )
 
   const setDatesHandle = (day: any) => {
-    if (!duration.value) {
-      setDates({ ...dates, start_date: day })
+    if (!duration) {
+      setDates({ ...dates, start_date: day });
     } else {
       if (dates?.start_date <= day) {
-        setDates({ ...dates, end_date: day })
+        setDates({ ...dates, end_date: day });
       } else {
-        setDates({ ...dates, start_date: day })
+        setDates({ ...dates, start_date: day });
       }
     }
-  }
+  };
 
   useEffect(() => {
-    if (format(dates?.start_date, 'MMM-yyyy') !== currentMonth.value) {
-      setMonth(dates.start_date.getMonth())
+    if (format(dates?.start_date, "MMM-yyyy") !== currentMonth) {
+      setMonth(dates.start_date.getMonth());
     }
-  }, [dates, dates?.start_date])
+  }, [dates, dates?.start_date]);
 
   return (
     <div className="mt-3">
-      {pickMonthOpen.value ? (
+      {pickMonthOpen ? (
         <>
           <div className="flex items-center justify-evenly">
             <button
@@ -111,9 +115,9 @@ export default function Calendar({ dates, setDates, duration }: Props) {
             </button>
             <button
               className="btn btn-ghost btn-sm font-semibold"
-              onClick={() => (pickYearOpen.value = !pickYearOpen.value)}
+              onClick={() => setPickYearOpen(!pickYearOpen)}
             >
-              {format(firstDayCurrentMonth, 'yyyy')}
+              {format(firstDayCurrentMonth, "yyyy")}
             </button>
             <button
               onClick={nextYear}
@@ -124,18 +128,18 @@ export default function Calendar({ dates, setDates, duration }: Props) {
               <ChevronRightIcon />
             </button>
           </div>
-          {pickYearOpen.value ? (
+          {pickYearOpen ? (
             <ul className="menu menu-horizontal sticky bottom-20 h-48 w-full justify-between overflow-y-auto">
               {years?.map((y) => (
                 <li key={y}>
                   <button
                     className={classNames(
-                      y === firstDayCurrentMonth.getFullYear() && 'active',
-                      y === today.getFullYear() && '!text-primary',
+                      y === firstDayCurrentMonth.getFullYear() && "active",
+                      y === today.getFullYear() && "!text-primary",
                     )}
                     onClick={() => {
-                      setYear(y)
-                      pickYearOpen.value = false
+                      setYear(y);
+                      setPickYearOpen(false);
                     }}
                   >
                     {y}
@@ -149,18 +153,18 @@ export default function Calendar({ dates, setDates, duration }: Props) {
                 <li key={m}>
                   <button
                     className={classNames(
-                      m === firstDayCurrentMonth.getMonth() && 'active',
+                      m === firstDayCurrentMonth.getMonth() && "active",
                       m === today.getMonth() &&
                         today.getFullYear() ===
                           firstDayCurrentMonth.getFullYear() &&
-                        '!text-primary',
+                        "!text-primary",
                     )}
                     onClick={() => {
-                      setMonth(m)
-                      pickMonthOpen.value = !pickMonthOpen.value
+                      setMonth(m);
+                      setPickMonthOpen(!pickMonthOpen);
                     }}
                   >
-                    {enUS?.localize?.month(m as any, { width: 'abbreviated' })}
+                    {enUS?.localize?.month(m as any, { width: "abbreviated" })}
                   </button>
                 </li>
               ))}
@@ -172,10 +176,10 @@ export default function Calendar({ dates, setDates, duration }: Props) {
           <div className="flex items-center justify-between">
             <button
               className="btn btn-ghost btn-sm"
-              onClick={() => (pickMonthOpen.value = true)}
+              onClick={() => setPickMonthOpen(true)}
             >
               <h2 className="flex-auto font-semibold">
-                {format(firstDayCurrentMonth, 'MMMM yyyy')}
+                {format(firstDayCurrentMonth, "MMMM yyyy")}
               </h2>
             </button>
             <button
@@ -203,50 +207,50 @@ export default function Calendar({ dates, setDates, duration }: Props) {
             <div>S</div>
           </div>
           <div className="grid grid-cols-7 text-sm">
-            {currentMonth.value &&
+            {currentMonth &&
               days.map((day, dayIdx) => (
                 <div
                   key={day.toString()}
                   className={classNames(
                     dayIdx === 0 && colStartClasses[getDay(day)],
-                    '',
+                    "",
                   )}
                 >
                   <label
                     className={classNames(
                       // (!isEqual(day, dates?.start_date) ||
                       //   !isEqual(day, dates?.end_date)) &&
-                      isToday(day) && 'text-primary',
+                      isToday(day) && "text-primary",
                       (!isEqual(day, dates?.start_date) ||
                         !isEqual(day, dates?.end_date)) &&
                         !isToday(day) &&
                         isSameMonth(day, firstDayCurrentMonth) &&
-                        'text-base-content',
+                        "text-base-content",
                       (!isEqual(day, dates?.start_date) ||
                         !isEqual(day, dates?.end_date)) &&
                         !isToday(day) &&
                         !isSameMonth(day, firstDayCurrentMonth) &&
-                        'text-base-content/40',
+                        "text-base-content/40",
                       (isEqual(day, dates?.start_date) ||
                         isEqual(day, dates?.end_date)) &&
                         isToday(day) &&
-                        'bg-primary !text-primary-content',
+                        "bg-primary !text-primary-content",
                       (isEqual(day, dates?.start_date) ||
                         isEqual(day, dates?.end_date)) &&
                         !isToday(day) &&
-                        'bg-secondary text-secondary-content',
-                      duration.value &&
+                        "bg-secondary text-secondary-content",
+                      duration &&
                         isAfter(day, dates?.start_date) &&
                         isBefore(day, dates?.end_date) &&
-                        'bg-secondary/30',
+                        "bg-secondary/30",
                       (!isEqual(day, dates?.end_date) ||
                         !isEqual(day, dates?.end_date)) &&
-                        'hover:bg-secondary/50',
+                        "hover:bg-secondary/50",
                       (!isEqual(day, dates?.end_date) ||
                         !isEqual(day, dates?.end_date) ||
                         isToday(day)) &&
-                        'font-semibold',
-                      'mx-auto flex h-8 w-8 items-center justify-center rounded-box',
+                        "font-semibold",
+                      "mx-auto flex h-8 w-8 items-center justify-center rounded-box",
                     )}
                   >
                     <input
@@ -255,8 +259,8 @@ export default function Calendar({ dates, setDates, duration }: Props) {
                       onChange={() => setDatesHandle(day)}
                       className="sr-only"
                     />
-                    <time dateTime={format(day, 'yyyy-MM-dd')}>
-                      {format(day, 'd')}
+                    <time dateTime={format(day, "yyyy-MM-dd")}>
+                      {format(day, "d")}
                     </time>
                   </label>
                 </div>
@@ -265,15 +269,15 @@ export default function Calendar({ dates, setDates, duration }: Props) {
         </>
       )}
     </div>
-  )
+  );
 }
 
 const colStartClasses = [
-  '',
-  'col-start-2',
-  'col-start-3',
-  'col-start-4',
-  'col-start-5',
-  'col-start-6',
-  'col-start-7',
-]
+  "",
+  "col-start-2",
+  "col-start-3",
+  "col-start-4",
+  "col-start-5",
+  "col-start-6",
+  "col-start-7",
+];

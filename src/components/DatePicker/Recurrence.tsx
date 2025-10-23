@@ -1,42 +1,46 @@
-import RecurrenceIcon from '../../assets/svgs/recurrence.svg?react'
-import CloseIcon from '../../assets/svgs/close.svg?react'
-import ChevronDownIcon from '../../assets/svgs/chevronDown.svg?react'
-import ChevronRightIcon from '../../assets/svgs/chevronRight.svg?react'
-import { Signal, signal } from '@preact/signals-react'
-import { Button } from 'react-aria-components'
+import RecurrenceIcon from "../../assets/svgs/recurrence.svg?react";
+import CloseIcon from "../../assets/svgs/close.svg?react";
+import ChevronDownIcon from "../../assets/svgs/chevronDown.svg?react";
+import ChevronRightIcon from "../../assets/svgs/chevronRight.svg?react";
+import { Button } from "react-aria-components";
 
-const weekDays = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa']
+const weekDays = ["su", "mo", "tu", "we", "th", "fr", "sa"];
 
 interface Props {
-  selectedRecurrence: Signal<any>
-  customRecurrence: Signal<any>
-  createRecurrenceOpen: Signal<boolean>
-  settings: any
+  selectedRecurrence: any;
+  setSelectedRecurrence: (value: any) => void;
+  customRecurrence: any;
+  setCustomRecurrence: (value: any) => void;
+  createRecurrenceOpen: boolean;
+  setCreateRecurrenceOpen: (value: boolean) => void;
+  settings: any;
 }
 
-const recurrences = signal<any>([
+const recurrences = [
   {
-    label: 'Daily',
+    label: "Daily",
     value: new Date().setDate(new Date().getDate() + 1),
   },
   {
-    label: 'Weekly',
+    label: "Weekly",
     value: new Date().setDate(new Date().getDate() + 7),
   },
-
   {
-    label: 'Monthly',
+    label: "Monthly",
     value: new Date().setMonth(new Date().getMonth() + 1),
   },
   {
-    label: 'Yearly',
+    label: "Yearly",
     value: new Date().setFullYear(new Date().getFullYear() + 1),
   },
-])
+];
 export default function Recurrence({
   selectedRecurrence,
+  setSelectedRecurrence,
   customRecurrence,
+  setCustomRecurrence,
   createRecurrenceOpen,
+  setCreateRecurrenceOpen,
   settings,
 }: Props) {
   return (
@@ -44,43 +48,41 @@ export default function Recurrence({
       <Button className="btn btn-sm btn-wide justify-between">
         <div
           className={`${
-            selectedRecurrence.value && 'text-secondary'
+            selectedRecurrence && "text-secondary"
           } inline-flex items-center`}
         >
           <RecurrenceIcon />
           <span className="max-w-40 truncate text-nowrap pl-3">
-            {selectedRecurrence.value
-              ? selectedRecurrence.value.label
-              : 'Recurrence'}
+            {selectedRecurrence ? selectedRecurrence.label : "Recurrence"}
           </span>
         </div>
-        {selectedRecurrence.value ? (
+        {selectedRecurrence ? (
           <button
             className="btn btn-square btn-ghost btn-xs"
             onClick={(e: any) => {
-              e.stopPropagation()
-              customRecurrence.value = {
+              e.stopPropagation();
+              setCustomRecurrence({
                 every: 1,
-                by: 'day',
-              }
-              selectedRecurrence.value = null
+                by: "day",
+              });
+              setSelectedRecurrence(null);
             }}
           >
             <CloseIcon className="h-3 w-3" />
           </button>
         ) : (
           <ChevronRightIcon
-            className={`${true ? 'rotate-90 transform' : ''} h-4 w-4`}
+            className={`${true ? "rotate-91 transform" : ""} h-4 w-4`}
           />
         )}
       </Button>
       {/* <Disclosure.Panel className="px-5 py-3 text-center">
             <Listbox
-              value={selectedRecurrence.value}
+              value={selectedRecurrence}
               onChange={(e: any) => {
-                selectedRecurrence.value = e
-                if (createRecurrenceOpen.value) {
-                  createRecurrenceOpen.value = false
+                setSelectedRecurrence(e)
+                if (createRecurrenceOpen) {
+                  setCreateRecurrenceOpen(false)
                 }
               }}
             >
@@ -89,8 +91,8 @@ export default function Recurrence({
                   <Listbox.Button className="input input-sm input-bordered flex w-full items-center justify-between">
                     <div className="inline-flex items-center">
                       <span className="max-w-40 truncate text-nowrap pl-3">
-                        {selectedRecurrence.value
-                          ? selectedRecurrence.value.label
+                        {selectedRecurrence
+                          ? selectedRecurrence.label
                           : 'Frequency'}
                       </span>
                     </div>
@@ -100,13 +102,13 @@ export default function Recurrence({
                   </Listbox.Button>
                   <Listbox.Options className="absolute right-9 w-52 translate-y-2 rounded-box bg-base-200">
                     <ul className="menu">
-                      {recurrences.value.map(
+                      {recurrences.map(
                         (r: { label: string; value: number }) => (
                           <li key={r.value}>
                             <Listbox.Option
                               value={r}
                               className={`${
-                                selectedRecurrence.value?.label === r.label &&
+                                selectedRecurrence?.label === r.label &&
                                 'bg-base-300 !text-secondary'
                               }`}
                             >
@@ -116,10 +118,10 @@ export default function Recurrence({
                         ),
                       )}
                       <li />
-                      <li onClick={() => (createRecurrenceOpen.value = true)}>
+                      <li onClick={() => setCreateRecurrenceOpen(true)}>
                         <Listbox.Option
                           className={`${
-                            selectedRecurrence.value?.label === 'custom' &&
+                            selectedRecurrence?.label === 'custom' &&
                             'bg-base-300 !text-secondary'
                           }`}
                           value={{ label: 'custom', value: null }}
@@ -133,26 +135,26 @@ export default function Recurrence({
               )}
             </Listbox>
             <div className="p-3">
-              {createRecurrenceOpen.value && (
+              {createRecurrenceOpen && (
                 <div>
                   <div className="flex items-center justify-between">
                     <span>Every</span>
                     <input
                       type="number"
                       className="input input-xs input-bordered w-9 outline-none"
-                      value={customRecurrence.value?.every}
+                      value={customRecurrence?.every}
                       onChange={(e: any) =>
-                        (customRecurrence.value = {
-                          ...customRecurrence.value,
+                        setCustomRecurrence({
+                          ...customRecurrence,
                           every: e.target.value,
                         })
                       }
                     />
                     <Listbox
-                      value={customRecurrence.value?.by}
+                      value={customRecurrence?.by}
                       onChange={(e: any) =>
-                        (customRecurrence.value = {
-                          ...customRecurrence.value,
+                        setCustomRecurrence({
+                          ...customRecurrence,
                           by: e,
                         })
                       }
@@ -160,7 +162,7 @@ export default function Recurrence({
                       <Listbox.Button className="input input-xs input-bordered flex items-center outline-none">
                         <span className="pl-1 pr-2">
                           {' '}
-                          {customRecurrence.value?.by}
+                          {customRecurrence?.by}
                         </span>
                         <ChevronDownIcon className="h-4 w-4" />
                       </Listbox.Button>
@@ -180,7 +182,7 @@ export default function Recurrence({
                       </Listbox.Options>
                     </Listbox>
                   </div>
-                  {customRecurrence.value?.by === 'week' && (
+                  {customRecurrence?.by === 'week' && (
                     <div className="join mt-4">
                       {weekDays.map((d: string) => (
                         <input
@@ -195,7 +197,7 @@ export default function Recurrence({
                   )}
                 </div>
               )}
-              {customRecurrence.value?.by === 'month' && (
+              {customRecurrence?.by === 'month' && (
                 <div>
                   <div role="tablist" className="tabs tabs-bordered">
                     <input
@@ -204,14 +206,15 @@ export default function Recurrence({
                       className="tab"
                       aria-label="Tab 1"
                       name="by_month"
-                      checked={customRecurrence.value?.on_date}
+                      checked={customRecurrence?.on_date}
                       onClick={() => {
-                        if (!customRecurrence.value?.on_date) {
-                          customRecurrence.value = {
-                            ...customRecurrence.value,
+                        if (!customRecurrence?.on_date) {
+                          setCustomRecurrence({
+                            ...customRecurrence,
                             on_date: 1,
                             by_week: null,
-                          }
+                            by_week_day: null,
+                          })
                         }
                       }}
                     />
@@ -224,31 +227,31 @@ export default function Recurrence({
                       className="tab"
                       aria-label="Tab 2"
                       name="by_month"
-                      checked={customRecurrence.value?.by_week}
+                      checked={customRecurrence?.by_week}
                       onClick={() => {
-                        if (!customRecurrence.value?.by_week) {
-                          customRecurrence.value = {
-                            ...customRecurrence.value,
+                        if (!customRecurrence?.by_week) {
+                          setCustomRecurrence({
+                            ...customRecurrence,
                             by_week: 'first',
                             by_week_day: 'mo',
                             on_date: null,
-                          }
+                          })
                         }
                       }}
                     />
                     <div role="tabpanel" className="tab-content p-10">
                       <Listbox
-                        value={customRecurrence.value?.by_week}
+                        value={customRecurrence?.by_week}
                         onChange={(e: number) =>
-                          (customRecurrence.value = {
-                            ...customRecurrence.value,
+                          setCustomRecurrence({
+                            ...customRecurrence,
                             by_week: e,
                           })
                         }
                       >
                         <Listbox.Button className="input input-xs input-bordered flex w-full items-center justify-between capitalize outline-none">
                           <span className="pl-1 pr-2">
-                            {customRecurrence.value?.by_week}
+                            {customRecurrence?.by_week}
                           </span>
                           <ChevronDownIcon className="h-4 w-4" />
                         </Listbox.Button>
@@ -347,5 +350,5 @@ export default function Recurrence({
             </div> */}
       {/* </Disclosure.Panel> */}
     </div>
-  )
+  );
 }

@@ -1,75 +1,76 @@
-import { Signal } from '@preact/signals-react'
-import DatePicker from '../components/DatePicker/index.tsx'
-import CloseIcon from '../assets/svgs/close.svg?react'
-import PinOutlineIcon from '../assets/svgs/pinOutline.svg?react'
-import PinSolidIcon from '../assets/svgs/pinSolid.svg?react'
-import PlayIcon from '../assets/svgs/play.svg?react'
-import PauseIcon from '../assets/svgs/pause.svg?react'
-import AddDateIcon from '../assets/svgs/addCalendar.svg?react'
-import PriorityMenu from '../components/PriorityMenu.tsx'
-import { useEffect, useRef, useState } from 'react'
-import { ChangeEvent } from 'react'
-import ItemMenu from '../components/ItemMenu.tsx'
-import { format } from 'date-fns'
+import DatePicker from "../components/DatePicker/index.tsx";
+import CloseIcon from "../assets/svgs/close.svg?react";
+import PinOutlineIcon from "../assets/svgs/pinOutline.svg?react";
+import PinSolidIcon from "../assets/svgs/pinSolid.svg?react";
+import PlayIcon from "../assets/svgs/play.svg?react";
+import PauseIcon from "../assets/svgs/pause.svg?react";
+import AddDateIcon from "../assets/svgs/addCalendar.svg?react";
+import PriorityMenu from "../components/PriorityMenu.tsx";
+import { useEffect, useRef, useState } from "react";
+import { ChangeEvent } from "react";
+import ItemMenu from "../components/ItemMenu.tsx";
+import { format } from "date-fns";
 
 interface Props {
-  // settings: Signal<any>
-  item: Signal<any>
-  pinItemView: Signal<boolean>
-  handlePinView: any
-  onDeleteItem: any
+  // settings: any
+  item: any;
+  setItem: (value: any) => void;
+  pinItemView: boolean;
+  handlePinView: any;
+  onDeleteItem: any;
 }
 
 // const dates = signal<any>(null)
 export default function ItemView({
   // settings,
   item,
+  setItem,
   pinItemView,
   handlePinView,
   onDeleteItem,
 }: Props) {
-  const refBox = useRef(null)
-  const refLeft = useRef(null)
-  const [dates, setDates] = useState<any>(null)
+  const refBox = useRef(null);
+  const refLeft = useRef(null);
+  const [dates, setDates] = useState<any>(null);
 
   const onClose = () => {
-    item.value = null
-    dates.value = null
-  }
+    setItem(null);
+    setDates(null);
+  };
 
   useEffect(() => {
     if (refBox.current) {
-      const resizeable: HTMLElement = refBox.current
-      const styles = window.getComputedStyle(resizeable)
-      let width = parseInt(styles.width, 10)
-      let xCord = 0
+      const resizeable: HTMLElement = refBox.current;
+      const styles = window.getComputedStyle(resizeable);
+      let width = parseInt(styles.width, 10);
+      let xCord = 0;
       const onMouseMoveLeftResize = (e: any) => {
-        const dx = e.clientX - xCord
-        xCord = e.clientX
-        width -= dx
+        const dx = e.clientX - xCord;
+        xCord = e.clientX;
+        width -= dx;
         // if (width > 200 && width < 700) {
-        resizeable.style.width = `${width}px`
+        resizeable.style.width = `${width}px`;
         // }
-      }
+      };
       const onMouseUpLeftResize = () => {
-        document.removeEventListener('mousemove', onMouseMoveLeftResize)
-      }
+        document.removeEventListener("mousemove", onMouseMoveLeftResize);
+      };
       const onMouseDownLeftResize = (e: any) => {
-        xCord = e.clientX
-        resizeable.style.right = styles.right
-        resizeable.style.left = ''
-        document.addEventListener('mouseup', onMouseUpLeftResize)
-        document.addEventListener('mousemove', onMouseMoveLeftResize)
-      }
+        xCord = e.clientX;
+        resizeable.style.right = styles.right;
+        resizeable.style.left = "";
+        document.addEventListener("mouseup", onMouseUpLeftResize);
+        document.addEventListener("mousemove", onMouseMoveLeftResize);
+      };
 
-      const resizerLeft = refLeft.current as any
-      resizerLeft.addEventListener('mousedown', onMouseDownLeftResize)
+      const resizerLeft = refLeft.current as any;
+      resizerLeft.addEventListener("mousedown", onMouseDownLeftResize);
 
       return () => {
-        resizerLeft.removeEventListener('mousedown', onMouseDownLeftResize)
-      }
+        resizerLeft.removeEventListener("mousedown", onMouseDownLeftResize);
+      };
     }
-  }, [])
+  }, []);
 
   return (
     <div className="h-full overflow-y-auto">
@@ -86,12 +87,12 @@ export default function ItemView({
         <div className="mb-8 inline-flex w-full">
           <input
             type="text"
-            defaultValue={item.value?.name || ''}
-            // value={element.value?.name || ''}
+            defaultValue={item?.name || ""}
+            // value={element?.name || ''}
             onInput={(e: ChangeEvent<HTMLInputElement>) =>
-              (item.value = {
+              setItem({
                 name: (e.target as HTMLInputElement).value,
-                ...item.value,
+                ...item,
               })
             }
             placeholder="Task Name"
@@ -114,11 +115,11 @@ export default function ItemView({
         </div>
         <div>
           <textarea
-            defaultValue={item.value?.description || ''}
+            defaultValue={item?.description || ""}
             onInput={(e: ChangeEvent<HTMLTextAreaElement>) =>
-              (item.value = {
+              setItem({
                 description: (e.target as HTMLTextAreaElement).value,
-                ...item.value,
+                ...item,
               })
             }
             rows={4}
@@ -137,7 +138,7 @@ export default function ItemView({
         className="absolute top-0 h-full w-2 cursor-col-resize hover:bg-base-300"
       ></div>
     </div>
-  )
+  );
 }
 
 const Fields = () => {
@@ -176,8 +177,8 @@ const Fields = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const Subtasks = () => {
   return (
@@ -190,8 +191,8 @@ const Subtasks = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 const Tags = () => {
   return (
@@ -206,8 +207,8 @@ const Tags = () => {
         + Tag
       </button>
     </div>
-  )
-}
+  );
+};
 
 const Status = () => {
   return (
@@ -223,8 +224,8 @@ const Status = () => {
       </div>
       <div className="stat-desc">IN PROGRESS</div>
     </div>
-  )
-}
+  );
+};
 const Timer = () => {
   return (
     <div className="stat">
@@ -238,8 +239,8 @@ const Timer = () => {
       </div>
       <div className="stat-desc">00:00:00</div>
     </div>
-  )
-}
+  );
+};
 const Dates = ({ dates, setDates }: any) => {
   return (
     <div className="stat">
@@ -254,22 +255,22 @@ const Dates = ({ dates, setDates }: any) => {
         >
           <span className="text-xl">
             {dates?.start_date ? (
-              format(dates?.start_date, 'dd/MMM/yy')
+              format(dates?.start_date, "dd/MMM/yy")
             ) : (
               <AddDateIcon />
             )}
           </span>
           {dates?.end_date && (
             <span className="text-xl">
-              - {format(dates?.end_date, 'dd/MMM/yy')}
+              - {format(dates?.end_date, "dd/MMM/yy")}
             </span>
           )}
         </DatePicker>
       </div>
       {/* <div className="stat-desc">↗︎ 400 (22%)</div> */}
     </div>
-  )
-}
+  );
+};
 const Priority = () => {
   return (
     <div className="stat">
@@ -279,8 +280,8 @@ const Priority = () => {
       </div>
       <div className="stat-desc">High</div>
     </div>
-  )
-}
+  );
+};
 const Guests = () => {
   return (
     <div className="stat">
@@ -311,8 +312,8 @@ const Guests = () => {
       </div>
       {/* <div className="stat-desc">↘︎ 90 (14%)</div> */}
     </div>
-  )
-}
+  );
+};
 
 const Header = ({
   item,
@@ -345,8 +346,8 @@ const Header = ({
             )}
           </button>
         </div> */}
-        {/* <ItemMenu id={item.value?.id} onDeleteItem={onDeleteTask} /> */}
+        {/* <ItemMenu id={item?.id} onDeleteItem={onDeleteTask} /> */}
       </div>
     </header>
-  )
-}
+  );
+};

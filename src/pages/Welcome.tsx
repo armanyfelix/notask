@@ -1,98 +1,96 @@
-import { signal } from '@preact/signals-react'
-import UserIcon from '../assets/svgs/user.svg?react'
-import TrashIcon from '../assets/svgs/trash.svg?react'
-import { ChangeEvent } from 'react'
-import supabase from '../utils/supabase'
-import defaultListPresets from '../data/default-list-presets.json'
+// import UserIcon from '../assets/svgs/user.svg?react'
+// import TrashIcon from '../assets/svgs/trash.svg?react'
+import { ChangeEvent, useState } from "react";
+import supabase from "../utils/supabase";
+import defaultListPresets from "../data/default-list-presets.json";
 import {
   AccountState,
   SessionState,
   useAccountStore,
   useSessionStore,
-} from '../utils/zustand'
-import { redirect } from 'react-router-dom'
-import { Button, Input } from 'react-aria-components'
-
-const name = signal<string>('')
-const avatar = signal<any>(undefined)
-const avatarUrl = signal<string | ArrayBuffer | null>(null)
-const appUse = signal<string>('')
-const step = signal<number>(1)
-const error = signal<any>()
-const errorAlert = signal<string>('')
+} from "../utils/zustand";
+import { redirect } from "react-router";
+import { Button, Input } from "react-aria-components";
 
 export default function Welcome({}: any) {
-  const setAccount = useAccountStore((s: AccountState) => s.setAccount)
-  const session = useSessionStore((s: SessionState) => s.session)
+  const [name, setName] = useState<string>("");
+  const [avatar, setAvatar] = useState<any>(undefined);
+  const [avatarUrl, setAvatarUrl] = useState<string | ArrayBuffer | null>(null);
+  const [appUse, setAppUse] = useState<string>("");
+  const [step, setStep] = useState<number>(1);
+  const [error, setError] = useState<any>();
+  const [errorAlert, setErrorAlert] = useState<string>("");
+
+  const setAccount = useAccountStore((s: AccountState) => s.setAccount);
+  const session = useSessionStore((s: SessionState) => s.session);
 
   const imageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = (e.target as HTMLInputElement).files
-    console.log('files', files)
+    const files = (e.target as HTMLInputElement).files;
     if (files) {
       // Check file size (5MB)
-      const maxSize = 5 * 1024 * 1024
+      const maxSize = 5 * 1024 * 1024;
       if (files[0].size > maxSize) {
-        error.value =
-          'File is too large, please select a file smaller than 5MB.'
-        return
+        setError("File is too large, please select a file smaller than 5MB.");
+        return;
       } else {
         // Check file type
-        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+        const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
         if (!allowedTypes.includes(files[0].type)) {
-          error.value =
-            'Invalid file type, please select a PNG, JPEG, or JPG image.'
-          return
+          setError(
+            "Invalid file type, please select a PNG, JPEG, or JPG image.",
+          );
+          return;
         }
-        error.value = ''
-        const reader = new FileReader()
+        setError("");
+        const reader = new FileReader();
         reader.onloadend = () => {
-          avatarUrl.value = reader.result
-        }
-        reader.readAsDataURL(files[0])
-        avatar.value = files[0]
+          setAvatarUrl(reader.result);
+        };
+        reader.readAsDataURL(files[0]);
+        setAvatar(files[0]);
       }
     }
-  }
+  };
 
   const createAccount = async () => {
     const data: any = {
-      name: name.value,
+      name,
       user_id: session?.user?.id || null,
       email: session?.user?.email || null,
-      app_use: appUse.value,
+      app_use: appUse,
       list_presets: defaultListPresets,
-    }
+    };
     if (avatar.value) {
-      const fileExt = avatar.value.name.split('.').pop()
-      const fileName = `${Math.random()}.${fileExt}`
-      const filePath = `${fileName}`
+      const fileExt = avatar.value.name.split(".").pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
       const avatarRes = await supabase.storage
-        .from('avatars')
-        .upload(filePath, avatar.value)
+        .from("avatars")
+        .upload(filePath, avatar.value);
 
       if (avatarRes.error) {
-        errorAlert.value =
-          'The avatar could not be saved, please try again later.'
-        setTimeout(() => (errorAlert.value = ''), 6000)
+        setErrorAlert("The avatar could not be saved, please try again later.");
+        setTimeout(() => setErrorAlert(""), 6000);
       } else {
-        data.avatar_url = avatarRes.data.path
+        data.avatar_url = avatarRes.data.path;
       }
     }
-    const accountRes = await supabase.from('accounts').insert([data]).select()
+    const accountRes = await supabase.from("accounts").insert([data]).select();
     if (accountRes.error) {
-      errorAlert.value =
-        'The account could not be created, please try again later.'
-      setTimeout(() => (errorAlert.value = ''), 6000)
-      redirect('/')
+      setErrorAlert(
+        "The account could not be created, please try again later.",
+      );
+      setTimeout(() => setErrorAlert(""), 6000);
+      redirect("/");
     } else {
-      setAccount(accountRes.data[0])
-      redirect('/')
+      setAccount(accountRes.data[0]);
+      redirect("/");
     }
-  }
+  };
 
   return (
     <main className="flex h-screen w-screen justify-end bg-[url('/images/newsoldier.jpg')] bg-cover font-futura">
-      {errorAlert.value ? (
+      {errorAlert ? (
         <div className="alert alert-error absolute left-0 right-0 top-3 z-30 mx-auto w-2/3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -107,10 +105,10 @@ export default function Welcome({}: any) {
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>Error! {errorAlert.value}</span>
+          <span>Error! {errorAlert}</span>
         </div>
       ) : (
-        ''
+        ""
       )}
       <div className="flex h-full w-full flex-col justify-between bg-base-100/90 p-5 backdrop-blur-2xl md:w-2/3 md:p-12 lg:w-1/2">
         <div className="carousel w-full pt-10">
@@ -125,14 +123,14 @@ export default function Welcome({}: any) {
                 type="text"
                 placeholder="Your name"
                 className="mt-32 w-full border-b border-base-300 bg-transparent p-3 text-xl shadow outline-none duration-100 ease-out focus:border-b-2 focus:border-primary"
-                onInput={(e) =>
-                  (name.value = (e.target as HTMLInputElement).value)
+                onInput={(e: any) =>
+                  setName((e.target as HTMLInputElement).value)
                 }
               />
               <div className="flex w-full justify-end gap-2 py-2">
                 <a
                   href={`#${step}`}
-                  onClick={() => (step.value += 1)}
+                  onClick={() => setStep(step + 1)}
                   // disabled={!name.value}
                   className="btn btn-primary mt-10"
                 >
@@ -150,44 +148,42 @@ export default function Welcome({}: any) {
               </h2> */}
               <div className="card items-center bg-base-100 p-5 shadow-lg">
                 <div>
-                  {typeof avatarUrl.value === 'string' ? (
+                  {typeof avatarUrl === "string" ? (
                     <figure>
                       <img
-                        src={avatarUrl.value || ''}
+                        src={avatarUrl || ""}
                         className="h-40 w-40 rounded-full object-cover object-center"
                         alt="Movie"
                       />
                     </figure>
                   ) : (
-                    <UserIcon className="h-48 w-48" />
+                    // <UserIcon className='h-48 w-48' />
+                    "user icon"
                   )}
                 </div>
-                <div className="card-body flex-shrink-0">
-                  {error.value ? (
-                    <span className="text-error">{error.value}</span>
-                  ) : (
-                    ''
-                  )}
+                <div className="card-body shrink-0">
+                  {error ? <span className="text-error">{error}</span> : ""}
                   <div className="flex flex-wrap items-end justify-end">
                     <Input
                       type="file"
                       accept="image/png, image/jpeg, image/jpg"
                       className="file-input file-input-bordered file-input-md"
-                      value={avatar.value}
+                      value={avatar}
                       onInput={imageUpload}
                     />
-                    {avatar.value ? (
+                    {avatar ? (
                       <button
                         onClick={() => {
-                          avatar.value = null
-                          avatarUrl.value = null
+                          setAvatar(null);
+                          setAvatarUrl(null);
                         }}
                         className="btn btn-error mt-4"
                       >
-                        <TrashIcon className="h-7 w-7" />
+                        {/* <TrashIcon className='h-7 w-7' /> */}
+                        trash
                       </button>
                     ) : (
-                      ''
+                      ""
                     )}
                   </div>
                 </div>
@@ -196,9 +192,9 @@ export default function Welcome({}: any) {
                 <a
                   href={`#${step}`}
                   onClick={() => {
-                    step.value += 1
-                    avatar.value = null
-                    avatarUrl.value = null
+                    setStep(step + 1);
+                    setAvatar(null);
+                    setAvatarUrl(null);
                   }}
                   className="link-hover link"
                 >
@@ -207,7 +203,7 @@ export default function Welcome({}: any) {
                 <a
                   href={`#${step}`}
                   // disabled={error.value ? true : false}
-                  onClick={() => (step.value += 1)}
+                  onClick={() => setStep(step + 1)}
                   className="btn btn-primary mt-10"
                 >
                   Next
@@ -223,18 +219,18 @@ export default function Welcome({}: any) {
               <div className="mt-10 flex justify-evenly gap-5">
                 <Button
                   className={`btn btn-lg flex h-full w-52 flex-col p-5 text-center ${
-                    appUse.value === 'individual' && 'ring-2 ring-primary'
+                    appUse === "individual" && "ring-2 ring-primary"
                   }`}
-                  onPress={() => (appUse.value = 'individual')}
+                  onPress={() => setAppUse("individual")}
                 >
                   <img src="/images/individual.png" className="" />
                   Individual
                 </Button>
                 <Button
                   className={`btn btn-lg flex h-full w-52 flex-col p-5 text-center ${
-                    appUse.value === 'collaborative' && 'ring-2 ring-primary'
+                    appUse === "collaborative" && "ring-2 ring-primary"
                   }`}
-                  onPress={() => (appUse.value = 'collaborative')}
+                  onPress={() => setAppUse("collaborative")}
                 >
                   <img src="/images/group.png" />
                   Collaborative
@@ -243,7 +239,7 @@ export default function Welcome({}: any) {
               <div className="flex w-full justify-end gap-2 py-2">
                 <a
                   href={`#${step}`}
-                  onClick={() => (step.value += 1)}
+                  onClick={() => setStep(step + 1)}
                   // disabled={!appUse.value}
                   className="btn btn-primary mt-10 capitalize"
                 >
@@ -260,7 +256,7 @@ export default function Welcome({}: any) {
               <div className="flex w-full justify-end gap-2 py-2">
                 <a
                   href={`#${step}`}
-                  onClick={() => (step.value += 1)}
+                  onClick={() => setStep(step + 1)}
                   className="btn btn-primary mt-10 capitalize"
                 >
                   Next
@@ -275,7 +271,7 @@ export default function Welcome({}: any) {
               <div className="flex w-full justify-end gap-2 py-2">
                 <Button
                   onPress={createAccount}
-                  isDisabled={!name.value && !appUse.value}
+                  isDisabled={!name && !appUse}
                   className="btn btn-primary mt-10 capitalize"
                 >
                   Finish
@@ -287,66 +283,56 @@ export default function Welcome({}: any) {
         <ul className="steps steps-horizontal">
           <li
             data-content=""
-            className={`step ${
-              step.value >= 1 && 'step-primary z-10'
-            } translate-y-9`}
+            className={`step ${step >= 1 && "step-primary z-10"} translate-y-9`}
           >
             <a
               href="#1"
               className="z-20 h-8 w-8 -translate-y-9 rounded-full"
-              onClick={() => (step.value = 1)}
+              onClick={() => setStep(1)}
             ></a>
           </li>
           <li
             data-content=""
-            className={`step ${
-              step.value >= 2 && 'step-primary z-10'
-            } translate-y-9`}
+            className={`step ${step >= 2 && "step-primary z-10"} translate-y-9`}
           >
             <a
               href="#2"
               className="z-20 h-8 w-8 -translate-y-9 rounded-full"
-              onClick={() => (step.value = 2)}
+              onClick={() => setStep(2)}
             ></a>
           </li>
           <li
             data-content=""
-            className={`step ${
-              step.value >= 3 && 'step-primary z-10'
-            } translate-y-9`}
+            className={`step ${step >= 3 && "step-primary z-10"} translate-y-9`}
           >
             <a
               href="#3"
               className="z-20 h-8 w-8 -translate-y-9 rounded-full"
-              onClick={() => (step.value = 3)}
+              onClick={() => setStep(3)}
             ></a>
           </li>
           <li
             data-content=""
-            className={`step ${
-              step.value >= 4 && 'step-primary z-10'
-            } translate-y-9`}
+            className={`step ${step >= 4 && "step-primary z-10"} translate-y-9`}
           >
             <a
               href="#4"
               className="z-20 h-8 w-8 -translate-y-9 rounded-full"
-              onClick={() => (step.value = 4)}
+              onClick={() => setStep(4)}
             ></a>
           </li>
           <li
             data-content=""
-            className={`step ${
-              step.value >= 5 && 'step-primary z-10'
-            } translate-y-9`}
+            className={`step ${step >= 5 && "step-primary z-10"} translate-y-9`}
           >
             <a
               href="#5"
               className="z-20 h-8 w-8 -translate-y-9 rounded-full"
-              onClick={() => (step.value = 5)}
+              onClick={() => setStep(5)}
             ></a>
           </li>
         </ul>
       </div>
     </main>
-  )
+  );
 }

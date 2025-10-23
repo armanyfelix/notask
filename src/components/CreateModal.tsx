@@ -7,11 +7,17 @@ import {
   TabList,
   TabPanel,
   Tabs,
-} from 'react-aria-components'
-import CreateSpace from './common/CreateSpace'
-import CreateItem from './common/CreateItem'
+} from "react-aria-components";
+import CreateSpace from "./common/CreateSpace";
+import CreateItem from "./common/CreateItem";
 
-export default function CreateModal({ accountId, spaces }: any) {
+interface Props {
+  accountId: number | undefined;
+  spaces: any;
+  setSpaces: (value: any) => void;
+}
+
+export default function CreateModal({ accountId, spaces, setSpaces }: Props) {
   return (
     <DialogTrigger>
       <Button className="btn btn-circle btn-ghost">
@@ -28,7 +34,7 @@ export default function CreateModal({ accountId, spaces }: any) {
                 aria-label="Select what you want to create"
                 className="tabs tabs-bordered"
               >
-                {['item', 'list', 'note', 'space'].map((t, i: number) => (
+                {["item", "list", "note", "space"].map((t, i: number) => (
                   <Tab
                     key={i}
                     id={t}
@@ -40,18 +46,23 @@ export default function CreateModal({ accountId, spaces }: any) {
               </TabList>
               <TabPanel id="item" className="pt-3">
                 <CreateItem
-                  // accountId={accountId} close={close}
+                // accountId={accountId} close={close}
                 />
               </TabPanel>
               <TabPanel id="space" className="pt-3">
-                <CreateSpace accountId={accountId} spaces={spaces} onClose={() => {
-                  close()
-                }} />
+                <CreateSpace
+                  accountId={accountId}
+                  spaces={spaces}
+                  setSpaces={setSpaces}
+                  onClose={() => {
+                    close();
+                  }}
+                />
               </TabPanel>
             </Tabs>
           )}
         </Dialog>
       </Modal>
     </DialogTrigger>
-  )
+  );
 }

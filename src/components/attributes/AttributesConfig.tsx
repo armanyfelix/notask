@@ -1,52 +1,52 @@
-import { Signal, signal } from '@preact/signals-react'
-import { useContext, useEffect, useRef } from 'react'
-import PlusIcon from '../../assets/svgs/plus.svg?react'
-import DotsIcon from '../../assets/svgs/dotsBold.svg?react'
-import TrashIcon from '../../assets/svgs/trash.svg?react'
-import EditIcon from '../../assets/svgs/edit.svg?react'
-import CheckIcon from '../../assets/svgs/checkCircle.svg?react'
-import CloseIcon from '../../assets/svgs/closeCircle.svg?react'
-import StatusesIcon from '../../assets/icons/attributes/statuses.svg?react'
-import DatesIcon from '../../assets/icons/attributes/dates.svg?react'
-import PriorityIcon from '../../assets/icons/attributes/priority.svg?react'
-import TagsIcon from '../../assets/icons/attributes/tags.svg?react'
-import FieldsIcon from '../../assets/icons/attributes/fields.svg?react'
-import TimerIcon from '../../assets/icons/attributes/timer.svg?react'
-import RelationshipsIcon from '../../assets/icons/attributes/relationships.svg?react'
-import CollaborationIcon from '../../assets/icons/attributes/collaboration.svg?react'
-import ChevronLeftIcon from '../../assets/svgs/chevronLeft.svg?react'
-import supabase from '../../utils/supabase'
-import { AlertContext } from '../../context/AlertContext'
-import Confirm from '../common/Confirm'
-import defaultPreset from '../../data/new-list-preset.json'
-import Statuses from './Statuses'
-import Tags from './Tags'
-import Fields from './Fields'
-import Timer from './Timer'
-import Relationships from './Relationships'
-import Dates from './Dates'
-import Priorities from './Priority'
-import Collaboration from './Collaboration'
-import { Button, Menu } from 'react-aria-components'
+import { Signal, signal } from "@preact/signals-react";
+import { useContext, useEffect, useRef } from "react";
+import PlusIcon from "../../assets/svgs/plus.svg?react";
+import DotsIcon from "../../assets/svgs/dotsBold.svg?react";
+import TrashIcon from "../../assets/svgs/trash.svg?react";
+import EditIcon from "../../assets/svgs/edit.svg?react";
+import CheckIcon from "../../assets/svgs/checkCircle.svg?react";
+import CloseIcon from "../../assets/svgs/closeCircle.svg?react";
+import StatusesIcon from "../../assets/icons/attributes/statuses.svg?react";
+import DatesIcon from "../../assets/icons/attributes/dates.svg?react";
+import PriorityIcon from "../../assets/icons/attributes/priority.svg?react";
+import TagsIcon from "../../assets/icons/attributes/tags.svg?react";
+import FieldsIcon from "../../assets/icons/attributes/fields.svg?react";
+import TimerIcon from "../../assets/icons/attributes/timer.svg?react";
+import RelationshipsIcon from "../../assets/icons/attributes/relationships.svg?react";
+import CollaborationIcon from "../../assets/icons/attributes/collaboration.svg?react";
+import ChevronLeftIcon from "../../assets/svgs/chevronLeft.svg?react";
+import supabase from "../../utils/supabase";
+import { AlertContext } from "../../context/AlertContext";
+import Confirm from "../common/Confirm";
+import defaultPreset from "../../data/new-list-preset.json";
+import Statuses from "./Statuses";
+import Tags from "./Tags";
+import Fields from "./Fields";
+import Timer from "./Timer";
+import Relationships from "./Relationships";
+import Dates from "./Dates";
+import Priorities from "./Priority";
+import Collaboration from "./Collaboration";
+import { Button, Menu } from "react-aria-components";
 
 interface Props {
-  setting: Signal<any>
-  presets: Signal<any>
-  account: any
-  setAccount: any
+  setting: Signal<any>;
+  presets: Signal<any>;
+  account: any;
+  setAccount: any;
 }
 
-const editPresetName = signal<number>(-1)
-const newPresetName = signal<string>('')
-const setNewPreset = signal<boolean>(false)
-const editPresetError = signal<string>('')
-const newPresetError = signal<string>('')
-const openConfirm = signal<boolean>(false)
-const savePreset = signal<number>(-1)
+const editPresetName = signal<number>(-1);
+const newPresetName = signal<string>("");
+const setNewPreset = signal<boolean>(false);
+const editPresetError = signal<string>("");
+const newPresetError = signal<string>("");
+const openConfirm = signal<boolean>(false);
+const savePreset = signal<number>(-1);
 const confirmDeletePreset = signal<any>({
-  title: '',
-  element: '',
-})
+  title: "",
+  element: "",
+});
 
 export default function AttributesConfig({
   setting,
@@ -54,9 +54,9 @@ export default function AttributesConfig({
   account,
   setAccount,
 }: Props) {
-  const notify = useContext(AlertContext)
-  const presetRefs = presets.value?.map(() => useRef())
-  const newPresetRef = useRef<any>(null)
+  const notify = useContext(AlertContext);
+  const presetRefs = presets.value?.map(() => useRef(undefined));
+  const newPresetRef = useRef<any>(null);
 
   const onRenamePreset = async (index: number) => {
     if (
@@ -66,51 +66,51 @@ export default function AttributesConfig({
           newPresetName.value.trim().toLowerCase(),
       )
     ) {
-      editPresetError.value = 'Preset name already exists'
-      return
+      editPresetError.value = "Preset name already exists";
+      return;
     }
     if (newPresetName.value.length === 0) {
-      editPresetError.value = 'Preset name cannot be empty'
-      return
+      editPresetError.value = "Preset name cannot be empty";
+      return;
     }
     if (newPresetName.value.length >= 20) {
-      editPresetError.value = "The Preset name it's too long."
-      return
+      editPresetError.value = "The Preset name it's too long.";
+      return;
     }
-    presets.value[index].name = newPresetName.value
+    presets.value[index].name = newPresetName.value;
     const { data, error } = await supabase
-      .from('accounts')
+      .from("accounts")
       .update({ list_presets: presets.value })
-      .eq('id', account.id)
-      .select()
+      .eq("id", account.id)
+      .select();
     if (error) {
-      editPresetError.value = 'Error updating preset name, try again later'
+      editPresetError.value = "Error updating preset name, try again later";
     } else {
-      editPresetError.value = ''
-      notify('success', 'Preset name updated')
-      setAccount(data[0])
+      editPresetError.value = "";
+      notify("success", "Preset name updated");
+      setAccount(data[0]);
     }
-    editPresetName.value = -1
-  }
+    editPresetName.value = -1;
+  };
 
   const onDeletePreset = async (_preset: any, index: number) => {
-    const newPresets = presets.value
-    newPresets.splice(index, 1)
+    const newPresets = presets.value;
+    newPresets.splice(index, 1);
     const { data, error }: any = await supabase
-      .from('accounts')
+      .from("accounts")
       .update({ list_presets: newPresets })
-      .eq('id', account.id)
-      .select()
+      .eq("id", account.id)
+      .select();
     if (error) {
-      notify('error', 'Error deleting the preset, try again later')
+      notify("error", "Error deleting the preset, try again later");
     } else {
-      notify('success', 'Preset deleted')
-      setAccount(data[0])
-      presets.value = data[0].list_presets
+      notify("success", "Preset deleted");
+      setAccount(data[0]);
+      presets.value = data[0].list_presets;
     }
-    openConfirm.value = false
-    confirmDeletePreset.value = null
-  }
+    openConfirm.value = false;
+    confirmDeletePreset.value = null;
+  };
 
   const onAddPreset = async () => {
     if (
@@ -120,89 +120,89 @@ export default function AttributesConfig({
           newPresetName.value.trim().toLowerCase(),
       )
     ) {
-      newPresetError.value = 'Preset name already exists'
-      return
+      newPresetError.value = "Preset name already exists";
+      return;
     }
     if (newPresetName.value.length === 0) {
-      newPresetError.value = 'Preset name cannot be empty'
-      return
+      newPresetError.value = "Preset name cannot be empty";
+      return;
     }
     if (newPresetName.value.length >= 20) {
-      newPresetError.value = "The Preset name it's too long."
-      return
+      newPresetError.value = "The Preset name it's too long.";
+      return;
     }
     const newPreset = {
       ...defaultPreset,
       id: Date.now(),
       name: newPresetName.value,
-    }
-    const newPresets = [...presets.value, newPreset]
-    presets.value = newPresets
-    setNewPreset.value = false
+    };
+    const newPresets = [...presets.value, newPreset];
+    presets.value = newPresets;
+    setNewPreset.value = false;
     const { data, error } = await supabase
-      .from('accounts')
+      .from("accounts")
       .update({ list_presets: newPresets })
-      .eq('id', account.id)
+      .eq("id", account.id)
       .select()
-      .single()
+      .single();
     if (error) {
-      newPresetError.value = 'Error creating the preset, try again later'
+      newPresetError.value = "Error creating the preset, try again later";
     } else {
-      newPresetError.value = ''
-      notify('success', `Preset ${newPresetName.value} created`)
-      presets.value = data.list_presets
-      setAccount(data)
+      newPresetError.value = "";
+      notify("success", `Preset ${newPresetName.value} created`);
+      presets.value = data.list_presets;
+      setAccount(data);
     }
-    newPresetName.value = ''
-  }
+    newPresetName.value = "";
+  };
 
   const onUpdatePreset = async () => {
     const presetIndex = presets.value.findIndex(
       (p: any) => p.name === setting.value.name,
-    )
-    const updatedPresets = presets.value
-    updatedPresets.splice(presetIndex, 1, setting.value)
+    );
+    const updatedPresets = presets.value;
+    updatedPresets.splice(presetIndex, 1, setting.value);
     const { data, error } = await supabase
-      .from('accounts')
+      .from("accounts")
       .update({ list_presets: updatedPresets })
-      .eq('id', account.id)
-      .select()
+      .eq("id", account.id)
+      .select();
 
     if (error) {
-      notify('error', 'Error updating the preset, try again later')
+      notify("error", "Error updating the preset, try again later");
     } else {
-      notify('success', 'Preset updated')
-      presets.value = data[0].list_presets
-      setAccount(data[0])
-      savePreset.value = -1
+      notify("success", "Preset updated");
+      presets.value = data[0].list_presets;
+      setAccount(data[0]);
+      savePreset.value = -1;
     }
-  }
+  };
 
   useEffect(() => {
     if (setNewPreset.value && newPresetRef.current) {
-      newPresetRef.current.focus()
+      newPresetRef.current.focus();
     }
-  }, [setNewPreset.value])
+  }, [setNewPreset.value]);
 
   useEffect(() => {
     if (editPresetName.value >= 0 && presetRefs[editPresetName.value].current) {
-      presetRefs[editPresetName.value].current.focus()
-      const range = document.createRange()
-      range.selectNodeContents(presetRefs[editPresetName.value].current)
-      const sel = window.getSelection()
+      presetRefs[editPresetName.value].current.focus();
+      const range = document.createRange();
+      range.selectNodeContents(presetRefs[editPresetName.value].current);
+      const sel = window.getSelection();
       if (sel) {
-        sel.removeAllRanges()
-        sel.addRange(range)
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
     }
-  }, [editPresetName.value])
+  }, [editPresetName.value]);
 
   useEffect(() => {
     if (account && account.list_presets) {
-      presets.value = account.list_presets
+      presets.value = account.list_presets;
     }
-    setting.value = defaultPreset
-  }, [])
+    setting.value = defaultPreset;
+  }, []);
 
   return (
     <div className="mt-5 max-h-[60vh] overflow-y-auto">
@@ -215,7 +215,7 @@ export default function AttributesConfig({
                 <li>
                   <button
                     className={`group flex-nowrap text-xl ${
-                      setting.value && setting.value.name === null && 'active'
+                      setting.value && setting.value.name === null && "active"
                     }`}
                     onClick={() => (setting.value = defaultPreset)}
                   >
@@ -251,7 +251,7 @@ export default function AttributesConfig({
                           onInput={(e: any) =>
                             (newPresetName.value = e.currentTarget.value)
                           }
-                          onKeyUp={(e) => e.key === 'Enter' && onAddPreset()}
+                          onKeyUp={(e) => e.key === "Enter" && onAddPreset()}
                         />
                         <button
                           className="text-xs text-primary"
@@ -262,8 +262,8 @@ export default function AttributesConfig({
                         <button
                           className="text-xs text-error"
                           onClick={() => {
-                            setNewPreset.value = false
-                            newPresetName.value = ''
+                            setNewPreset.value = false;
+                            newPresetName.value = "";
                           }}
                         >
                           <CloseIcon />
@@ -288,7 +288,7 @@ export default function AttributesConfig({
           </div>
         </>
       ) : (
-        ''
+        ""
       )}
       {/* <Confirm
       data={confirmDeletePreset}
@@ -296,7 +296,7 @@ export default function AttributesConfig({
       handleConfirm={onDeletePreset}
       /> */}
     </div>
-  )
+  );
 }
 
 const Preset = ({
@@ -318,16 +318,16 @@ const Preset = ({
       <li>
         <button
           className={`group flex w-full flex-nowrap items-center justify-between text-xl ${
-            preset.value?.name === p.name && 'active'
+            preset.value?.name === p.name && "active"
           } `}
           onClick={() => {
-            preset.value = p
-            savePreset.value = -1
+            preset.value = p;
+            savePreset.value = -1;
           }}
         >
           <span
             role="textbox"
-            contentEditable={editPresetName.value === i ? 'true' : 'false'}
+            contentEditable={editPresetName.value === i ? "true" : "false"}
             ref={presetRefs[i]}
             className="w-full whitespace-nowrap outline-none"
             onInput={(e: any) => (newPresetName.value = e.target.textContent)}
@@ -339,17 +339,17 @@ const Preset = ({
               <button
                 className="p-0.5 text-xs text-primary"
                 onClick={() => onRenamePreset(i)}
-                onKeyPress={(e) => e.key === 'Enter' && onRenamePreset(i)}
+                onKeyPress={(e) => e.key === "Enter" && onRenamePreset(i)}
               >
                 <CheckIcon />
               </button>
               <button
                 className="p-0.5 text-xs text-error"
                 onClick={() => {
-                  editPresetName.value = -1
-                  presetRefs[i].current.textContent = presets.value[i].name
-                  newPresetName.value = ''
-                  editPresetError.value = ''
+                  editPresetName.value = -1;
+                  presetRefs[i].current.textContent = presets.value[i].name;
+                  newPresetName.value = "";
+                  editPresetError.value = "";
                 }}
               >
                 <CloseIcon />
@@ -359,8 +359,8 @@ const Preset = ({
             <button
               className="btn btn-accent btn-xs"
               onClick={(e: any) => {
-                e.stopPropagation()
-                onUpdatePreset()
+                e.stopPropagation();
+                onUpdatePreset();
               }}
             >
               save changes
@@ -370,7 +370,7 @@ const Preset = ({
               <Button
                 onPress={(e: any) => e.stopPropagation()}
                 className={`btn btn-square btn-ghost btn-xs group-hover:visible ${
-                  true ? 'visible' : 'invisible'
+                  true ? "visible" : "invisible"
                 }`}
               >
                 <DotsIcon className="h-5 w-5" />
@@ -412,8 +412,8 @@ const Preset = ({
         </button>
       </li>
     </>
-  )
-}
+  );
+};
 
 // const Attributes = ({ preset }: any) => {
 //   return (

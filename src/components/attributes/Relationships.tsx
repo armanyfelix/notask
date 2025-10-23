@@ -1,12 +1,15 @@
-import { Signal } from '@preact/signals-react'
-
 interface Props {
-  preset: any
-  savePreset: Signal<number>
+  preset: any;
+  savePreset: number;
+  setSavePreset: (value: number) => void;
 }
 
-export default function Relationships({ preset, savePreset }: Props) {
-  const relationships = preset.value.attributes.relationships.values
+export default function Relationships({
+  preset,
+  savePreset,
+  setSavePreset,
+}: Props) {
+  const relationships = preset.attributes.relationships.values;
   return (
     <div>
       <p className="mb-10 text-sm leading-3">
@@ -21,19 +24,20 @@ export default function Relationships({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={relationships.lists}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   relationships: {
-                    ...preset.value.attributes.relationships,
+                    ...preset.attributes.relationships,
                     values: {
                       ...relationships,
                       lists: !relationships.lists,
                     },
                   },
                 },
-              }
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -44,20 +48,20 @@ export default function Relationships({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={relationships.elements}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   relationships: {
-                    ...preset.value.attributes.relationships,
+                    ...preset.attributes.relationships,
                     values: {
                       ...relationships,
                       elements: !relationships.elements,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -68,20 +72,20 @@ export default function Relationships({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={relationships.notes}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   relationships: {
-                    ...preset.value.attributes.relationships,
+                    ...preset.attributes.relationships,
                     values: {
                       ...relationships,
                       notes: !relationships.notes,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -92,20 +96,20 @@ export default function Relationships({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={relationships.whiteboards}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   relationships: {
-                    ...preset.value.attributes.relationships,
+                    ...preset.attributes.relationships,
                     values: {
                       ...relationships,
                       whiteboards: !relationships.whiteboards,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -116,20 +120,20 @@ export default function Relationships({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={relationships.dependencies}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   relationships: {
-                    ...preset.value.attributes.relationships,
+                    ...preset.attributes.relationships,
                     values: {
                       ...relationships,
                       dependencies: !relationships.dependencies,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
@@ -140,24 +144,24 @@ export default function Relationships({ preset, savePreset }: Props) {
             className="toggle toggle-secondary toggle-sm"
             checked={relationships.urls}
             onInput={() => {
-              preset.value = {
-                ...preset.value,
+              preset = {
+                ...preset,
                 attributes: {
-                  ...preset.value.attributes,
+                  ...preset.attributes,
                   relationships: {
-                    ...preset.value.attributes.relationships,
+                    ...preset.attributes.relationships,
                     values: {
                       ...relationships,
                       urls: !relationships.urls,
                     },
                   },
                 },
-              }
-              savePreset.value = preset.value.id
+              };
+              setSavePreset(preset.id);
             }}
           />
         </li>
       </ul>
     </div>
-  )
+  );
 }

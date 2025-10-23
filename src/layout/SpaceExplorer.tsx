@@ -1,159 +1,108 @@
-import TrashIcon from '../assets/svgs/trash.svg?react'
-import PlusIcon from '../assets/svgs/plus.svg?react'
-import DotsIcon from '../assets/svgs/dotsBold.svg?react'
-import AddFolderIcon from '../assets/svgs/addFolder.svg?react'
-import AddFileIcon from '../assets/svgs/addFile.svg?react'
-import AddListIcon from '../assets/svgs/addList.svg?react'
-import { signal } from '@preact/signals-react'
-import supabase from '../utils/supabase'
-import { Fragment, useEffect } from 'react'
+import TrashIcon from "../assets/svgs/trash.svg?react";
+import PlusIcon from "../assets/svgs/plus.svg?react";
+import DotsIcon from "../assets/svgs/dotsBold.svg?react";
+import AddFolderIcon from "../assets/svgs/addFolder.svg?react";
+import AddFileIcon from "../assets/svgs/addFile.svg?react";
+import AddListIcon from "../assets/svgs/addList.svg?react";
+
+import supabase from "../utils/supabase";
+import { Fragment, useEffect, useState } from "react";
 import {
   Button,
   Menu,
   MenuItem,
   MenuTrigger,
   Popover,
-} from 'react-aria-components'
-import CreateFolderModal from '../components/CreateFolderModal'
-import CreateListModal from '../components/CreateListModal'
-import { Link } from 'react-router-dom'
+} from "react-aria-components";
+import CreateFolderModal from "../components/CreateFolderModal";
+import CreateListModal from "../components/CreateListModal";
+import { Link } from "react-router-dom";
 
 interface Props {
-  space: any
-  account: any
-  setAccount: any
+  space: any;
+  account: any;
+  setAccount: any;
 }
 
 type Element = {
-  id: number
-  name: string
-  folder: number
-  space: number
-  type: 'list' | 'note' | 'folder'
-}
-
-// const example = [
-//   {
-//     type: 'folder',
-//     name: 'folder 1',
-//     id: 1,
-//     content: [],
-//   },
-//   {
-//     type: 'list',
-//     name: 'list 1',
-//     id: 2,
-//   },
-//   {
-//     type: 'folder',
-//     name: 'folder 2',
-//     content: [
-//       {
-//         type: 'note',
-//         name: 'note 1',
-//         id: 4,
-//       },
-//       {
-//         type: 'list',
-//         name: 'list in folder 1',
-//         id: 3,
-//       },
-//     ],
-//   },
-//   {
-//     type: 'folder',
-//     name: 'folder 3',
-//     content: [
-//       {
-//         type: 'list',
-//         name: 'lis in folder 2',
-//         id: 5,
-//       },
-//       {
-//         type: 'folder',
-//         name: 'folder in folder 1',
-//         id: 6,
-//         content: [
-//           {
-//             type: 'folder',
-//             name: 'folder in folder in folder',
-//             id: 7,
-//           },
-//           {
-//             type: 'note',
-//             name: 'note in folder in folder',
-//             id: 8,
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     type: 'note',
-//     name: 'note 5',
-//     id: 9,
-//   },
-//   {
-//     type: 'folder',
-//     name: 'folder 4',
-//     content: [],
-//   },
-// ]
-
-const openCreateFolder = signal<boolean>(false)
-const openCreateList = signal<boolean>(false)
-const loading = signal<boolean>(false)
-const parent = signal<any>(null)
-const elements = signal<any>(null)
+  id: number;
+  name: string;
+  folder: number;
+  space: number;
+  type: "list" | "note" | "folder";
+};
 
 export default function SpaceExplorer({ space, account, setAccount }: Props) {
+  const [openCreateFolder, setOpenCreateFolder] = useState<boolean>(false);
+  const [openCreateList, setOpenCreateList] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [parent, setParent] = useState<any>(null);
+  const [elements, setElements] = useState<any>(null);
   async function getData() {
-    console.log('20milli')
-    loading.value = true
+    console.log("20milli");
+    setLoading(true);
     const { data, error }: { data: any; error: any } = await supabase
-      .from('space_data')
-      .select('*')
-      .eq('space', space.value.id)
+      .from("space_data")
+      .select("*")
+      .eq("space", space.id);
 
-    console.log('data :>> ', data)
-    console.log('error :>> ', error);
+    console.log("data :>> ", data);
+    console.log("error :>> ", error);
     if (data) {
-      elements.value = data
+      setElements(data);
     }
 
-    loading.value = false
+    setLoading(false);
   }
 
   useEffect(() => {
-    console.log('space :>> ', space.value);
-    getData()
-  }, [space.value])
+    console.log("space :>> ", space);
+    getData();
+  }, [space]);
 
   return (
     <>
-      <Header space={space} />
-      <ElementsTree space={space} />
+      <Header
+        space={space}
+        setOpenCreateFolder={setOpenCreateFolder}
+        setParent={setParent}
+        setOpenCreateList={setOpenCreateList}
+      />
+      <ElementsTree
+        space={space}
+        elements={elements}
+        setOpenCreateList={setOpenCreateList}
+        setParent={setParent}
+        setOpenCreateFolder={setOpenCreateFolder}
+      />
       <CreateFolderModal
         open={openCreateFolder}
+        setOpen={setOpenCreateFolder}
         parent={parent}
         account={account}
         getData={getData}
       />
       <CreateListModal
         open={openCreateList}
+        setOpen={setOpenCreateList}
         parent={parent}
         account={account}
         setAccount={setAccount}
         getData={getData}
       />
     </>
-  )
+  );
 }
 
-const Header = ({ space }: any) => {
+const Header = ({
+  space,
+  setOpenCreateFolder,
+  setParent,
+  setOpenCreateList,
+}: any) => {
   return (
     <header className="group z-0 flex items-center justify-between px-4">
-      <h3 className="text-xl font-bold capitalize">{space.value.name}</h3>
+      <h3 className="text-xl font-bold capitalize">{space.name}</h3>
       <div className="inline-flex">
         <MenuTrigger>
           <Button
@@ -166,11 +115,11 @@ const Header = ({ space }: any) => {
             <Menu className="dialog menu menu-sm">
               <MenuItem
                 onAction={() => {
-                  openCreateFolder.value = true
-                  parent.value = {
-                    type: 'space',
-                    id: space.value.id,
-                  }
+                  setOpenCreateFolder(true);
+                  setParent({
+                    type: "space",
+                    id: space.id,
+                  });
                 }}
               >
                 <li>
@@ -182,11 +131,11 @@ const Header = ({ space }: any) => {
               </MenuItem>
               <MenuItem
                 onAction={() => {
-                  openCreateList.value = true
-                  parent.value = {
-                    type: 'space',
-                    id: space.value.id,
-                  }
+                  setOpenCreateList(true);
+                  setParent({
+                    type: "space",
+                    id: space.id,
+                  });
                 }}
               >
                 <li>
@@ -223,42 +172,60 @@ const Header = ({ space }: any) => {
         </MenuTrigger>
       </div>
     </header>
-  )
-}
+  );
+};
 
-const ElementsTree = ({ space }: any) => {
-  // loading.value ? (
-  //   <div className="mt-5 space-y-3 px-3">
-  //     <div className="skeleton h-4 w-28"></div>
-  //     <div className="skeleton h-4 w-44"></div>
-  //     <div className="skeleton h-4 w-36"></div>
-  //   </div>
-  // ) :
-  return  (
+const ElementsTree = ({
+  space,
+  elements,
+  setOpenCreateList,
+  setParent,
+  setOpenCreateFolder,
+}: any) => {
+  return (
     <ul className="menu menu-xs [&>li>details>summary]:after:hidden">
-      {elements.value ? (
-        elements.value.map((e: Element, i: number) => (
+      {elements ? (
+        elements.map((e: Element, i: number) => (
           <div key={i}>
-            {e.type === 'list' && !e.folder && <List e={e} />}
-            {e.type === 'note' && !e.folder && <Notes e={e} />}
-            {e.type === 'folder' && !e.folder && (
-              <Folder id={e.id} name={e.name} />
+            {e.type === "list" && !e.folder && (
+              <List
+                e={e}
+                setOpenCreateFolder={setOpenCreateFolder}
+                setParent={setParent}
+                setOpenCreateList={setOpenCreateList}
+              />
+            )}
+            {e.type === "note" && !e.folder && (
+              <Notes
+                e={e}
+                setOpenCreateFolder={setOpenCreateFolder}
+                setParent={setParent}
+                setOpenCreateList={setOpenCreateList}
+              />
+            )}
+            {e.type === "folder" && !e.folder && (
+              <Folder
+                id={e.id}
+                name={e.name}
+                setOpenCreateFolder={setOpenCreateFolder}
+                setOpenCreateList={setOpenCreateList}
+                elements={elements}
+              />
             )}
           </div>
         ))
-      )
-      : (
+      ) : (
         <div>
           <ul className="menu w-full">
             <li>
               <button
                 className="whitespace-nowrap"
                 onClick={() => {
-                  openCreateList.value = true
-                  parent.value = {
-                    type: 'space',
-                    id: space.value.id,
-                  }
+                  setOpenCreateList(true);
+                  setParent({
+                    type: "space",
+                    id: space.id,
+                  });
                 }}
               >
                 <AddFolderIcon />
@@ -275,11 +242,11 @@ const ElementsTree = ({ space }: any) => {
               <button
                 className="whitespace-nowrap"
                 onClick={() => {
-                  openCreateList.value = true
-                  parent.value = {
-                    type: 'space',
-                    id: space.value.id,
-                  }
+                  setOpenCreateList(true);
+                  setParent({
+                    type: "space",
+                    id: space.id,
+                  });
                 }}
               >
                 <AddListIcon />
@@ -288,13 +255,19 @@ const ElementsTree = ({ space }: any) => {
             </li>
           </ul>
         </div>
-      )
-      }
+      )}
     </ul>
-  )
-}
+  );
+};
 
-const Folder = ({ id, name }: { id: number; name: string }) => {
+const Folder = ({
+  id,
+  name,
+  setOpenCreateFolder,
+  setOpenCreateList,
+  elements,
+  setParent,
+}: any) => {
   return (
     <li>
       <details>
@@ -316,11 +289,7 @@ const Folder = ({ id, name }: { id: number; name: string }) => {
                     <button
                       className="whitespace-nowrap"
                       onClick={() => {
-                        openCreateFolder.value = true
-                        // parent.value = {
-                        //   type: 'folder',
-                        //   id: e.id,
-                        // }
+                        setOpenCreateFolder(true);
                       }}
                     >
                       <AddFolderIcon className="h-5 w-5" />
@@ -341,13 +310,7 @@ const Folder = ({ id, name }: { id: number; name: string }) => {
                     <button
                       className="whitespace-nowrap"
                       onClick={() => {
-                        openCreateList.value = true
-                        // if (e.type === 'folder') {
-                        //   parent.value = {
-                        //     type: 'folder',
-                        //     id: e.id,
-                        //   }
-                        // }
+                        setOpenCreateList(true);
                       }}
                     >
                       <AddListIcon className="h-5 w-5" />
@@ -360,23 +323,50 @@ const Folder = ({ id, name }: { id: number; name: string }) => {
           </MenuTrigger>
         </summary>
         <ul className="[&>li>details>summary]:after:hidden">
-          {elements.value?.map(
+          {elements?.map(
             (e: Element, i: number) =>
               e.folder === id && (
                 <Fragment key={i}>
-                  {e.type === 'list' && <List e={e} />}
-                  {e.type === 'note' && <Notes e={e} />}
-                  {e.type === 'folder' && <Folder id={e.id} name={e.name} />}
+                  {e.type === "list" && (
+                    <List
+                      e={e}
+                      setOpenCreateFolder={setOpenCreateFolder}
+                      setParent={setParent}
+                      setOpenCreateList={setOpenCreateList}
+                    />
+                  )}
+                  {e.type === "note" && (
+                    <Notes
+                      e={e}
+                      setOpenCreateFolder={setOpenCreateFolder}
+                      setParent={setParent}
+                      setOpenCreateList={setOpenCreateList}
+                    />
+                  )}
+                  {e.type === "folder" && (
+                    <Folder
+                      id={e.id}
+                      name={e.name}
+                      setOpenCreateFolder={setOpenCreateFolder}
+                      setOpenCreateList={setOpenCreateList}
+                      elements={elements}
+                    />
+                  )}
                 </Fragment>
               ),
           )}
         </ul>
       </details>
     </li>
-  )
-}
+  );
+};
 
-const List = ({ e }: { e: Element }) => {
+const List = ({
+  e,
+  setOpenCreateFolder,
+  setParent,
+  setOpenCreateList,
+}: any) => {
   return (
     <li>
       <Link to={`/list/${e.id}`} className="group pr-1">
@@ -394,11 +384,11 @@ const List = ({ e }: { e: Element }) => {
                     <button
                       className="whitespace-nowrap"
                       onClick={() => {
-                        openCreateFolder.value = true
-                        parent.value = {
-                          type: 'folder',
+                        setOpenCreateFolder(true);
+                        setParent({
+                          type: "folder",
                           id: e.id,
-                        }
+                        });
                       }}
                     >
                       <AddFolderIcon className="h-5 w-5" />
@@ -419,12 +409,12 @@ const List = ({ e }: { e: Element }) => {
                     <button
                       className="whitespace-nowrap"
                       onClick={() => {
-                        openCreateList.value = true
-                        if (e.type === 'folder') {
-                          parent.value = {
-                            type: 'folder',
+                        setOpenCreateList(true);
+                        if (e.type === "folder") {
+                          setParent({
+                            type: "folder",
                             id: e.id,
-                          }
+                          });
                         }
                       }}
                     >
@@ -447,11 +437,11 @@ const List = ({ e }: { e: Element }) => {
                     <button
                       className="whitespace-nowrap"
                       onClick={() => {
-                        openCreateFolder.value = true
-                        parent.value = {
-                          type: 'folder',
+                        setOpenCreateFolder(true);
+                        setParent({
+                          type: "folder",
                           id: e.id,
-                        }
+                        });
                       }}
                     >
                       <AddFolderIcon className="h-5 w-5" />
@@ -472,12 +462,12 @@ const List = ({ e }: { e: Element }) => {
                     <button
                       className="whitespace-nowrap"
                       onClick={() => {
-                        openCreateList.value = true
-                        if (e.type === 'folder') {
-                          parent.value = {
-                            type: 'folder',
+                        setOpenCreateList(true);
+                        if (e.type === "folder") {
+                          setParent({
+                            type: "folder",
                             id: e.id,
-                          }
+                          });
                         }
                       }}
                     >
@@ -492,10 +482,15 @@ const List = ({ e }: { e: Element }) => {
         </div>
       </Link>
     </li>
-  )
-}
+  );
+};
 
-const Notes = ({ e }: { e: Element }) => {
+const Notes = ({
+  e,
+  setOpenCreateFolder,
+  setParent,
+  setOpenCreateList,
+}: any) => {
   return (
     <li>
       <Link to={`/notes/${e.id}`} className="group pr-1">
@@ -512,11 +507,11 @@ const Notes = ({ e }: { e: Element }) => {
                   <button
                     className="whitespace-nowrap"
                     onClick={() => {
-                      openCreateFolder.value = true
-                      parent.value = {
-                        type: 'folder',
+                      setOpenCreateFolder(true);
+                      setParent({
+                        type: "folder",
                         id: e.id,
-                      }
+                      });
                     }}
                   >
                     <AddFolderIcon className="h-5 w-5" />
@@ -537,12 +532,12 @@ const Notes = ({ e }: { e: Element }) => {
                   <button
                     className="whitespace-nowrap"
                     onClick={() => {
-                      openCreateList.value = true
-                      if (e.type === 'folder') {
-                        parent.value = {
-                          type: 'folder',
+                      setOpenCreateList(true);
+                      if (e.type === "folder") {
+                        setParent({
+                          type: "folder",
                           id: e.id,
-                        }
+                        });
                       }
                     }}
                   >
@@ -556,5 +551,5 @@ const Notes = ({ e }: { e: Element }) => {
         </MenuTrigger>
       </Link>
     </li>
-  )
-}
+  );
+};

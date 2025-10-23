@@ -1,15 +1,14 @@
-import { useEffect } from 'react'
-import { signal } from '@preact/signals-react'
-import DotsIcon from '../../assets/svgs/dots.svg?react'
-import ShareIcon from '../../assets/svgs/share.svg?react'
-import StarIcon from '../../assets/svgs/star.svg?react'
-import StarSolidIcon from '../../assets/svgs/starSolid.svg?react'
-import { Suspense } from 'react'
-import ItemView from '../../views/ItemView'
-import { useParams } from 'react-router-dom'
-import supabase from '../../utils/supabase'
-import TableView from '../../views/TableView'
-import { useAccountStore } from '../../utils/zustand'
+import { useEffect, useState } from "react";
+import DotsIcon from "../../assets/svgs/dots.svg?react";
+import ShareIcon from "../../assets/svgs/share.svg?react";
+import StarIcon from "../../assets/svgs/star.svg?react";
+import StarSolidIcon from "../../assets/svgs/starSolid.svg?react";
+import { Suspense } from "react";
+import ItemView from "../../views/ItemView";
+import { useParams } from "react-router-dom";
+import supabase from "../../utils/supabase";
+import TableView from "../../views/TableView";
+import { useAccountStore } from "../../utils/zustand";
 import {
   Button,
   Dialog,
@@ -28,182 +27,187 @@ import {
   SelectValue,
   Switch,
   Text,
-} from 'react-aria-components'
-import CreateItemModal from '@/components/CreateItemModal'
-import { Icon } from '@iconify-icon/react/dist/iconify.mjs'
+} from "react-aria-components";
+import CreateItemModal from "@/components/CreateItemModal";
+import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 
-const list = signal<any>(null)
-const items = signal<any>([])
-const pinItemView = signal<boolean>(false)
-const item = signal<any>(null)
-const settings = signal<any>(null)
-const preferences = signal<any>(null)
-const parents = signal<any>([])
-const space = signal<any>(null)
-const listSettingsOpen = signal<boolean>(false)
-const groupBy = ['None', 'Status', 'Priority', 'Member', 'Tag', 'Date']
+const groupBy = ["None", "Status", "Priority", "Member", "Tag", "Date"];
 export default function List() {
-  const { id } = useParams()
-  const { account, setAccount } = useAccountStore((s) => s)
+  const [list, setList] = useState<any>(null);
+  const [items, setItems] = useState<any>([]);
+  const [pinItemView, setPinItemView] = useState<boolean>(false);
+  const [item, setItem] = useState<any>(null);
+  const [settings, setSettings] = useState<any>(null);
+  const [preferences, setPreferences] = useState<any>(null);
+  const [parents, setParents] = useState<any>([]);
+  const [space, setSpace] = useState<any>(null);
+  const [listSettingsOpen, setListSettingsOpen] = useState<boolean>(false);
+
+  const { id } = useParams();
+  const { account, setAccount } = useAccountStore((s) => s);
   // const submitInputRef = useRef<any>()
 
   const handlePinView = () => {
-    pinItemView.value = !pinItemView.value
-  }
+    setPinItemView(!pinItemView);
+  };
   const handleGroupBy = (g: string) => {
     const newPreferences = {
-      ...preferences.value,
+      ...preferences,
       group_by: g,
-    }
-    localStorage.setItem(String(id), JSON.stringify(newPreferences))
-    preferences.value = newPreferences
-  }
+    };
+    localStorage.setItem(String(id), JSON.stringify(newPreferences));
+    setPreferences(newPreferences);
+  };
   const changeView = (v: string) => {
     const newPreferences = {
-      ...preferences.value,
+      ...preferences,
       view: v,
-    }
-    localStorage.setItem(String(id), JSON.stringify(newPreferences))
-    preferences.value = newPreferences
-  }
+    };
+    localStorage.setItem(String(id), JSON.stringify(newPreferences));
+    setPreferences(newPreferences);
+  };
   const showClosed = () => {
     const newPreferences = {
-      ...preferences.value,
-      show_closed: !preferences.value?.show_closed,
-    }
-    localStorage.setItem(String(id), JSON.stringify(newPreferences))
-    preferences.value = newPreferences
-  }
+      ...preferences,
+      show_closed: !preferences?.show_closed,
+    };
+    localStorage.setItem(String(id), JSON.stringify(newPreferences));
+    setPreferences(newPreferences);
+  };
   const showDetails = () => {
     const newPreferences = {
-      ...preferences.value,
-      show_details: !preferences.value?.show_details || false,
-    }
-    localStorage.setItem(String(id), JSON.stringify(newPreferences))
-    preferences.value = newPreferences
-  }
+      ...preferences,
+      show_details: !preferences?.show_details || false,
+    };
+    localStorage.setItem(String(id), JSON.stringify(newPreferences));
+    setPreferences(newPreferences);
+  };
   const addToFavorite = async () => {
     // try {
     //   const { data, error } = await supabase
     //     .from('lists')
-    //     .update([{ favorite: !list.value?.favorite }])
+    //     .update([{ favorite: !list?.favorite }])
     //     .eq('id', id)
     //     .select()
     //     .single()
     //   if (!error) {
-    //     list.value = data
+    //     setList(data)
     //   } else {
     //     console.log(error)
     //   }
     // } catch (error) {
     //   console.log(error)
     // }
-  }
+  };
 
   const getParents = async (id: number) => {
     const { data } = await supabase
-      .from('folders')
-      .select('name, folder')
-      .eq('id', id)
-      .single()
+      .from("folders")
+      .select("name, folder")
+      .eq("id", id)
+      .single();
     if (data) {
-      parents.value = [...parents.value, data.name]
+      setParents([...parents, data.name]);
       if (data.folder) {
-        getParents(data.folder)
+        getParents(data.folder);
       }
     }
-  }
+  };
 
   const getSpace = async (id: number) => {
     const { data } = await supabase
-      .from('spaces')
-      .select('id, name')
-      .eq('id', id)
-      .single()
+      .from("spaces")
+      .select("id, name")
+      .eq("id", id)
+      .single();
     if (data) {
-      space.value = data
+      setSpace(data);
     }
-  }
+  };
   const getList = async () => {
     if (id) {
       try {
         const { data, error } = await supabase
-          .from('lists')
-          .select('*')
-          .eq('id', Number(id))
-          .single()
+          .from("lists")
+          .select("*")
+          .eq("id", Number(id))
+          .single();
         if (data) {
-          list.value = data
-          settings.value = data.settings
+          setList(data);
+          setSettings(data.settings);
           if (data.folder) {
-            getParents(data.folder)
+            getParents(data.folder);
           }
           if (data.space) {
-            getSpace(data.space)
+            getSpace(data.space);
           }
         } else {
-          console.log(error)
+          console.log(error);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
-  }
+  };
 
   const getItems = async () => {
     if (id) {
       try {
         const { data, error }: any = await supabase
-          .from('items')
-          .select('*')
-          .eq('list', Number(id))
+          .from("items")
+          .select("*")
+          .eq("list", Number(id));
         if (data) {
-          items.value = data
+          setItems(data);
         } else {
-          console.log(error)
+          console.log(error);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
-  }
+  };
 
   const onDeleteItem = async () => {
     try {
-      getItems()
+      getItems();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const selectItem = (i: any) => {
-    item.value = items.value[i]
+    setItem(items[i]);
     // openItemModal.value = true
-  }
+  };
 
   useEffect(() => {
     if (id) {
-      parents.value = []
-      getItems()
-      getList()
-      const view_settings = localStorage.getItem(String(id))
+      setParents([]);
+      getItems();
+      getList();
+      const view_settings = localStorage.getItem(String(id));
       if (view_settings) {
-        preferences.value = JSON.parse(view_settings)
+        setPreferences(JSON.parse(view_settings));
       }
     }
-  }, [id])
+  }, [id]);
 
   return (
     <div className="inline-flex h-[94vh] w-full rounded-box bg-base-100">
       <div className="relative w-full overflow-y-auto pb-32">
         <Navbar
-          changeView={changeView}
           addToFavorite={addToFavorite}
           account={account}
           setAccount={setAccount}
+          list={list}
+          space={space}
+          parents={parents}
+          listSettingsOpen={listSettingsOpen}
+          setListSettingsOpen={setListSettingsOpen}
         />
         <div className="mx-auto border-2 border-base-200/40 p-3 shadow-md">
-          <Options getItems={getItems} />
+          <Options getItems={getItems} list={list} space={space} />
           {/* <AddItemBar
             onAddItem={onAddItem}
             submitInputRef={submitInputRef}
@@ -219,50 +223,46 @@ export default function List() {
           </Suspense>
         </div>
       </div>
-      {item.value && !pinItemView.value ? (
+      {item && !pinItemView ? (
         <section className="border-l border-base-200/50">
           <ItemView
             // settings={settings}
             item={item}
+            setItem={setItem}
             pinItemView={pinItemView}
             handlePinView={handlePinView}
             onDeleteItem={onDeleteItem}
           />
         </section>
       ) : (
-        ''
+        ""
       )}
-      {/* <Modal
-        isOpen={openItemModal.value}
-        onOpenChange={() => (openItemModal.value = false)}
-      >
-        <Dialog className="bg-neutral/70 shadow-xl backdrop-blur-lg">
-          <ItemView
-            settings={settings}
-            item={item}
-            pinItemView={pinItemView}
-            handlePinView={handlePinView}
-            onDeleteItem={onDeleteItem}
-          />
-        </Dialog>
-      </Modal> */}
     </div>
-  )
+  );
 }
 
-const Navbar = ({ changeView, addToFavorite }: any) => {
+const Navbar = ({
+  addToFavorite,
+  list,
+  space,
+  parents,
+  listSettingsOpen,
+  setListSettingsOpen,
+}: any) => {
   return (
     <header className="flex flex-wrap items-center justify-between px-4 py-1">
       <div className="breadcrumbs text-sm">
         <ul>
-          {space.value && <li className="capitalize">{space.value.name}</li>}
-          {parents.value?.map((f: string, i: number) => <li key={i}>{f}</li>)}
-          {!list.value ? (
+          {space && <li className="capitalize">{space.name}</li>}
+          {parents?.map((f: string, i: number) => (
+            <li key={i}>{f}</li>
+          ))}
+          {!list ? (
             <li>
               <div className="skeleton h-4 w-20"></div>
             </li>
           ) : (
-            <li>{list.value?.name}</li>
+            <li>{list?.name}</li>
           )}
         </ul>
       </div>
@@ -286,7 +286,7 @@ const Navbar = ({ changeView, addToFavorite }: any) => {
               className="btn btn-square btn-sm mr-2"
               onPress={() => addToFavorite()}
             >
-              {list.value?.favorite ? (
+              {list?.favorite ? (
                 <StarSolidIcon className="h-5 w-5 text-yellow-600" />
               ) : (
                 <StarIcon className="h-5 w-5" />
@@ -320,9 +320,7 @@ const Navbar = ({ changeView, addToFavorite }: any) => {
                     <li>
                       <button
                         className="text-nowrap"
-                        onClick={() =>
-                          (listSettingsOpen.value = !listSettingsOpen.value)
-                        }
+                        onClick={() => setListSettingsOpen(!listSettingsOpen)}
                       >
                         <span className="icon-[solar--settings-line-duotone]"></span>
                         Settings
@@ -367,35 +365,11 @@ const Navbar = ({ changeView, addToFavorite }: any) => {
           </li>
         </ul>
       </div>
-      {/* <Dialog
-        open={listSettingsOpen.value}
-        onClose={() => (listSettingsOpen.value = false)}
-      >
-        <div
-          className="fixed inset-0 bg-base-100/90 backdrop-opacity-90"
-          aria-hidden="true"
-        />
-        <Dialog.Panel className="card fixed inset-x-2 inset-y-36 z-50 mx-auto h-min max-h-[85vh] w-fit bg-base-300/70 font-futura backdrop-blur-xl sm:inset-x-20 md:inset-20">
-          <div className="card-body">
-            <div className="card-title text-3xl">List Settings</div>
-            <AttributesConfig
-              setting={settings}
-              presets={presets}
-              account={account}
-              setAccount={setAccount}
-            />
-            <div className="card-actions justify-end">
-              <button className="btn btn-outline btn-error">cancel</button>
-              <button className="btn btn-primary">save changes</button>
-            </div>
-          </div>
-        </Dialog.Panel>
-      </Dialog> */}
     </header>
-  )
-}
+  );
+};
 
-const Options = ({ getItems }: any) => {
+const Options = ({ getItems, list, space }: any) => {
   return (
     <div className="flex items-center justify-between">
       <ul className="flex items-center space-x-2">
@@ -433,7 +407,7 @@ const Options = ({ getItems }: any) => {
         </li>
         {/* <li>
           <button onClick={() => showClosed()}>
-            {preferences.value?.show_closed ? 'Show' : 'Hide'} closed
+            {preferences?.show_closed ? 'Show' : 'Hide'} closed
           </button>
         </li> */}
       </ul>
@@ -441,41 +415,8 @@ const Options = ({ getItems }: any) => {
         <CreateItemModal list={list} space={space} getItems={getItems} />
       </div>
     </div>
-  )
-}
-// const AddItemBar = ({ onAddItem, submitInputRef }: any) => {
-//   return (
-//     <form onSubmit={onAddItem} className="form-control my-10">
-//       <div className="group absolute bottom-0 right-1/2 z-50 translate-x-1/2 scale-125 rounded-box bg-base-300/60 shadow focus-within:shadow-inner">
-//         <div className="input flex w-full items-center bg-transparent !outline-none">
-//           <input
-//             type="text"
-//             name="name"
-//             className="h-ful w-full bg-transparent text-2xl placeholder:font-serif placeholder:text-2xl"
-//             placeholder="New task"
-//             // autocomplete="off"
-//             ref={submitInputRef}
-//             value={newItem.value}
-//             // onInput={(e: ChangeEvent<HTMLInputItem>) =>
-//             //   (newItem.value = (e.target as HTMLInputItem).value)
-//             // }
-//           />
-//           <div className="mr-4 hidden items-center group-focus-within:flex">
-//             {/* <DatePicker btnStyles="btn btn-square btn-neutral btn-sm" />
-//             <PriorityMenu
-//               btnStyles="btn btn-square btn-neutral btn-sm ml-2"
-//               position="right-0 top-5"
-//             /> */}
-//             <button type="submit" className="btn btn-primary btn-sm ml-2 leading-4">
-//               Save
-//               {/* <EnterIcon className="h-4 w-4" /> */}
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </form>
-//   )
-// }
+  );
+};
 
 const DisplayPopover = () => {
   return (
@@ -514,7 +455,7 @@ const DisplayPopover = () => {
               <Button className="select select-xs bg-neutral text-neutral-content">
                 <SelectValue className="pl-3">
                   {({ defaultChildren, isPlaceholder }) => {
-                    return isPlaceholder ? <b>Status</b> : defaultChildren
+                    return isPlaceholder ? <b>Status</b> : defaultChildren;
                   }}
                 </SelectValue>
               </Button>
@@ -550,7 +491,7 @@ const DisplayPopover = () => {
                 <Button className="select btn-xs select-xs bg-neutral text-neutral-content">
                   <SelectValue className="pl-3">
                     {({ defaultChildren, isPlaceholder }) => {
-                      return isPlaceholder ? <b>Priority</b> : defaultChildren
+                      return isPlaceholder ? <b>Priority</b> : defaultChildren;
                     }}
                   </SelectValue>
                 </Button>
@@ -594,7 +535,7 @@ const DisplayPopover = () => {
                       </>
                     ) : (
                       defaultChildren
-                    )
+                    );
                   }}
                 </SelectValue>
               </Button>
@@ -630,12 +571,12 @@ const DisplayPopover = () => {
           </div>
           <div>Display properties</div>
           <div>
-            {['Priority', 'ID', 'Status', 'Labels'].map((colum) => (
+            {["Priority", "ID", "Status", "Labels"].map((colum) => (
               <Button className="btn btn-sm">{colum}</Button>
             ))}
           </div>
         </Dialog>
       </Popover>
     </DialogTrigger>
-  )
-}
+  );
+};

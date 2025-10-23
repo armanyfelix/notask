@@ -9,39 +9,40 @@ import {
   Popover,
   TextArea,
   TextField,
-} from 'react-aria-components'
-import PlusIcon from '@/assets/svgs/plus.svg?react'
-import supabase from '@/utils/supabase'
-import { signal } from '@preact/signals-react'
+} from "react-aria-components";
+import PlusIcon from "@/assets/svgs/plus.svg?react";
+import supabase from "@/utils/supabase";
+import { useState } from "react";
 
-const loading = signal<boolean>(false)
 export default function CreateItemModal({ list, space, getItems }: any) {
+  const [loading, setLoading] = useState<boolean>(false);
   const onSubmit = async (e: any, close: any) => {
-    e.preventDefault()
-    loading.value = true
-    let values = Object.fromEntries(new FormData(e.currentTarget))
-    console.log('values :>> ', values)
+    e.preventDefault();
+    setLoading(true);
+    let values = Object.fromEntries(new FormData(e.currentTarget));
+    console.log("values :>> ", values);
 
     const { data, error } = await supabase
-      .from('items')
-      .insert([{
-        ...values,
-        list: list.value.id,
-        space: space.value.id,
-
-      }])
+      .from("items")
+      .insert([
+        {
+          ...values,
+          list: list.value.id,
+          space: space.value.id,
+        },
+      ])
       .select()
-      .single()
+      .single();
     if (data) {
-      console.log('data :>> ', data)
-      close()
-      getItems()
+      console.log("data :>> ", data);
+      close();
+      getItems();
     }
     if (error) {
-      console.log(error)
+      console.log(error);
     }
-    loading.value = false
-  }
+    setLoading(false);
+  };
   return (
     <DialogTrigger>
       <Button className="btn btn-square btn-sm">
@@ -96,10 +97,10 @@ export default function CreateItemModal({ list, space, getItems }: any) {
                   Cancel
                 </Button>
                 <Button type="submit" className="btn btn-secondary">
-                  {loading.value ? (
+                  {loading ? (
                     <span className="loading loading-dots"></span>
                   ) : (
-                    'Save'
+                    "Save"
                   )}
                 </Button>
               </div>
@@ -108,7 +109,7 @@ export default function CreateItemModal({ list, space, getItems }: any) {
         </Dialog>
       </Modal>
     </DialogTrigger>
-  )
+  );
 }
 
 function LocationSelect() {
@@ -128,5 +129,5 @@ function LocationSelect() {
         </Dialog>
       </Popover>
     </DialogTrigger>
-  )
+  );
 }

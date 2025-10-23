@@ -1,25 +1,22 @@
-import supabase from '../../utils/supabase'
-import { z } from 'zod'
-import { Link, useParams } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { signal } from '@preact/signals-react'
+import supabase from "../../utils/supabase";
+import { z } from "zod";
+import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 const schema = z
   .object({
     password: z.string().min(8),
   })
-  .required()
-type Inputs = z.infer<typeof schema>
-
-const submit = signal<any>({})
-const toggleSeePassword = signal<boolean>(false)
+  .required();
+type Inputs = z.infer<typeof schema>;
 
 export default function ResetPassword() {
-  const { code, token } = useParams()
+  // const { code, token } = useParams()
 
-  console.log('code :>> ', code)
-  console.log('token :>> ', token)
+  const [submit, setSubmit] = useState<any>({});
+  const [toggleSeePassword, setToggleSeePassword] = useState<boolean>(false);
 
   const {
     register,
@@ -27,7 +24,7 @@ export default function ResetPassword() {
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
-  })
+  });
 
   const onSubmit = async (values: Inputs) => {
     try {
@@ -36,20 +33,26 @@ export default function ResetPassword() {
         {
           redirectTo: `${import.meta.env.url}/password/reset`,
         },
-      )
+      );
       if (error) {
-        submit.value.error = error.message
+        setSubmit({
+          ...submit,
+          error: error.message,
+        });
       } else {
-        submit.value.success = true
+        setSubmit({
+          ...submit,
+          success: true,
+        });
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   return (
-    <section className="h-screen bg-gradient-to-tl from-secondary/10 to-accent/10">
-      {submit.value.success ? (
+    <section className="h-screen bg-linear-to-tl from-secondary/10 to-accent/10">
+      {submit.success ? (
         <div className="relative top-1/2 flex -translate-y-1/2 flex-col space-y-5 p-5 text-center">
           <h1 className="font-mono text-4xl font-bold tracking-tighter text-primary">
             Email Verification
@@ -74,16 +77,18 @@ export default function ResetPassword() {
             >
               <div>
                 <label
-                  className={`input input-bordered flex items-center pl-3 ${errors.password && 'border-error'}`}
+                  className={`input input-bordered flex items-center pl-3 ${
+                    errors.password && "border-error"
+                  }`}
                 >
                   <span className="icon-[solar--key-minimalistic-bold-duotone] h-6 w-6"></span>
                   <input
                     className="ml-3 grow"
                     placeholder="New password"
-                    {...register('password', {
-                      required: 'Password is required',
+                    {...register("password", {
+                      required: "Password is required",
                     })}
-                    aria-invalid={errors.password ? 'true' : 'false'}
+                    aria-invalid={errors.password ? "true" : "false"}
                   />
                 </label>
                 {errors.password && (
@@ -94,24 +99,24 @@ export default function ResetPassword() {
               </div>
               <div>
                 <label
-                  className={`input input-bordered flex items-center pl-3 ${errors.password && 'border-error'}`}
+                  className={`input input-bordered flex items-center pl-3 ${
+                    errors.password && "border-error"
+                  }`}
                 >
                   <span className="icon-[solar--key-minimalistic-bold-duotone] h-6 w-6"></span>
                   <input
-                    type={toggleSeePassword.value ? 'text' : 'password'}
+                    type={toggleSeePassword ? "text" : "password"}
                     className="ml-3 grow"
                     placeholder="Confirm new password"
-                    {...register('password', {
-                      required: 'Password  confirmation is required',
+                    {...register("password", {
+                      required: "Password  confirmation is required",
                     })}
-                    aria-invalid={errors.password ? 'true' : 'false'}
+                    aria-invalid={errors.password ? "true" : "false"}
                   />
                   <label className="swap">
                     <input
                       type="checkbox"
-                      onClick={() =>
-                        (toggleSeePassword.value = !toggleSeePassword.value)
-                      }
+                      onClick={() => setToggleSeePassword(!toggleSeePassword)}
                     />
                     <span className="swap-on icon-[solar--eye-closed-linear]"></span>
                     <span className="swap-off icon-[solar--eye-linear]"></span>
@@ -124,16 +129,16 @@ export default function ResetPassword() {
                 )}
               </div>
               <p className="text-center text-sm font-semibold text-error">
-                {submit.value.error && submit.value.error}
+                {submit.error && submit.error}
               </p>
               <button
                 type="submit"
                 className="btn btn-primary shadow-lg shadow-primary/50"
               >
-                {submit.value.pending ? (
+                {submit.pending ? (
                   <span className="loading loading-dots"></span>
                 ) : (
-                  'send mail'
+                  "send mail"
                 )}
               </button>
               <p className="inline-flex justify-center pt-2 text-sm">
@@ -150,5 +155,5 @@ export default function ResetPassword() {
         </div>
       )}
     </section>
-  )
+  );
 }

@@ -1,33 +1,33 @@
-import { signal } from '@preact/signals-react'
 // import Logo from '../../assets/svgs/logo.svg?react'
-import supabase from '../../utils/supabase'
-import { z } from 'zod'
-import GoogleIcon from '../../assets/icons/google.svg?react'
-import GithubIcon from '../../assets/icons/github.svg?react'
-import { Link } from 'react-router-dom'
-// import { useMemo } from 'preact/hooks'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import supabase from "../../utils/supabase";
+import { z } from "zod";
+import GoogleIcon from "../../assets/icons/google.svg?react";
+import GithubIcon from "../../assets/icons/github.svg?react";
+import { Link } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 const schema = z
   .object({
     email: z.string().email(),
     password: z.string().min(6),
   })
-  .required()
+  .required();
 
-type Inputs = z.infer<typeof schema>
+type Inputs = z.infer<typeof schema>;
 
-const toggleSeePassword = signal<boolean>(false)
-const submit = signal<any>({})
 export default function Signup() {
+  const [submit, setSubmit] = useState<any>({});
+  const [toggleSeePassword, setToggleSeePassword] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
-  })
+  });
 
   // const navigate = useNavigate()
   // const location = useLocation()
@@ -38,12 +38,15 @@ export default function Signup() {
 
   const withGithub = () => {
     supabase.auth.signInWithOAuth({
-      provider: 'github',
-    })
-  }
+      provider: "github",
+    });
+  };
 
   const onSubmit = async (value: Inputs) => {
-    submit.value.pending = true
+    setSubmit({
+      ...submit,
+      pending: true,
+    });
     try {
       const { data, error } = await supabase.auth.signUp({
         email: value.email,
@@ -51,25 +54,37 @@ export default function Signup() {
         options: {
           emailRedirectTo: import.meta.env.VITE_SIGNUP_REDIRECT_TO,
         },
-      })
+      });
       if (error) {
-        submit.value.error = error.message
+        setSubmit({
+          ...submit,
+          error: error.message,
+        });
       } else {
         if (data.user?.user_metadata?.email_verified === false) {
-          submit.value.success = true
+          setSubmit({
+            ...submit,
+            success: true,
+          });
         } else {
-          submit.value.error = 'Account already exist, please sign in.'
+          setSubmit({
+            ...submit,
+            error: "Account already exist, please sign in.",
+          });
         }
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-    submit.value.pending = false
-  }
+    setSubmit({
+      ...submit,
+      pending: false,
+    });
+  };
 
   return (
     <section className="bg-gradient-to-tb h-screen from-accent/10 to-secondary/10">
-      {submit.value.success ? (
+      {submit.success ? (
         <div className="relative top-1/2 flex -translate-y-1/2 flex-col space-y-5 p-5 text-center">
           <h1 className="font-mono text-4xl font-bold tracking-tighter text-primary md:text-6xl">
             Account Confirmation
@@ -107,16 +122,18 @@ export default function Signup() {
               <div className="divider text-sm">or</div>
               <div>
                 <label
-                  className={`input input-bordered flex items-center pl-3 ${errors.email && 'border-error'}`}
+                  className={`input input-bordered flex items-center pl-3 ${
+                    errors.email && "border-error"
+                  }`}
                 >
                   <span className="icon-[solar--letter-bold-duotone] h-6 w-6"></span>
                   <input
                     className="ml-3 grow"
                     placeholder="Email"
-                    {...register('email', {
-                      required: 'Email address is required',
+                    {...register("email", {
+                      required: "Email address is required",
                     })}
-                    aria-invalid={errors.email ? 'true' : 'false'}
+                    aria-invalid={errors.email ? "true" : "false"}
                   />
                 </label>
                 {errors.email && (
@@ -127,25 +144,25 @@ export default function Signup() {
               </div>
               <div>
                 <label
-                  className={`input input-bordered flex items-center pl-3 ${errors.password && 'border-error'}`}
+                  className={`input input-bordered flex items-center pl-3 ${
+                    errors.password && "border-error"
+                  }`}
                 >
                   <span className="icon-[solar--key-minimalistic-bold-duotone] h-6 w-6"></span>
                   <input
                     id="password"
-                    type={toggleSeePassword.value ? 'text' : 'password'}
+                    type={toggleSeePassword ? "text" : "password"}
                     placeholder="Password"
                     className="ml-3 grow"
-                    {...register('password', {
-                      required: 'Password is required',
+                    {...register("password", {
+                      required: "Password is required",
                     })}
-                    aria-invalid={errors.password ? 'true' : 'false'}
+                    aria-invalid={errors.password ? "true" : "false"}
                   />
                   <label className="swap">
                     <input
                       type="checkbox"
-                      onClick={() =>
-                        (toggleSeePassword.value = !toggleSeePassword.value)
-                      }
+                      onClick={() => setToggleSeePassword(!toggleSeePassword)}
                     />
                     <span className="swap-on icon-[solar--eye-closed-linear]"></span>
                     <span className="swap-off icon-[solar--eye-linear]"></span>
@@ -158,16 +175,16 @@ export default function Signup() {
                 )}
               </div>
               <p className="text-center text-sm text-error">
-                {submit.value.error && submit.value.error}
+                {submit.error && submit.error}
               </p>
               <button
                 type="submit"
                 className="btn btn-primary shadow-lg shadow-primary/50"
               >
-                {submit.value.pending ? (
+                {submit.pending ? (
                   <span className="loading loading-dots"></span>
                 ) : (
-                  'sign up'
+                  "sign up"
                 )}
               </button>
               <p className="inline-flex justify-center pt-2 text-sm">
@@ -184,5 +201,5 @@ export default function Signup() {
         </div>
       )}
     </section>
-  )
+  );
 }

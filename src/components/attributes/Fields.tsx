@@ -1,34 +1,34 @@
-import { Signal, signal } from '@preact/signals-react'
-import PlusIcon from '../../assets/svgs/plus.svg?react'
-import TrashIcon from '../../assets/svgs/trash.svg?react'
-import fieldTypes from '../../data/fields.json'
-import { useEffect, useRef } from 'react'
-import Confirm from '../common/Confirm'
-import { Button, ListBox } from 'react-aria-components'
+import { Signal, signal } from "@preact/signals-react";
+import PlusIcon from "../../assets/svgs/plus.svg?react";
+import TrashIcon from "../../assets/svgs/trash.svg?react";
+import fieldTypes from "../../data/fields.json";
+import { useEffect, useRef } from "react";
+import Confirm from "../common/Confirm";
+import { Button, ListBox } from "react-aria-components";
 
 interface Props {
-  preset: any
-  savePreset: Signal<number>
+  preset: any;
+  savePreset: Signal<number>;
 }
 
-const addField = signal<boolean>(false)
-const newFieldName = signal<string>('')
-const newFieldType = signal<string>('')
-const newFieldRequired = signal<boolean>(false)
-const error = signal<string>('')
-const confirmDelete = signal<any>(null)
-const openConfirm = signal<boolean>(false)
+const addField = signal<boolean>(false);
+const newFieldName = signal<string>("");
+const newFieldType = signal<string>("");
+const newFieldRequired = signal<boolean>(false);
+const error = signal<string>("");
+const confirmDelete = signal<any>(null);
+const openConfirm = signal<boolean>(false);
 
 export default function Fields({ preset, savePreset }: Props) {
-  const fields = preset.value.attributes.fields.values
-  const refs = fields.map(() => useRef())
-  const newFieldRef = useRef<any>(null)
+  const fields = preset.value.attributes.fields.values;
+  const refs = fields.map(() => useRef(undefined));
+  const newFieldRef = useRef<any>(null);
 
   const onRename = (newName: string, field: any, index: number) => {
     if (!newName) {
-      error.value = 'Field name cannot be empty'
-      refs[index].current.textContent = fields[index].name
-      return
+      error.value = "Field name cannot be empty";
+      refs[index].current.textContent = fields[index].name;
+      return;
     }
     if (
       fields.some(
@@ -36,21 +36,21 @@ export default function Fields({ preset, savePreset }: Props) {
           p.name.trim().toLowerCase() === newName.trim().toLowerCase(),
       )
     ) {
-      error.value = 'Field already exists'
-      refs[index].current.textContent = fields[index].name
-      return
+      error.value = "Field already exists";
+      refs[index].current.textContent = fields[index].name;
+      return;
     }
     if (newName.length >= 20) {
-      error.value = "The field name it's too long."
-      refs[index].current.textContent = fields[index].name
-      return
+      error.value = "The field name it's too long.";
+      refs[index].current.textContent = fields[index].name;
+      return;
     }
     const renamedField = {
       ...field,
       name: newName.trim(),
-    }
-    const newFieldsValues = fields
-    newFieldsValues.splice(index, 1, renamedField)
+    };
+    const newFieldsValues = fields;
+    newFieldsValues.splice(index, 1, renamedField);
     preset.value = {
       ...preset.value,
       attributes: {
@@ -60,22 +60,22 @@ export default function Fields({ preset, savePreset }: Props) {
           values: newFieldsValues,
         },
       },
-    }
-    error.value = ''
-    savePreset.value = preset.value.id
-  }
+    };
+    error.value = "";
+    savePreset.value = preset.value.id;
+  };
 
   const onChangeType = (type: string, field: any, index: number) => {
     if (!type) {
-      error.value = "The field type it's required."
-      return
+      error.value = "The field type it's required.";
+      return;
     }
     const newTypeField = {
       ...field,
       type,
-    }
-    const newFieldsValues = fields
-    newFieldsValues.splice(index, 1, newTypeField)
+    };
+    const newFieldsValues = fields;
+    newFieldsValues.splice(index, 1, newTypeField);
     preset.value = {
       ...preset.value,
       attributes: {
@@ -85,17 +85,17 @@ export default function Fields({ preset, savePreset }: Props) {
           values: newFieldsValues,
         },
       },
-    }
-    savePreset.value = preset.value.id
-  }
+    };
+    savePreset.value = preset.value.id;
+  };
 
   const onChangeRequired = (required: boolean, field: any, index: number) => {
     const newTypeField = {
       ...field,
       required,
-    }
-    const newFieldsValues = fields
-    newFieldsValues.splice(index, 1, newTypeField)
+    };
+    const newFieldsValues = fields;
+    newFieldsValues.splice(index, 1, newTypeField);
     preset.value = {
       ...preset.value,
       attributes: {
@@ -105,13 +105,13 @@ export default function Fields({ preset, savePreset }: Props) {
           values: newFieldsValues,
         },
       },
-    }
-    savePreset.value = preset.value.id
-  }
+    };
+    savePreset.value = preset.value.id;
+  };
 
   const onDelete = (_field: any, index: number) => {
-    const newFields = fields
-    newFields.splice(index, 1)
+    const newFields = fields;
+    newFields.splice(index, 1);
     preset.value = {
       ...preset.value,
       attributes: {
@@ -121,16 +121,16 @@ export default function Fields({ preset, savePreset }: Props) {
           values: newFields,
         },
       },
-    }
-    savePreset.value = preset.value.id
-    openConfirm.value = false
-    confirmDelete.value = null
-  }
+    };
+    savePreset.value = preset.value.id;
+    openConfirm.value = false;
+    confirmDelete.value = null;
+  };
 
   const onAddField = () => {
     if (!newFieldName.value) {
-      error.value = 'Field name cannot be empty'
-      return
+      error.value = "Field name cannot be empty";
+      return;
     }
     if (
       fields.some(
@@ -139,24 +139,24 @@ export default function Fields({ preset, savePreset }: Props) {
           newFieldName.value.trim().toLowerCase(),
       )
     ) {
-      error.value = 'Field already exists'
-      return
+      error.value = "Field already exists";
+      return;
     }
     if (newFieldName.value.length >= 20) {
-      error.value = "The field name it's too long."
-      return
+      error.value = "The field name it's too long.";
+      return;
     }
     if (!newFieldType.value) {
-      error.value = "The field type it's required."
-      return
+      error.value = "The field type it's required.";
+      return;
     }
-    const newFieldsValues = fields
+    const newFieldsValues = fields;
     newFieldsValues.push({
       id: Date.now(),
       name: newFieldName.value.trim(),
       type: newFieldType.value,
       required: newFieldRequired.value,
-    })
+    });
     preset.value = {
       ...preset.value,
       attributes: {
@@ -166,24 +166,24 @@ export default function Fields({ preset, savePreset }: Props) {
           values: newFieldsValues,
         },
       },
-    }
-    error.value = ''
-    savePreset.value = preset.value.id
-    addField.value = false
-  }
+    };
+    error.value = "";
+    savePreset.value = preset.value.id;
+    addField.value = false;
+  };
 
   useEffect(() => {
     if (newFieldRef.current && addField.value) {
-      newFieldRef.current.focus()
-      const range = document.createRange()
-      range.selectNodeContents(newFieldRef.current)
-      const sel = window.getSelection()
+      newFieldRef.current.focus();
+      const range = document.createRange();
+      range.selectNodeContents(newFieldRef.current);
+      const sel = window.getSelection();
       if (sel) {
-        sel.removeAllRanges()
-        sel.addRange(range)
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
     }
-  }, [addField.value])
+  }, [addField.value]);
 
   return (
     <div className="relative mb-6">
@@ -214,7 +214,7 @@ export default function Fields({ preset, savePreset }: Props) {
                     onRename(e.target.textContent, field, index)
                   }
                   onKeyPress={(e) =>
-                    e.key === 'Enter' && refs[index].current.blur()
+                    e.key === "Enter" && refs[index].current.blur()
                   }
                 >
                   {field.name}
@@ -226,7 +226,7 @@ export default function Fields({ preset, savePreset }: Props) {
                 // onChange={(e) => onChangeType(e, field, index)}
                 >
                   <Button className="select select-sm whitespace-nowrap bg-transparent">
-                    {field.type || 'Select type'}
+                    {field.type || "Select type"}
                   </Button>
                   {/* <Listbox.Options className=" absolute z-50 w-full -translate-x-80 rounded-box bg-neutral p-4">
                     <div className="menu max-h-52 overflow-auto p-0">
@@ -258,12 +258,12 @@ export default function Fields({ preset, savePreset }: Props) {
                   className="btn btn-square btn-ghost btn-sm text-error"
                   onClick={() => {
                     confirmDelete.value = {
-                      type: 'delete',
-                      title: 'Delete Field',
+                      type: "delete",
+                      title: "Delete Field",
                       element: field,
                       index,
-                    }
-                    openConfirm.value = true
+                    };
+                    openConfirm.value = true;
                   }}
                 >
                   <TrashIcon className="h-5 w-5" />
@@ -282,7 +282,7 @@ export default function Fields({ preset, savePreset }: Props) {
                   onInput={(e: any) =>
                     (newFieldName.value = e.target.textContent)
                   }
-                  onKeyPress={(e) => e.key === 'Enter' && e.preventDefault()}
+                  onKeyPress={(e) => e.key === "Enter" && e.preventDefault()}
                 >
                   New Field
                 </span>
@@ -293,7 +293,7 @@ export default function Fields({ preset, savePreset }: Props) {
                 // onChange={(e: string) => (newFieldType.value = e)}
                 >
                   <Button className="select select-sm whitespace-nowrap bg-transparent">
-                    {newFieldType.value || 'Select type'}
+                    {newFieldType.value || "Select type"}
                   </Button>
                   {/* <Listbox.Options className=" absolute z-50 w-full -translate-x-80 rounded-box bg-neutral p-4">
                     <div className="menu max-h-52 overflow-auto p-0">
@@ -347,8 +347,8 @@ export default function Fields({ preset, savePreset }: Props) {
           <button
             className="btn btn-secondary btn-sm btn-wide"
             onClick={() => {
-              addField.value = true
-              error.value = ''
+              addField.value = true;
+              error.value = "";
             }}
           >
             <PlusIcon />
@@ -362,5 +362,5 @@ export default function Fields({ preset, savePreset }: Props) {
       // handleConfirm={onDelete}
       />
     </div>
-  )
+  );
 }

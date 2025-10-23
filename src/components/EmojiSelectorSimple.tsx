@@ -1,38 +1,45 @@
-import FolderIcon from '../assets/svgs/folder.svg?react'
-import ListIcon from '../assets/svgs/list.svg?react'
-import FileIcon from '../assets/svgs/file.svg?react'
-import Picker from '@emoji-mart/react'
-import { Signal } from '@preact/signals-react'
-import twemoji from 'twemoji'
-import { Button, Popover } from 'react-aria-components'
+import FolderIcon from "../assets/svgs/folder.svg?react";
+import ListIcon from "../assets/svgs/list.svg?react";
+import FileIcon from "../assets/svgs/file.svg?react";
+import Picker from "@emoji-mart/react";
+import twemoji from "twemoji";
+import { Button, Popover } from "react-aria-components";
 
 interface Props {
-  emoji: Signal<string>
-  emojiCode: Signal<string>
-  defaultIcon: string
+  emoji: string;
+  setEmoji: (value: string) => void;
+  emojiCode: string;
+  setEmojiCode: (value: string) => void;
+  defaultIcon: string;
 }
 
-function EmojiSelector({ emojiCode, emoji, defaultIcon }: Props) {
+function EmojiSelector({
+  emojiCode,
+  setEmojiCode,
+  emoji,
+  setEmoji,
+  defaultIcon,
+}: Props) {
   const emojiSelected = async (data: { unified: string }) => {
     const emojiImage = twemoji.parse(
       `https://twemoji.maxcdn.com/v/latest/72x72/${data.unified}.png`,
-    )
-    emojiCode.value = data.unified
-    emoji.value = emojiImage
-  }
+    );
+    setEmojiCode(data.unified);
+    setEmoji(emojiImage);
+  };
 
   const handleBrokenImage = (e: any) => {
     e.currentTarget.src =
-      'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f1e6.png'
-    e.currentTarget.onerror = null
-  }
+      "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f1e6.png";
+    e.currentTarget.onerror = null;
+  };
 
   return (
     <Popover>
       <Button className="btn join-item z-50 rounded-r-box brightness-105">
-        {emoji.value ? (
+        {emoji ? (
           <img
-            src={emoji.value}
+            src={emoji}
             onError={handleBrokenImage}
             width={24}
             height={24}
@@ -40,9 +47,9 @@ function EmojiSelector({ emojiCode, emoji, defaultIcon }: Props) {
           />
         ) : (
           <>
-            {defaultIcon === 'folder' && <FolderIcon />}
-            {defaultIcon === 'list' && <ListIcon />}
-            {defaultIcon === 'file' && <FileIcon />}
+            {defaultIcon === "folder" && <FolderIcon />}
+            {defaultIcon === "list" && <ListIcon />}
+            {defaultIcon === "file" && <FileIcon />}
           </>
         )}
       </Button>
@@ -63,7 +70,7 @@ function EmojiSelector({ emojiCode, emoji, defaultIcon }: Props) {
           )}
         </Popover.Panel> */}
     </Popover>
-  )
+  );
 }
 
-export default EmojiSelector
+export default EmojiSelector;
