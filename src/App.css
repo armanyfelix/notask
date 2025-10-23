@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @plugin "daisyui" {
     themes:
-        business --default,
+        autumn --default,
         dark --prefersdark;
 }
 @plugin "tailwindcss-react-aria-components";

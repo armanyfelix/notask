@@ -108,7 +108,7 @@ export default function Home({}: any) {
   }, []);
 
   return (
-    <div className="h-screen overflow-auto rounded-xl m-1 bg-base-300">
+    <div className="h-screen overflow-auto rounded-xl m-1 bg-base-100">
       <header className="flex items-center justify-between p-6">
         <div className="flex items-center">
           <SunCloudIcon className="h-14 w-14" />

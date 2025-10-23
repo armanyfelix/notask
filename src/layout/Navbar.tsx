@@ -5,73 +5,55 @@ import ToggleRightIcon from "../assets/svgs/toggleRight.svg?react";
 import ToggleLeftIcon from "../assets/svgs/toggleLeft.svg?react";
 import {
   useAccountStore,
-  useSessionStore,
   useSidebarStore,
   useSpacesStore,
 } from "../utils/zustand";
 import { Button } from "react-aria-components";
-import UserDropdown from "@/components/UserDropdown";
 import NotificationsDialog from "./NotificationsDialog";
 import CreateModal from "@/components/CreateModal";
-
-const tabs = ["A", "B", "C", "D"];
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function Navbar() {
-  const [activeTab, setActiveTab] = useState("");
   const { WideSidebar, setWideSidebar } = useSidebarStore();
   const { account } = useAccountStore();
-  const { session } = useSessionStore();
   const { spaces, setSpaces } = useSpacesStore();
 
   return (
-    <header className="sticky top-0 right-0 p-1 z-50 flex justify-between">
-      <div className="flex items-center overflow-hidden pl-2">
+    <header className="sticky top-0 right-0 p-1 z-50 flex h-10 bg-base-100 border-b border-neutral justify-between">
+      <div className="flex items-center overflow-hidden space-x-2 pl-1">
         <Button
           onPress={() => setWideSidebar(!WideSidebar)}
-          className="group btn btn-square btn-ghost btn-sm"
+          className="btn btn-square btn-ghost btn-sm"
         >
-          <HamburgerIcon className="block group-hover:hidden" />
           {!WideSidebar ? (
-            <ToggleRightIcon className="hidden h-5 w-5 group-hover:block" />
+            <span className="icon-[tabler--layout-sidebar-left-expand] h-7 w-7"></span>
           ) : (
-            <ToggleLeftIcon className="hidden h-5 w-5 group-hover:block" />
+            <span className="icon-[tabler--layout-sidebar-left-collapse] h-7 w-7"></span>
           )}
         </Button>
-        {tabs.map((tab) => (
-          <a
-            key={tab}
-            href="#"
-            onClick={() => setActiveTab(tab)}
-            className={`tab-lg tab tabs-bordered ${
-              activeTab === tab ? "tab-active bg-base-100 pl-3! pr-2!" : ""
-            }`}
-          >
-            <span className="mr-2">{tab}</span>
-            {activeTab === tab ? (
-              <Button className="btn btn-circle btn-ghost btn-xs">
-                <PlusIcon className="rotate-45" />
-              </Button>
-            ) : (
-              ""
-            )}
-          </a>
-        ))}
+        <Button className="btn btn-square btn-ghost btn-sm">
+          <span className="icon-[tabler--arrow-left] h-6 w-6"></span>
+        </Button>
+        <Button className="btn btn-square btn-ghost btn-sm">
+          <span className="icon-[tabler--arrow-right] h-6 w-6"></span>
+        </Button>
+        <Breadcrumbs />
       </div>
-      <ul className="flex flex-row items-center justify-center">
-        <li>
-          <CreateModal
-            accountId={account?.id}
-            setSpaces={setSpaces}
-            spaces={spaces}
-          />
-        </li>
-        <li>
-          <NotificationsDialog />
-        </li>
-        <li className="disabled ml-1">
-          <UserDropdown session={session} />
-        </li>
-      </ul>
+      <div className="flex items-center overflow-hidden space-x-2 pl-1">
+        <CreateModal
+          accountId={account?.id}
+          setSpaces={setSpaces}
+          spaces={spaces}
+        />
+        <NotificationsDialog />
+        <Button className="btn btn-square btn-ghost btn-sm">
+          <span className="icon-[tabler--layout-columns] h-6 w-6"></span>
+        </Button>
+        <Button className="btn btn-square btn-ghost btn-sm">
+          <span className="icon-[tabler--arrows-diagonal] h-6 w-6"></span>
+          <span className="hidden icon-[tabler--arrows-diagonal-minimize] h-6 w-6"></span>
+        </Button>
+      </div>
     </header>
   );
 }

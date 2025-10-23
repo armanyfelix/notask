@@ -109,7 +109,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="hidden h-screen max-h-screen bg-base-200 sm:flex">
+      <aside className="hidden h-screen max-h-screen border-r border-neutral bg-base-100 sm:flex">
         <section className="sticky bottom-0 left-0 top-0 z-50 py-1 pl-1">
           <ul>
             {routes.map((r, i) => (

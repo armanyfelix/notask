@@ -24,31 +24,26 @@ interface Props {
   session: any;
 }
 
-export default function UserDropdown({}: Props) {
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
+export default function UserDropdown({ session }: Props) {
   const { account } = useAccountStore((s: AccountState) => s);
   const { theme, setTheme } = useThemeStore((s: ThemeState) => s);
+
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [login, setLogin] = useState<boolean>(false);
+
   async function downloadImage(path: string) {
-    // try {
-    //   const response = await fetch('http://test.tauri.app/data.json', {
-    //     method: 'GET',
-    //   });
-    //   console.log(response.status); // e.g. 200
-    //   console.log(response.statusText); // e.g. "OK"
-    // console.log('kocskadcoksm')
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .download(path);
-    // console.log('data :>> ', data);
-    // console.log('error :>> ', error);
-    if (error) {
-      throw error;
+    try {
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .download(path);
+      if (error) {
+        throw error;
+      }
+      const url = URL.createObjectURL(data);
+      setAvatarUrl(url);
+    } catch (error: any) {
+      console.log("Error downloading image: ", error.message);
     }
-    const url = URL.createObjectURL(data);
-    setAvatarUrl(url);
-    // } catch (error: any) {
-    //   console.log('Error downloading image: ', error.message)
-    // }
   }
 
   const onSignOut = () => {
@@ -56,19 +51,23 @@ export default function UserDropdown({}: Props) {
   };
 
   useEffect(() => {
-    if (account?.avatar_url) {
-      console.log("account.avatar_url :>> ", account.avatar_url);
-      downloadImage(account.avatar_url);
+    if (!session && !account) {
+      setLogin(true);
+    } else {
+      if (account?.avatar_url) {
+        downloadImage(account.avatar_url);
+      }
+      setLogin(false);
     }
   }, []);
 
-  return (
+  return login ? (
     <MenuTrigger>
       <Button className="btn btn-ghost btn-circle avatar">
         {avatarUrl ? (
           <img src={avatarUrl} className="h-5 w-5 rounded-full" alt="avatar" />
         ) : (
-          <span className="icon-[solar--user-circle-bold-duotone] h-10 w-10"></span>
+          <span className="icon-[solar--user-circle-bold-duotone] h-8 w-8"></span>
         )}
       </Button>
       <Popover placement="bottom">
@@ -154,5 +153,9 @@ export default function UserDropdown({}: Props) {
         </Menu>
       </Popover>
     </MenuTrigger>
+  ) : (
+    <Link to="/signin" className="btn btn-primary btn-xs mt-1">
+      Login
+    </Link>
   );
 }

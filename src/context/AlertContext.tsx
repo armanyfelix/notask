@@ -17,7 +17,7 @@ export default function AlertProvider({ children }: any) {
       {children}
       {alert && (
         <div
-          className={`alert alvert-${alert.type} absolute bottom-4 left-4 z-[99999999] w-fit`}
+          className={`alert alvert-${alert.type} absolute bottom-4 left-4 w-fit z-9999`}
         >
           {!alert.type && (
             <svg
