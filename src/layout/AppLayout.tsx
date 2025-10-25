@@ -10,7 +10,7 @@ export default function AppLayout() {
       <Titlebar />
       <div className="flex h">
         <Sidebar />
-        <div className="w-full overflow-auto pr-1">
+        <div className="w-full overflow-auto border-l border-neutral pr-1">
           <Navbar />
           <Outlet />
         </div>

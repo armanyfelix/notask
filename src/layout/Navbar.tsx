@@ -14,7 +14,7 @@ export default function Navbar() {
   const { spaces, setSpaces } = useSpacesStore();
 
   return (
-    <header className="sticky top-0 right-0 z-50 flex h-8.5 bg-base-100 border-b border-neutral justify-between">
+    <header className="sticky top-0 right-0 z-50 flex h-8.5 bg-base-200 border-b border-neutral justify-between">
       <div className="flex items-center overflow-hidden space-x-1 pl-1">
         <div
           className={twMerge(

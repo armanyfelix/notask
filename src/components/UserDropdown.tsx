@@ -154,7 +154,7 @@ export default function UserDropdown({ session }: Props) {
       </Popover>
     </MenuTrigger>
   ) : (
-    <Link to="/signin" className="btn btn-primary btn-xs mt-1">
+    <Link to="/signin" className="btn btn-link">
       Login
     </Link>
   );
