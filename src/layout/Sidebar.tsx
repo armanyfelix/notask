@@ -32,19 +32,47 @@ export default function Sidebar() {
 
   const routes = [
     {
-      name: "home",
+      name: "Home",
       path: "/",
       icon: <span className="icon-[tabler--home] size-6"></span>,
     },
     {
-      name: "lists",
+      name: "Lists",
       path: "/",
       icon: <span className="icon-[tabler--list-check] size-6"></span>,
     },
     {
-      name: "notes",
+      name: "Notes",
       path: "/",
       icon: <span className="icon-[tabler--notebook] size-6"></span>,
+    },
+    {
+      name: "Whiteboard",
+      path: "/",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="size-6"
+          viewBox="0 0 24 24"
+        >
+          <g
+            fill="none"
+            stroke="currentColor"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              d="M14 4h-4C6.229 4 4.343 4 3.172 5.172S2 8.229 2 12s0 5.657 1.172 6.828S6.229 20 10 20h4c2.809 0 4.213 0 5.222-.674a4 4 0 0 0 1.104-1.104C21 17.213 21 15.81 21 13"
+            />
+            <path
+              stroke-linecap="round"
+              d="M2 12.017L4.5 9.6a2.173 2.173 0 0 1 3 0c.828.8.828 2.098 0 2.899a2 2 0 0 0 0 2.9c.828.8 2.172.8 3 0l.5-.484"
+            />
+            <path d="M14.672 13H13v-1.672a2 2 0 0 1 .586-1.414l5.476-5.475a1.5 1.5 0 0 1 2.121 0l.379.379a1.5 1.5 0 0 1 0 2.121l-5.476 5.475a2 2 0 0 1-1.414.586Z" />
+          </g>
+        </svg>
+      ),
     },
   ];
 
@@ -98,14 +126,15 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <aside className="flex">
-      <div className="static select-none h- lef z-50 w-10 flex flex-col items-center bg-base-100">
+    <aside className="flex items-start">
+      <div className="static select-none z-50 w-10 flex flex-col space-y-2 items-center justify-between h-[calc(100vh-40px)] bg-base-100">
         {routes.map((r, i) => (
           <Link
             key={i}
             to={r.path}
             onClick={() => onToggle(r.name, r.name)}
-            className={`btn btn-ghost btn-square btn-sm ${closeSidebar && !space ? "" : ""}`}
+            className={`btn btn-ghost btn-square btn-sm tooltip tooltip-right`}
+            data-tip={r.name}
           >
             {r.icon}
             {/*{closeSidebar && !space ? <span>{r.name}</span> : ""}*/}
@@ -113,12 +142,12 @@ export default function Sidebar() {
         ))}
         <Button
           onPress={() => setOpenFavoritesSidebar(!openFavoritesSidebar)}
-          className={`group btn btn-ghost btn-xs justify-between text-xs font-medium tracking-tighter opacity-50 p-0.5 ${closeSidebar && !space ? "btn-wd" : "p5"}`}
+          className={`group btn btn-ghost btn-xs p-0.5 tooltip tooltip-right`}
+          data-tip="Favorites"
         >
-          <span className="icon-[solar--star-fall-bold] size-4.5"></span>
-          {/*{closeSidebar && !space && "Favorites"}*/}
+          <span className="icon-[solar--star-fall-bold] -mr-1 size-4.5"></span>
           <span
-            className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${closeSidebar && !space ? "size-" : "size-3"} ${openFavoritesSidebar && "rotate-180"}`}
+            className={`icon-[solar--alt-arrow-up-linear] duration-300 ease-in-out ${openFavoritesSidebar && "rotate-180"}`}
           ></span>
         </Button>
         {openFavoritesSidebar && (
@@ -131,12 +160,12 @@ export default function Sidebar() {
         )}
         <Button
           onPress={() => setOpenSpacesSidebar(!openSpacesSidebar)}
-          className={`group btn btn-ghost btn-xs  p-0.5 ${closeSidebar && !space ? "btnde" : ""}`}
+          className={`group btn btn-ghost btn-xs p-0.5 tooltip tooltip-right`}
+          data-tip="Spaces"
         >
-          <span className="icon-[solar--planet-4-bold] size-4.5"></span>
-          {/*{closeSidebar && !space && "Spaces"}*/}
+          <span className="icon-[solar--planet-4-bold] -mr-1 size-4.5"></span>
           <span
-            className={`icon-[solar--alt-arrow-down-linear] duration-300 ease-in-out ${closeSidebar && !space ? "size-" : "size-3"} ${openSpacesSidebar && "rotate-180"}`}
+            className={`icon-[solar--alt-arrow-up-linear] duration-300 ease-in-out size-3 ${openSpacesSidebar && "rotate-180"}`}
           ></span>
         </Button>
         {openSpacesSidebar &&
@@ -144,7 +173,8 @@ export default function Sidebar() {
           spaces.map((s: any) => (
             <Button
               key={s.id}
-              className={`btn btn-ghost btn-square btn-sm ${closeSidebar && !space ? "bt" : "btn-circustify-center"}`}
+              className={`btn btn-ghost btn-square btn-sm tooltip tooltip-right`}
+              data-tip={`${s.name}`}
               onPress={() => {
                 onOpenSpace(s);
               }}
@@ -161,7 +191,6 @@ export default function Sidebar() {
                   height={24}
                 />
               )}
-              {/*{closeSidebar && !space ? <span>{s.name}</span> : ""}*/}
             </Button>
           ))}
         <div className="mt-auto">Foo</div>
@@ -172,18 +201,18 @@ export default function Sidebar() {
           marginRight: `${closeSidebar ? 0 : -width - 6}px`,
           transition: "0.5s ease",
         }}
-        className="select-none absolute shadow-md md:static md:shadow-none bg-base-200 hidden sm:flex"
+        className="select-none absolute shadow-md md:static md:shadow-none hidden sm:flex"
       >
         <div
           className={twMerge(
-            "flex transition-all duration-500",
+            "flex transition-all duration-500 bg-base-200",
             closeSidebar ? "min-w-[120px]  max-w-[510px]" : "-translate-x-full",
           )}
         >
           <div
             style={{ width: `${width}px` }}
             className={twMerge(
-              "relative min-w-[120px] max-w-[510px] max-h-dvh flex flex-col  justify-between gap-5 text-sm p-3 pb-1",
+              "relative min-w-[120px] max-w-[510px] max-h-dvh flex flex-col justify-between gap-5 text-sm p-3 pb-1",
             )}
           >
             <section

@@ -39,12 +39,12 @@ export default function Titlebar() {
   }, []);
 
   return (
-    <div className="sticky top-0 right-0 left-0 h-10 bg-base-100">
+    <div className="sticky top-0 bottom-0 right-0 left-0 h-10 bg-base-100">
       <div className="flex items-start">
         <Button className="btn btn-ghost btn-sm mt-1 ml-1 btn-square">
           <span className="icon-[tabler--menu-2] size-4"></span>
         </Button>
-        <div className="tabs tabs-lift bg-transparent shrink-0">
+        <div className="tabs tabs-lift bg-transparent ml-1.5 shrink-0">
           {tabs.map((tab) => (
             <label
               className="tab [--tab-bg:var(--color-base-200)] group"
