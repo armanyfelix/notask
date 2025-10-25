@@ -1,12 +1,12 @@
-import { Tables } from '../types/database.types.ts'
-import { Session } from '@supabase/supabase-js'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { Tables } from "../types/database.types.ts";
+import { Session } from "@supabase/supabase-js";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type SessionState = {
-  session: Session | null
-  setSession: (session: Session | null) => void
-}
+  session: Session | null;
+  setSession: (session: Session | null) => void;
+};
 export const useSessionStore = create<SessionState>()(
   persist(
     (set) => ({
@@ -14,15 +14,15 @@ export const useSessionStore = create<SessionState>()(
       setSession: (session) => set({ session }),
     }),
     {
-      name: 'session',
+      name: "session",
     },
   ),
-)
+);
 
 export type AccountState = {
-  account: Tables<'accounts'> | null
-  setAccount: (account: Tables<'accounts'> | null) => void
-}
+  account: Tables<"accounts"> | null;
+  setAccount: (account: Tables<"accounts"> | null) => void;
+};
 export const useAccountStore = create<AccountState>()(
   persist(
     (set) => ({
@@ -30,65 +30,65 @@ export const useAccountStore = create<AccountState>()(
       setAccount: (account) => set(() => ({ account })),
     }),
     {
-      name: 'account',
+      name: "account",
     },
   ),
-)
+);
 
 export type SpacesState = {
-  spaces: Tables<'spaces'>[]
-  setSpaces: (spaces: Tables<'spaces'>[]) => void
-}
+  spaces: Tables<"spaces">[];
+  setSpaces: (spaces: Tables<"spaces">[]) => void;
+};
 export const useSpacesStore = create<SpacesState>()(
   persist(
     (set) => ({
       spaces: [],
-      setSpaces: (spaces: Tables<'spaces'>[]) => set(() => ({ spaces })),
+      setSpaces: (spaces: Tables<"spaces">[]) => set(() => ({ spaces })),
     }),
     {
-      name: 'spaces',
+      name: "spaces",
     },
   ),
-)
+);
 
 export type ThemeState = {
-  theme: string
-  setTheme: (theme: string) => void
-}
+  theme: string;
+  setTheme: (theme: string) => void;
+};
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'dark',
+      theme: "dark",
       setTheme: (theme) => set({ theme }),
     }),
     {
-      name: 'theme',
+      name: "theme",
     },
   ),
-)
+);
 
 export type SidebarState = {
-  WideSidebar: boolean
-  setWideSidebar: (WideSidebar: boolean) => void
-}
+  closeSidebar: boolean;
+  setCloseSidebar: (WideSidebar: boolean) => void;
+};
 export const useSidebarStore = create<SidebarState>()(
   persist(
     (set) => ({
-      WideSidebar: false,
-      setWideSidebar: (WideSidebar) => set({ WideSidebar }),
+      closeSidebar: false,
+      setCloseSidebar: (closeSidebar) => set({ closeSidebar }),
     }),
     {
-      name: 'sidebar',
+      name: "sidebar",
     },
   ),
-)
+);
 
 export type UIState = {
-  openFavoritesSidebar: boolean
-  setOpenFavoritesSidebar: (open: boolean) => void
-  openSpacesSidebar: boolean
-  setOpenSpacesSidebar: (open: boolean) => void
-}
+  openFavoritesSidebar: boolean;
+  setOpenFavoritesSidebar: (open: boolean) => void;
+  openSpacesSidebar: boolean;
+  setOpenSpacesSidebar: (open: boolean) => void;
+};
 export const useUIStore = create<UIState>()(
   persist(
     (set) => ({
@@ -98,8 +98,8 @@ export const useUIStore = create<UIState>()(
       setOpenSpacesSidebar: (open) => set({ openSpacesSidebar: open }),
     }),
     {
-      name: 'ui',
+      name: "ui",
       // storage: createJSONStorage(() => sessionStorage),  // Solo si necesito guardar en el session storage, no localstorage
     },
   ),
-)
+);

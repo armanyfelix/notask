@@ -42,11 +42,11 @@ export default function Titlebar() {
     <div className="sticky top-0 right-0 left-0 h-8 bg-base-300">
       <div className="flex items-start">
         <Button className="btn btn-ghost btn-square btn-sm">
-          <span className="icon-[tabler--menu-2] w-4 h-4"></span>
+          <span className="icon-[tabler--menu-2] w-5 h-5"></span>
         </Button>
-        <div className="tabs tabs-lift tabs-sm bg-transparent flex-shrink-0">
+        <div className="tabs tabs-lift tabs-sm bg-transparent shrink-0">
           {tabs.map((tab) => (
-            <label className="tab group">
+            <label className="tab group" key={tab}>
               <input
                 type="radio"
                 key={tab}
