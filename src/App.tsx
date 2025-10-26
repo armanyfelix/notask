@@ -29,6 +29,9 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import { addImageUrl } from "./helpers/images";
 import isTauri from "./utils/isTauri";
 import { documentDir } from "@tauri-apps/api/path";
+import BaseLayout from "./layout/BaseLayout";
+import { getStore } from "@tauri-apps/plugin-store";
+import CreateHubModal from "./components/CreateHubModal";
 
 export default function App({}: any) {
   const { account, setAccount } = useAccountStore();
@@ -37,6 +40,16 @@ export default function App({}: any) {
   const { setSpaces } = useSpacesStore();
 
   const [allowResetPassword, setAllowResetPassword] = useState<boolean>(false);
+  const [createHubOpen, setCreateHubOpen] = useState<boolean>(false);
+
+  const getHubs = async () => {
+    try {
+      const hubsStore = await getStore("hubs.json");
+      console.log("Directorio de la app:", hubsStore);
+    } catch (error) {
+      console.error("Error al obtener directorio:", error);
+    }
+  };
 
   const getAccount = async (id: string) => {
     try {
@@ -78,7 +91,7 @@ export default function App({}: any) {
     }
   };
 
-  useEffect(() => {
+  const applyTheme = () => {
     if (!theme) {
       if (window.matchMedia("(prefers-color-scheme: dark)")?.matches) {
         setTheme("dark");
@@ -96,9 +109,11 @@ export default function App({}: any) {
         setTheme(newTheme);
         document.documentElement.setAttribute("data-theme", newTheme);
       });
-    getAppDir();
+  };
 
-    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+  const onAuthStateChange = () => {
+    return supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(session, account);
       if (event === "INITIAL_SESSION") {
         if (session) {
           await getAccount(session.user.id);
@@ -131,13 +146,27 @@ export default function App({}: any) {
         }
       }
     });
+  };
+
+  useEffect(() => {
+    applyTheme();
+  }, [theme]);
+
+  useEffect(() => {
+    getHubs();
+    const { data } = onAuthStateChange();
+
     return () => {
       data.subscription.unsubscribe();
     };
-  }, [theme]);
+  }, []);
 
   return (
     <BrowserRouter>
+      <CreateHubModal
+        isOpen={createHubOpen}
+        setOpen={() => setCreateHubOpen(false)}
+      />
       <Routes>
         <Route
           element={
@@ -158,10 +187,12 @@ export default function App({}: any) {
             <Route path="/list/:id" element={<List />} />
           </Route>
         </Route>
-        <Route element={<ProtectedRoute isAllowed={!session} />}>
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/password/forgot" element={<ForgotPassword />} />
+        <Route element={<ProtectedRoute isAllowed={!session && !account} />}>
+          <Route element={<BaseLayout />}>
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/password/forgot" element={<ForgotPassword />} />
+          </Route>
         </Route>
         <Route
           path="/welcome"

@@ -9,6 +9,9 @@ import {
   TextField,
 } from "react-aria-components";
 import { Link } from "react-router";
+import { confirm, open } from "@tauri-apps/plugin-dialog";
+import { BaseDirectory, documentDir } from "@tauri-apps/api/path";
+import { mkdir } from "@tauri-apps/plugin-fs";
 
 interface CreateHubModalProps {
   isOpen: boolean;
@@ -20,7 +23,24 @@ export default function CreateHubModal({
   setOpen,
 }: CreateHubModalProps) {
   const [createHub, setCreateHub] = useState<boolean>(false);
-  const [openHub, setOpenHub] = useState<boolean>(false);
+  const [newHubName, setNewHubName] = useState<boolean>(false);
+
+  const onSelectLocation = async () => {
+    const selected = await open({
+      directory: true,
+      defaultPath: await documentDir(),
+    });
+    if (selected !== null) {
+      return selected;
+    }
+  };
+
+  const onQuickStart = async () => {
+    try {
+      const newDir = await mkdir("zaghub", { baseDir: BaseDirectory.Document });
+      console.log(newDir);
+    } catch (err) {}
+  };
 
   return (
     <Modal isOpen={isOpen} onOpenChange={setOpen}>
@@ -49,7 +69,9 @@ export default function CreateHubModal({
                   Choose an existing folder to open as a hub
                 </div>
               </div>
-              <button className="btn">Open</button>
+              <Button className="btn" onPress={() => onSelectLocation()}>
+                Open
+              </Button>
             </div>
             <div className="divider"></div>
 
@@ -65,7 +87,12 @@ export default function CreateHubModal({
               </Link>
             </div>
             <div className="text-center mt-10">
-              <Button className="btn btn-primary btn-wide">Quick Start</Button>
+              <Button
+                className="btn btn-primary btn-wide"
+                onPress={() => onQuickStart()}
+              >
+                Quick Start
+              </Button>
             </div>
           </div>
         ) : (
@@ -87,7 +114,11 @@ export default function CreateHubModal({
                     Pick a name for your new hub
                   </div>
                 </div>
-                <Input className="input" placeholder="Hub name" />
+                <Input
+                  className="input"
+                  placeholder="Hub name"
+                  onChange={(e: any) => setNewHubName(e.target.value)}
+                />
               </div>
               <div className="divider"></div>
               <div className="flex items-center justify-between gap-x-10">
