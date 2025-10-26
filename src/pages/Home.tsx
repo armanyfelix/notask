@@ -101,6 +101,25 @@ export default function Home({}: any) {
     }
   };
 
+  const onSelectLocation = async () => {
+    const selected = await open({
+      multiple: true,
+      filters: [
+        {
+          name: "Image",
+          extensions: ["png", "jpeg"],
+        },
+      ],
+    });
+    if (Array.isArray(selected)) {
+      // user selected multiple files
+    } else if (selected === null) {
+      // user cancelled the selection
+    } else {
+      // user selected a single file
+    }
+  };
+
   // Cargar lista de archivos al montar el componente
   // useEffect(() => {
   //   listFiles();
