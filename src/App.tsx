@@ -8,7 +8,7 @@ import {
   Routes,
   redirect,
   useLocation,
-} from "react-router-dom";
+} from "react-router";
 import {
   useAccountStore,
   useSessionStore,
@@ -26,16 +26,17 @@ import { useEffect, useState } from "react";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import supabase from "./utils/supabase";
 import ResetPassword from "./pages/auth/ResetPassword";
-
 import { addImageUrl } from "./helpers/images";
 import isTauri from "./utils/isTauri";
+import { documentDir } from "@tauri-apps/api/path";
 
 export default function App({}: any) {
-  const [allowResetPassword, setAllowResetPassword] = useState<boolean>(false);
   const { account, setAccount } = useAccountStore();
   const { session, setSession } = useSessionStore();
   const { theme, setTheme } = useThemeStore();
   const { setSpaces } = useSpacesStore();
+
+  const [allowResetPassword, setAllowResetPassword] = useState<boolean>(false);
 
   const getAccount = async (id: string) => {
     try {
@@ -68,6 +69,15 @@ export default function App({}: any) {
     }
   }
 
+  const getAppDir = async () => {
+    try {
+      const dir = await documentDir();
+      console.log("Directorio de la app:", dir);
+    } catch (error) {
+      console.error("Error al obtener directorio:", error);
+    }
+  };
+
   useEffect(() => {
     if (!theme) {
       if (window.matchMedia("(prefers-color-scheme: dark)")?.matches) {
@@ -86,6 +96,7 @@ export default function App({}: any) {
         setTheme(newTheme);
         document.documentElement.setAttribute("data-theme", newTheme);
       });
+    getAppDir();
 
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "INITIAL_SESSION") {

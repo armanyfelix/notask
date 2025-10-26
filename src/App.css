@@ -8,11 +8,6 @@
 @plugin "tailwindcss-animate";
 @plugin "@iconify/tailwind4";
 
-/*@layer base {*/
-@font-face {
-    font-family: "Tropical Rothela";
-    src: url(/fonts/tropical_rothela.otf) format("otf");
-}
 @font-face {
     font-family: "Futura";
     src:
@@ -63,29 +58,7 @@ body {
 }
 
 .dialog {
-    @apply rounded-box border-base-200 bg-base-300/60 text-base-content border-2 shadow-xl backdrop-blur-md;
-}
-
-.titlebar {
-    height: 30px;
-    background: #329ea3;
-    user-select: none;
-    display: flex;
-    justify-content: flex-end;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-}
-.titlebar-button {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;
-    height: 30px;
-}
-.titlebar-button:hover {
-    background: #5bbec3;
+    @apply rounded-box border-neutral/90 bg-base-100/90 text-base-content border shadow-xl backdrop-blur-lg;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

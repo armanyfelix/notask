@@ -4,7 +4,6 @@ import DotsIcon from "../assets/svgs/dotsBold.svg?react";
 import AddFolderIcon from "../assets/svgs/addFolder.svg?react";
 import AddFileIcon from "../assets/svgs/addFile.svg?react";
 import AddListIcon from "../assets/svgs/addList.svg?react";
-
 import supabase from "../utils/supabase";
 import { Fragment, useEffect, useState } from "react";
 import {
@@ -39,15 +38,12 @@ export default function SpaceExplorer({ space, account, setAccount }: Props) {
   const [parent, setParent] = useState<any>(null);
   const [elements, setElements] = useState<any>(null);
   async function getData() {
-    console.log("20milli");
     setLoading(true);
     const { data, error }: { data: any; error: any } = await supabase
       .from("space_data")
       .select("*")
       .eq("space", space.id);
 
-    console.log("data :>> ", data);
-    console.log("error :>> ", error);
     if (data) {
       setElements(data);
     }
@@ -56,7 +52,6 @@ export default function SpaceExplorer({ space, account, setAccount }: Props) {
   }
 
   useEffect(() => {
-    console.log("space :>> ", space);
     getData();
   }, [space]);
 
@@ -101,15 +96,15 @@ const Header = ({
   setOpenCreateList,
 }: any) => {
   return (
-    <header className="group z-0 flex items-center justify-between px-4">
-      <h3 className="text-xl font-bold capitalize">{space.name}</h3>
+    <header className="group flex px-1 items-start justify-between">
+      <h2 className="text-xl font-bold capitalize">{space.name}</h2>
       <div className="inline-flex">
         <MenuTrigger>
           <Button
-            aria-label="create element on space"
-            className={`btn btn-square btn-ghost btn-xs`}
+            aria-label="create an element on this space"
+            className={`btn btn-square btn-ghost btn-sm`}
           >
-            <PlusIcon className="h-4 w-4" />
+            <PlusIcon className="size-4" />
           </Button>
           <Popover>
             <Menu className="dialog menu menu-sm">
@@ -124,7 +119,7 @@ const Header = ({
               >
                 <li>
                   <Button className="whitespace-nowrap">
-                    <AddFolderIcon className="h-4 w-4" />
+                    <AddFolderIcon className="size-4" />
                     Add Folder
                   </Button>
                 </li>
@@ -140,7 +135,7 @@ const Header = ({
               >
                 <li>
                   <Button className="whitespace-nowrap">
-                    <AddListIcon className="h-4 w-4" />
+                    <AddListIcon className="size-4" />
                     Add List
                   </Button>
                 </li>
@@ -149,8 +144,8 @@ const Header = ({
           </Popover>
         </MenuTrigger>
         <MenuTrigger>
-          <Button className={`btn btn-square btn-ghost btn-xs`}>
-            <DotsIcon className="h-4 w-4" />
+          <Button className={`btn btn-square btn-ghost btn-sm`}>
+            <DotsIcon className="size-4" />
           </Button>
           <Popover>
             <Menu className="dialog menu menu-sm">
@@ -162,7 +157,7 @@ const Header = ({
               <MenuItem>
                 <li>
                   <button className="whitespace-nowrap text-error">
-                    <TrashIcon className="h-5 w-5" />
+                    <TrashIcon className="size-5" />
                     Delete
                   </button>
                 </li>
@@ -183,80 +178,82 @@ const ElementsTree = ({
   setOpenCreateFolder,
 }: any) => {
   return (
-    <ul className="menu menu-xs [&>li>details>summary]:after:hidden">
-      {elements ? (
-        elements.map((e: Element, i: number) => (
-          <div key={i}>
-            {e.type === "list" && !e.folder && (
-              <List
-                e={e}
-                setOpenCreateFolder={setOpenCreateFolder}
-                setParent={setParent}
-                setOpenCreateList={setOpenCreateList}
-              />
-            )}
-            {e.type === "note" && !e.folder && (
-              <Notes
-                e={e}
-                setOpenCreateFolder={setOpenCreateFolder}
-                setParent={setParent}
-                setOpenCreateList={setOpenCreateList}
-              />
-            )}
-            {e.type === "folder" && !e.folder && (
-              <Folder
-                id={e.id}
-                name={e.name}
-                setOpenCreateFolder={setOpenCreateFolder}
-                setOpenCreateList={setOpenCreateList}
-                elements={elements}
-              />
-            )}
+    <div>
+      <ul className="mx-0 p-0 menu menu-xs w-full [&>li>details>summary]:after:hidden">
+        {elements ? (
+          elements.map((e: Element, i: number) => (
+            <li key={i}>
+              {e.type === "list" && !e.folder && (
+                <ListItem
+                  e={e}
+                  setOpenCreateFolder={setOpenCreateFolder}
+                  setParent={setParent}
+                  setOpenCreateList={setOpenCreateList}
+                />
+              )}
+              {e.type === "note" && !e.folder && (
+                <Notes
+                  e={e}
+                  setOpenCreateFolder={setOpenCreateFolder}
+                  setParent={setParent}
+                  setOpenCreateList={setOpenCreateList}
+                />
+              )}
+              {e.type === "folder" && !e.folder && (
+                <Folder
+                  id={e.id}
+                  name={e.name}
+                  setOpenCreateFolder={setOpenCreateFolder}
+                  setOpenCreateList={setOpenCreateList}
+                  elements={elements}
+                />
+              )}
+            </li>
+          ))
+        ) : (
+          <div>
+            <ul className="menu w-full">
+              <li>
+                <button
+                  className="whitespace-nowrap"
+                  onClick={() => {
+                    setOpenCreateList(true);
+                    setParent({
+                      type: "space",
+                      id: space.id,
+                    });
+                  }}
+                >
+                  <AddFolderIcon />
+                  Add Folder
+                </button>
+              </li>
+              <li>
+                <button className="whitespace-nowrap">
+                  <AddFileIcon />
+                  Add File
+                </button>
+              </li>
+              <li>
+                <button
+                  className="whitespace-nowrap"
+                  onClick={() => {
+                    setOpenCreateList(true);
+                    setParent({
+                      type: "space",
+                      id: space.id,
+                    });
+                  }}
+                >
+                  <AddListIcon />
+                  Add List
+                </button>
+              </li>
+            </ul>
           </div>
-        ))
-      ) : (
-        <div>
-          <ul className="menu w-full">
-            <li>
-              <button
-                className="whitespace-nowrap"
-                onClick={() => {
-                  setOpenCreateList(true);
-                  setParent({
-                    type: "space",
-                    id: space.id,
-                  });
-                }}
-              >
-                <AddFolderIcon />
-                Add Folder
-              </button>
-            </li>
-            <li>
-              <button className="whitespace-nowrap">
-                <AddFileIcon />
-                Add File
-              </button>
-            </li>
-            <li>
-              <button
-                className="whitespace-nowrap"
-                onClick={() => {
-                  setOpenCreateList(true);
-                  setParent({
-                    type: "space",
-                    id: space.id,
-                  });
-                }}
-              >
-                <AddListIcon />
-                Add List
-              </button>
-            </li>
-          </ul>
-        </div>
-      )}
-    </ul>
+        )}
+      </ul>
+    </div>
   );
 };
 
@@ -274,8 +271,8 @@ const Folder = ({
         <summary className="group pr-1">
           <label className={`swap`}>
             <input type="checkbox" />
-            <span className="swap-on icon-[solar--folder-open-line-duotone] h-4 w-4"></span>
-            <span className="swap-off icon-[solar--folder-with-files-outline] h-4 w-4"></span>
+            <span className="swap-on icon-[solar--folder-open-line-duotone] size-4"></span>
+            <span className="swap-off icon-[solar--folder-with-files-outline] size-4"></span>
           </label>
           {name}
           <MenuTrigger>
@@ -283,7 +280,7 @@ const Folder = ({
               <span className="icon-[solar--menu-dots-bold]"></span>
             </Button>
             <Popover>
-              <Menu className="menu menu-xs rounded-box bg-base-300">
+              <Menu className="menu menu-xs dialog">
                 <MenuItem>
                   <li>
                     <button
@@ -292,7 +289,7 @@ const Folder = ({
                         setOpenCreateFolder(true);
                       }}
                     >
-                      <AddFolderIcon className="h-5 w-5" />
+                      <AddFolderIcon className="size-5" />
                       Add Folder
                     </button>
                   </li>
@@ -300,7 +297,7 @@ const Folder = ({
                 <MenuItem>
                   <li>
                     <button className="whitespace-nowrap">
-                      <AddFileIcon className="h-5 w-5" />
+                      <AddFileIcon className="size-5" />
                       Add File
                     </button>
                   </li>
@@ -328,7 +325,7 @@ const Folder = ({
               e.folder === id && (
                 <Fragment key={i}>
                   {e.type === "list" && (
-                    <List
+                    <ListItem
                       e={e}
                       setOpenCreateFolder={setOpenCreateFolder}
                       setParent={setParent}
@@ -361,127 +358,125 @@ const Folder = ({
   );
 };
 
-const List = ({
+const ListItem = ({
   e,
   setOpenCreateFolder,
   setParent,
   setOpenCreateList,
 }: any) => {
   return (
-    <li>
-      <Link to={`/list/${e.id}`} className="group pr-1">
-        <span className="icon-[solar--clipboard-list-outline] h-4 w-4"></span>
-        {e.name}
-        <div className="inline-flex items-center">
-          <MenuTrigger>
-            <Button className="btn btn-square btn-ghost btn-xs invisible mr-0 group-hover:visible">
-              <PlusIcon className="h-4 w-4" />
-            </Button>
-            <Popover>
-              <Menu className="menu menu-xs rounded-box bg-base-300">
-                <MenuItem>
-                  <li>
-                    <button
-                      className="whitespace-nowrap"
-                      onClick={() => {
-                        setOpenCreateFolder(true);
+    <Link to={`/list/${e.id}`} className="group pr-1">
+      <span className="icon-[solar--clipboard-list-outline] h-4 w-4"></span>
+      {e.name}
+      <div className="inline-flex items-center">
+        <MenuTrigger>
+          <Button className="btn btn-square btn-ghost btn-xs invisible mr-0 group-hover:visible">
+            <PlusIcon className="h-4 w-4" />
+          </Button>
+          <Popover>
+            <Menu className="menu menu-xs dialog">
+              <MenuItem>
+                <li>
+                  <button
+                    className="whitespace-nowrap"
+                    onClick={() => {
+                      setOpenCreateFolder(true);
+                      setParent({
+                        type: "folder",
+                        id: e.id,
+                      });
+                    }}
+                  >
+                    <AddFolderIcon className="h-5 w-5" />
+                    Add Folder
+                  </button>
+                </li>
+              </MenuItem>
+              <MenuItem>
+                <li>
+                  <button className="whitespace-nowrap">
+                    <AddFileIcon className="h-5 w-5" />
+                    Add File
+                  </button>
+                </li>
+              </MenuItem>
+              <MenuItem>
+                <li>
+                  <button
+                    className="whitespace-nowrap"
+                    onClick={() => {
+                      setOpenCreateList(true);
+                      if (e.type === "folder") {
                         setParent({
                           type: "folder",
                           id: e.id,
                         });
-                      }}
-                    >
-                      <AddFolderIcon className="h-5 w-5" />
-                      Add Folder
-                    </button>
-                  </li>
-                </MenuItem>
-                <MenuItem>
-                  <li>
-                    <button className="whitespace-nowrap">
-                      <AddFileIcon className="h-5 w-5" />
-                      Add File
-                    </button>
-                  </li>
-                </MenuItem>
-                <MenuItem>
-                  <li>
-                    <button
-                      className="whitespace-nowrap"
-                      onClick={() => {
-                        setOpenCreateList(true);
-                        if (e.type === "folder") {
-                          setParent({
-                            type: "folder",
-                            id: e.id,
-                          });
-                        }
-                      }}
-                    >
-                      <AddListIcon className="h-5 w-5" />
-                      Add List
-                    </button>
-                  </li>
-                </MenuItem>
-              </Menu>
-            </Popover>
-          </MenuTrigger>
-          <MenuTrigger>
-            <Button className="btn btn-square btn-ghost btn-xs invisible group-hover:visible">
-              <span className="icon-[solar--menu-dots-bold]"></span>
-            </Button>
-            <Popover>
-              <Menu className="menu menu-xs rounded-box bg-base-300">
-                <MenuItem>
-                  <li>
-                    <button
-                      className="whitespace-nowrap"
-                      onClick={() => {
-                        setOpenCreateFolder(true);
+                      }
+                    }}
+                  >
+                    <AddListIcon className="h-5 w-5" />
+                    Add List
+                  </button>
+                </li>
+              </MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+        <MenuTrigger>
+          <Button className="btn btn-square btn-ghost btn-xs invisible group-hover:visible">
+            <span className="icon-[solar--menu-dots-bold]"></span>
+          </Button>
+          <Popover>
+            <Menu className="menu menu-xs dialog">
+              <MenuItem>
+                <li>
+                  <button
+                    className="whitespace-nowrap"
+                    onClick={() => {
+                      setOpenCreateFolder(true);
+                      setParent({
+                        type: "folder",
+                        id: e.id,
+                      });
+                    }}
+                  >
+                    <AddFolderIcon className="h-5 w-5" />
+                    Add Folder
+                  </button>
+                </li>
+              </MenuItem>
+              <MenuItem>
+                <li>
+                  <button className="whitespace-nowrap">
+                    <AddFileIcon className="h-5 w-5" />
+                    Add File
+                  </button>
+                </li>
+              </MenuItem>
+              <MenuItem>
+                <li>
+                  <button
+                    className="whitespace-nowrap"
+                    onClick={() => {
+                      setOpenCreateList(true);
+                      if (e.type === "folder") {
                         setParent({
                           type: "folder",
                           id: e.id,
                         });
-                      }}
-                    >
-                      <AddFolderIcon className="h-5 w-5" />
-                      Add Folder
-                    </button>
-                  </li>
-                </MenuItem>
-                <MenuItem>
-                  <li>
-                    <button className="whitespace-nowrap">
-                      <AddFileIcon className="h-5 w-5" />
-                      Add File
-                    </button>
-                  </li>
-                </MenuItem>
-                <MenuItem>
-                  <li>
-                    <button
-                      className="whitespace-nowrap"
-                      onClick={() => {
-                        setOpenCreateList(true);
-                        if (e.type === "folder") {
-                          setParent({
-                            type: "folder",
-                            id: e.id,
-                          });
-                        }
-                      }}
-                    >
-                      <AddListIcon className="h-5 w-5" />
-                      Add List
-                    </button>
-                  </li>
-                </MenuItem>
-              </Menu>
-            </Popover>
-          </MenuTrigger>
-        </div>
-      </Link>
-    </li>
+                      }
+                    }}
+                  >
+                    <AddListIcon className="h-5 w-5" />
+                    Add List
+                  </button>
+                </li>
+              </MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      </div>
+    </Link>
   );
 };
 

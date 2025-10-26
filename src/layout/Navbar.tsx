@@ -4,8 +4,6 @@ import {
   useSpacesStore,
 } from "../utils/zustand";
 import { Button } from "react-aria-components";
-import NotificationsDialog from "./NotificationsDialog";
-import CreateModal from "@/components/CreateModal";
 import { twMerge } from "tailwind-merge";
 
 export default function Navbar() {
@@ -22,16 +20,28 @@ export default function Navbar() {
             closeSidebar ? "-translte-x-10" : "translate-x-0 duration-700",
           )}
         >
-          <Button
+          {/*<Button
             onPress={() => setCloseSidebar(!closeSidebar)}
             className="btn btn-square btn-ghost btn-sm"
-          >
-            {!closeSidebar ? (
+          >*/}
+          <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
+            <input
+              type="checkbox"
+              onClick={() => setCloseSidebar(!closeSidebar)}
+            />
+            <div className="swap-on">
+              <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
+            </div>
+            <div className="swap-off">
+              <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
+            </div>
+          </label>
+          {/*{!closeSidebar ? (
               <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
             ) : (
               <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
-            )}
-          </Button>
+            )}*/}
+          {/*</Button>*/}
         </div>
 
         <Button className="btn btn-square btn-ghost btn-sm">

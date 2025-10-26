@@ -102,10 +102,10 @@ export default function Home({}: any) {
   };
 
   // Cargar lista de archivos al montar el componente
-  useEffect(() => {
-    listFiles();
-    getAppDir();
-  }, []);
+  // useEffect(() => {
+  //   listFiles();
+  //   getAppDir();
+  // }, []);
 
   return (
     <div className="h-screen overflow-auto m-1rounded-box bg-base-300">
