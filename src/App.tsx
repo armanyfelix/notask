@@ -8,6 +8,7 @@ import {
   Routes,
   redirect,
   useLocation,
+  useNavigate,
 } from "react-router";
 import {
   useAccountStore,
@@ -31,24 +32,29 @@ import isTauri from "./utils/isTauri";
 import { documentDir } from "@tauri-apps/api/path";
 import BaseLayout from "./layout/BaseLayout";
 import { getStore } from "@tauri-apps/plugin-store";
-import CreateHubModal from "./components/CreateHubModal";
+import CreateHub from "./pages/CreateHub";
 
-export default function App({}: any) {
+function AppRoutes() {
   const { account, setAccount } = useAccountStore();
   const { session, setSession } = useSessionStore();
   const { theme, setTheme } = useThemeStore();
   const { setSpaces } = useSpacesStore();
 
   const [allowResetPassword, setAllowResetPassword] = useState<boolean>(false);
-  const [createHubOpen, setCreateHubOpen] = useState<boolean>(false);
+  const [noHubs, setNoHubs] = useState<boolean>(false);
+  let navigate = useNavigate();
 
   const getHubs = async () => {
-    try {
-      const hubsStore = await getStore("hubs.json");
-      console.log("Directorio de la app:", hubsStore);
-    } catch (error) {
-      console.error("Error al obtener directorio:", error);
+    // try {
+    const hubsStore = await getStore("hubs.json");
+    if (hubsStore === null) {
+      console.log("what?");
+      setNoHubs(true);
+      navigate("/getting-started");
     }
+    // } catch (error) {
+    //   console.error("Error al obtener directorio:", error);
+    // }
   };
 
   const getAccount = async (id: string) => {
@@ -162,59 +168,56 @@ export default function App({}: any) {
   }, []);
 
   return (
-    <BrowserRouter>
-      <CreateHubModal
-        isOpen={createHubOpen}
-        setOpen={() => setCreateHubOpen(false)}
-      />
-      <Routes>
-        <Route
-          element={
-            <ProtectedRoute
-              isAllowed={isTauri || (session && account)}
-              redirectTo={
-                !session && !isTauri
-                  ? "/signin"
-                  : (session || isTauri) && !account && "/welcome"
-              }
-            />
-          }
-        >
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/today" element={<Home />} />
-            <Route path="/upcoming" element={<Upcoming />} />
-            <Route path="/list/:id" element={<List />} />
-          </Route>
+    <Routes>
+      <Route
+        element={
+          <ProtectedRoute
+            isAllowed={isTauri || (session && account)}
+            redirectTo={
+              !session && !isTauri
+                ? "/signin"
+                : (session || isTauri) && !account && "/welcome"
+            }
+          />
+        }
+      >
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/today" element={<Home />} />
+          <Route path="/upcoming" element={<Upcoming />} />
+          <Route path="/list/:id" element={<List />} />
         </Route>
-        <Route element={<ProtectedRoute isAllowed={!session && !account} />}>
-          <Route element={<BaseLayout />}>
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/password/forgot" element={<ForgotPassword />} />
-          </Route>
+      </Route>
+      <Route element={<ProtectedRoute isAllowed={!session && !account} />}>
+        <Route element={<BaseLayout />}>
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/password/forgot" element={<ForgotPassword />} />
+          <Route
+            path="/welcome"
+            element={
+              <ProtectedRoute isAllowed={session && isTauri && !account}>
+                <Welcome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/password/reset"
+            element={
+              // <ProtectedRoute
+              //   isAllowed={allowResetPassword && !session && !account}
+              // >
+              <ResetPassword />
+              // </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
         </Route>
-        <Route
-          path="/welcome"
-          element={
-            <ProtectedRoute isAllowed={session && isTauri && !account}>
-              <Welcome />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/password/reset"
-          element={
-            // <ProtectedRoute
-            //   isAllowed={allowResetPassword && !session && !account}
-            // >
-            <ResetPassword />
-            // </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+      </Route>
+      <Route element={<ProtectedRoute isAllowed={isTauri && noHubs} />}>
+        <Route path="/getting-started" element={<CreateHub />} />
+      </Route>
+    </Routes>
   );
 }
 
@@ -232,3 +235,11 @@ export const ProtectedRoute = ({ children, isAllowed, redirectTo }: any) => {
   }
   return children ? children : <Outlet />;
 };
+
+export default function App({}: any) {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}

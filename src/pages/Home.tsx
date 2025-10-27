@@ -11,6 +11,7 @@ import {
   mkdir,
 } from "@tauri-apps/plugin-fs";
 import { appDataDir } from "@tauri-apps/api/path";
+import { open } from "@tauri-apps/plugin-dialog";
 
 export default function Home({}: any) {
   const user = useAccountStore((s: AccountState) => s.account);
@@ -103,7 +104,6 @@ export default function Home({}: any) {
 
   const onSelectLocation = async () => {
     const selected = await open({
-      multiple: true,
       filters: [
         {
           name: "Image",
@@ -111,9 +111,7 @@ export default function Home({}: any) {
         },
       ],
     });
-    if (Array.isArray(selected)) {
-      // user selected multiple files
-    } else if (selected === null) {
+    if (selected === null) {
       // user cancelled the selection
     } else {
       // user selected a single file

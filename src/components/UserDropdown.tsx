@@ -13,6 +13,7 @@ import themes from "../data/themes.json";
 import { useEffect } from "react";
 import {
   AccountState,
+  SessionState,
   ThemeState,
   useAccountStore,
   useThemeStore,
@@ -21,7 +22,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 interface Props {
-  session: any;
+  session: SessionState;
 }
 
 export default function UserDropdown({ session }: Props) {
@@ -51,15 +52,15 @@ export default function UserDropdown({ session }: Props) {
   };
 
   useEffect(() => {
-    if (!session && !account) {
-      setLogin(true);
-    } else {
+    if (session && account) {
       if (account?.avatar_url) {
         downloadImage(account.avatar_url);
       }
+      setLogin(true);
+    } else {
       setLogin(false);
     }
-  }, []);
+  }, [session]);
 
   return login ? (
     <MenuTrigger>
@@ -67,7 +68,7 @@ export default function UserDropdown({ session }: Props) {
         {avatarUrl ? (
           <img src={avatarUrl} className="h-5 w-5 rounded-full" alt="avatar" />
         ) : (
-          <span className="icon-[solar--user-circle-bold-duotone] h-8 w-8"></span>
+          <span className="icon-[solar--user-circle-bold-duotone] size-7"></span>
         )}
       </Button>
       <Popover placement="bottom">
@@ -154,7 +155,7 @@ export default function UserDropdown({ session }: Props) {
       </Popover>
     </MenuTrigger>
   ) : (
-    <Link to="/signin" className="btn btn-link">
+    <Link to="/signin" className="btn btn-ghost btn-sm">
       Login
     </Link>
   );

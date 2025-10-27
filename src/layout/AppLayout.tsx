@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 import { Outlet } from "react-router-dom";
 import Titlebar from "./TitleBar";
 import Dock from "./Dock";
-import CreateHubModal from "@/components/CreateHubModal";
 
 export default function AppLayout() {
   return (

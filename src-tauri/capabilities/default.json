@@ -18,6 +18,9 @@
     "dialog:allow-save",
     "store:default",
     "store:allow-get-store",
+    "core:window:allow-set-size",
+    "core:window:allow-set-maximizable",
+    "core:window:allow-set-resizable",
     {
       "identifier": "fs:allow-exists",
       "allow": [{ "path": "$HOME/**" }]
