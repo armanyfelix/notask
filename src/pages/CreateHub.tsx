@@ -1,28 +1,44 @@
 import { useState, useRef, useEffect } from "react";
 import { Button, Input } from "react-aria-components";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { open } from "@tauri-apps/plugin-dialog";
-import { BaseDirectory, documentDir } from "@tauri-apps/api/path";
+import { BaseDirectory, dirname, documentDir } from "@tauri-apps/api/path";
 import { mkdir } from "@tauri-apps/plugin-fs";
 import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 import WindowButtons from "@/layout/WindowButtons";
+import { Store } from "@tauri-apps/plugin-store";
 
 interface CreateHubProps {}
 
 export default function CreateHub({}: CreateHubProps) {
   const [createHub, setCreateHub] = useState<boolean>(false);
-  const [newHubName, setNewHubName] = useState<boolean>(false);
+  const [newHubName, setNewHubName] = useState<string>("");
+  const [isValidName, setIsValidName] = useState<boolean>(true);
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
+  const [alert, setAlert] = useState<string>("");
+  const navigate = useNavigate();
 
   const window = getCurrentWindow();
 
   const onSelectLocation = async () => {
-    const selected = await open({
+    const location = await open({
       directory: true,
       defaultPath: await documentDir(),
     });
-    if (selected !== null) {
-      return selected;
+    if (location !== null) {
+      return location;
     }
+  };
+
+  const onBrowseLocation = async () => {
+    const location = await onSelectLocation();
+    if (location) {
+      setSelectedLocation(location);
+    }
+  };
+
+  const onOpenFolder = async () => {
+    const location = await onSelectLocation();
   };
 
   const onQuickStart = async () => {
@@ -32,11 +48,28 @@ export default function CreateHub({}: CreateHubProps) {
     } catch (err) {}
   };
 
+  const onCreateHub = async () => {
+    if (!newHubName || !isValidName) {
+      setAlert("Please, pick a valid hub name");
+    } else if (!selectedLocation) {
+      setAlert("Please, select a location");
+    } else {
+      try {
+        await mkdir(`${selectedLocation}/${newHubName}`);
+        const store = await Store.load("hubs.json");
+        await store.set(newHubName, selectedLocation);
+        console.log(store);
+        navigate("/");
+      } catch (error: any) {
+        setAlert(error);
+      }
+    }
+  };
+
   const windowSize = async () => {
     await window.setSize(new LogicalSize(600, 560));
     await window.setMaximizable(false);
     await window.setResizable(false);
-    console.log("window shit size");
   };
 
   const restoreWindow = async () => {
@@ -46,11 +79,16 @@ export default function CreateHub({}: CreateHubProps) {
 
   useEffect(() => {
     windowSize();
-
     return () => {
       restoreWindow();
     };
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAlert("");
+    }, 6000);
+  }, [alert]);
 
   return (
     <main className="h-screen overflow-hidden">
@@ -63,8 +101,8 @@ export default function CreateHub({}: CreateHubProps) {
         </div>
         <WindowButtons noMaximizable />
       </div>
-      <div className=" p-5 md:p-12">
-        <div slot="title" className="pb-10">
+      <div className="p-5">
+        <div slot="title" className="pb-10 pt-5">
           <img src="/logo_orange.png" alt="zag" className="w-48 mx-auto" />
         </div>
         {!createHub ? (
@@ -88,7 +126,7 @@ export default function CreateHub({}: CreateHubProps) {
                   Choose an existing folder to open as a hub
                 </div>
               </div>
-              <Button className="btn" onPress={() => onSelectLocation()}>
+              <Button className="btn" onPress={() => onOpenFolder()}>
                 Open
               </Button>
             </div>
@@ -120,36 +158,69 @@ export default function CreateHub({}: CreateHubProps) {
               </Button>
             </div>
             <div className="mt-6">
-              <div className="flex items-center justify-between gap-x-10">
+              <div className="flex items-start justify-between gap-x-10">
                 <div>
                   <div>Hub name</div>
                   <div className="text-xs font-semibold text-nowrap opacity-70">
                     Pick a name for your new hub
                   </div>
                 </div>
-                <Input
-                  className="input"
-                  placeholder="Hub name"
-                  onChange={(e: any) => setNewHubName(e.target.value)}
-                />
+                <fieldset>
+                  <Input
+                    className={`input ${!isValidName ? "input-error" : ""}`}
+                    type="text"
+                    required
+                    placeholder="Hub name"
+                    maxLength={60}
+                    minLength={1}
+                    value={newHubName}
+                    onChange={(e: any) => {
+                      const value = e.target.value;
+                      setNewHubName(value);
+                      const hasInvalidChars = /[/\\]/.test(value);
+                      const endsWithDot = /\.$/.test(value);
+                      const isValid = value.length > 0 && !hasInvalidChars && !endsWithDot;
+                      setIsValidName(isValid);
+                    }}
+                  />
+                  {!isValidName && (
+                    <div className="mt-0.5 text-error text-xs">Enter a valid name.</div>
+                  )}
+                </fieldset>
               </div>
-              <div className="divider"></div>
+              <div className="divider gap-0"></div>
               <div className="flex items-center justify-between gap-x-10">
                 <div>
                   <div>Location</div>
                   <div className="text-xs font-semibold opacity-70">
-                    Pick a place to put your new hub
+                    {selectedLocation ? (
+                      <p>
+                        Your new hub will be placed in:{" "}
+                        <span className="text-primary">{selectedLocation}</span>
+                      </p>
+                    ) : (
+                      "Pick a place to put your new hub"
+                    )}
                   </div>
                 </div>
-                <button className="btn">Browse</button>
+                <Button className="btn" onPress={() => onBrowseLocation()}>
+                  Browse
+                </Button>
               </div>
             </div>
             <div className="text-center mt-10">
-              <Button className="btn btn-primary btn-wide">Create Hub</Button>
+              <Button className="btn btn-primary btn-wide" onPress={() => onCreateHub()}>
+                Create Hub
+              </Button>
             </div>
           </div>
         )}
       </div>
+      {alert && (
+        <div role="alert" className="alert absolute text-xs alert-error top-10 right-3">
+          <span>{alert}</span>
+        </div>
+      )}
     </main>
   );
 }

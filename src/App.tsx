@@ -51,6 +51,8 @@ function AppRoutes() {
       console.log("what?");
       setNoHubs(true);
       navigate("/getting-started");
+    } else {
+      console.log("hubsStore", await hubsStore.values());
     }
     // } catch (error) {
     //   console.error("Error al obtener directorio:", error);
@@ -140,7 +142,7 @@ function AppRoutes() {
         setSession(null);
         setAccount(null);
         setSpaces([]);
-        redirect("/password/reset");
+        navigate("/password/reset");
       } else if (event === "TOKEN_REFRESHED") {
         if (session) {
           setSession(session);
