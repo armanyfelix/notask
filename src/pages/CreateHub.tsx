@@ -56,9 +56,10 @@ export default function CreateHub({}: CreateHubProps) {
     } else {
       try {
         await mkdir(`${selectedLocation}/${newHubName}`);
-        const store = await Store.load("hubs.json");
-        await store.set(newHubName, selectedLocation);
-        console.log(store);
+        const hubsStore = await Store.load("hubs.json");
+        await hubsStore.set(newHubName, selectedLocation);
+        const defaultsStore = await Store.load("defaults.json");
+        await defaultsStore.set("hub", newHubName);
         navigate("/");
       } catch (error: any) {
         setAlert(error);

@@ -20,9 +20,10 @@ import {
 } from "../utils/zustand";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Session } from "@supabase/supabase-js";
 
 interface Props {
-  session: SessionState;
+  session: Session | null;
 }
 
 export default function UserDropdown({ session }: Props) {
@@ -34,9 +35,7 @@ export default function UserDropdown({ session }: Props) {
 
   async function downloadImage(path: string) {
     try {
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .download(path);
+      const { data, error } = await supabase.storage.from("avatars").download(path);
       if (error) {
         throw error;
       }

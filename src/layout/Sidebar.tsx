@@ -34,13 +34,11 @@ export default function Sidebar() {
     {
       name: "Home",
       path: "/",
-      icon: (
-        <span className="icon-[solar--home-smile-angle-bold-duotone] size-6"></span>
-      ),
+      icon: <span className="icon-[solar--home-smile-angle-bold-duotone] size-6"></span>,
     },
     {
       name: "Lists",
-      path: "/",
+      path: "/list",
       icon: (
         <span className="icon-[solar--checklist-minimalistic-bold-duotone] size-6"></span>
       ),
@@ -48,16 +46,12 @@ export default function Sidebar() {
     {
       name: "Notes",
       path: "/",
-      icon: (
-        <span className="icon-[solar--notebook-bold-duotone] size-6"></span>
-      ),
+      icon: <span className="icon-[solar--notebook-bold-duotone] size-6"></span>,
     },
     {
       name: "Whiteboard",
       path: "/",
-      icon: (
-        <span className="icon-[solar--pen-new-square-bold-duotone] size-6"></span>
-      ),
+      icon: <span className="icon-[solar--pen-new-square-bold-duotone] size-6"></span>,
     },
   ];
 
@@ -75,10 +69,7 @@ export default function Sidebar() {
 
   async function getFavorites() {
     if (account) {
-      const { data } = await supabase
-        .from("lists")
-        .select("*")
-        .eq("favorite", true);
+      const { data } = await supabase.from("lists").select("*").eq("favorite", true);
       if (data) {
         const withImages = await addImageUrl(data);
         return withImages;
@@ -206,11 +197,7 @@ export default function Sidebar() {
           >
             {page === "lists" && <ListsExplorer />}
             {closeSidebar && space && (
-              <SpaceExplorer
-                space={space}
-                account={account}
-                setAccount={setAccount}
-              />
+              <SpaceExplorer space={space} account={account} setAccount={setAccount} />
             )}
             <div className="mt-auto">Footer</div>
           </div>

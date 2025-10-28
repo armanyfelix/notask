@@ -6,7 +6,6 @@ import {
   Outlet,
   Route,
   Routes,
-  redirect,
   useLocation,
   useNavigate,
 } from "react-router";
@@ -31,7 +30,7 @@ import { addImageUrl } from "./helpers/images";
 import isTauri from "./utils/isTauri";
 import { documentDir } from "@tauri-apps/api/path";
 import BaseLayout from "./layout/BaseLayout";
-import { getStore } from "@tauri-apps/plugin-store";
+import { load } from "@tauri-apps/plugin-store";
 import CreateHub from "./pages/CreateHub";
 
 function AppRoutes() {
@@ -45,18 +44,16 @@ function AppRoutes() {
   let navigate = useNavigate();
 
   const getHubs = async () => {
-    // try {
-    const hubsStore = await getStore("hubs.json");
-    if (hubsStore === null) {
-      console.log("what?");
-      setNoHubs(true);
-      navigate("/getting-started");
-    } else {
-      console.log("hubsStore", await hubsStore.values());
+    try {
+      const hubsStore = await load("hubs.json");
+      const hubsLength = await hubsStore.length();
+      if (hubsStore === null || hubsLength <= 0) {
+        setNoHubs(true);
+        navigate("/getting-started");
+      }
+    } catch (error) {
+      console.error(error);
     }
-    // } catch (error) {
-    //   console.error("Error al obtener directorio:", error);
-    // }
   };
 
   const getAccount = async (id: string) => {
@@ -68,6 +65,7 @@ function AppRoutes() {
         .single();
       if (data) {
         setAccount(data);
+        return data;
       }
       if (error) {
         console.log(error);
@@ -79,10 +77,12 @@ function AppRoutes() {
 
   async function getSpaces() {
     if (account) {
+      console.log("gettins spaces");
       const { data } = await supabase
         .from("spaces")
         .select("*")
         .eq("account", account?.id);
+      console.log(data);
       if (data?.length) {
         const dataWithImages = await addImageUrl(data);
         setSpaces(dataWithImages);
@@ -121,37 +121,45 @@ function AppRoutes() {
 
   const onAuthStateChange = () => {
     return supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(session, account);
-      if (event === "INITIAL_SESSION") {
-        if (session) {
-          await getAccount(session.user.id);
-          getSpaces();
-        }
-      } else if (event === "SIGNED_IN") {
-        if (session && !allowResetPassword) {
-          await getAccount(session.user.id);
-          setSession(session);
-          getSpaces();
-        }
-      } else if (event === "SIGNED_OUT") {
-        setSession(null);
-        setAccount(null);
-        setSpaces([]);
-      } else if (event === "PASSWORD_RECOVERY") {
-        setAllowResetPassword(true);
-        setSession(null);
-        setAccount(null);
-        setSpaces([]);
-        navigate("/password/reset");
-      } else if (event === "TOKEN_REFRESHED") {
-        if (session) {
-          setSession(session);
-        }
-      } else if (event === "USER_UPDATED") {
-        if (session) {
-          setSession(session);
-          getAccount(session.user.id);
-        }
+      console.log(event, session, account);
+      switch (event) {
+        case "INITIAL_SESSION":
+          if (session) {
+            await getAccount(session.user.id);
+            getSpaces();
+          }
+          break;
+        case "SIGNED_IN":
+          if (session) {
+            const acc = await getAccount(session.user.id);
+            // setSession(session);
+            console.log("getting account", acc);
+            getSpaces();
+          }
+          break;
+        case "SIGNED_OUT":
+          setSession(null);
+          setAccount(null);
+          setSpaces([]);
+          break;
+        case "PASSWORD_RECOVERY":
+          setAllowResetPassword(true);
+          setSession(null);
+          setAccount(null);
+          setSpaces([]);
+          navigate("/password/reset");
+          break;
+        case "TOKEN_REFRESHED":
+          if (session) {
+            setSession(session);
+          }
+          break;
+        case "USER_UPDATED":
+          if (session) {
+            setSession(session);
+            getAccount(session.user.id);
+          }
+          break;
       }
     });
   };

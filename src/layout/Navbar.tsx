@@ -1,8 +1,5 @@
-import {
-  useAccountStore,
-  useSidebarStore,
-  useSpacesStore,
-} from "../utils/zustand";
+import CreateModal from "@/components/CreateModal";
+import { useAccountStore, useSidebarStore, useSpacesStore } from "../utils/zustand";
 import { Button } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
 
@@ -25,10 +22,7 @@ export default function Navbar() {
             className="btn btn-square btn-ghost btn-sm"
           >*/}
           <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
-            <input
-              type="checkbox"
-              onClick={() => setCloseSidebar(!closeSidebar)}
-            />
+            <input type="checkbox" onClick={() => setCloseSidebar(!closeSidebar)} />
             <div className="swap-on">
               <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
             </div>
@@ -74,15 +68,11 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center overflow-hidden space-x-1 pl-1">
-        {/*<CreateModal
-          accountId={account?.id}
-          setSpaces={setSpaces}
-          spaces={spaces}
-        />
-        <NotificationsDialog />*/}
-        <Button className="btn btn-square btn-ghost btn-sm">
+        <CreateModal accountId={account?.id} setSpaces={setSpaces} spaces={spaces} />
+        {/*<NotificationsDialog />*/}
+        {/*<Button className="btn btn-square btn-ghost btn-sm">
           <span className="icon-[tabler--plus] size-5"></span>
-        </Button>
+        </Button>*/}
         <Button className="btn btn-square btn-ghost btn-sm">
           <span className="icon-[tabler--search] size-5"></span>
         </Button>

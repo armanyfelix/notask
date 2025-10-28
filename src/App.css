@@ -155,31 +155,14 @@ input[type="text"] {
     }
 }
 
-/* Titlebar debe estar siempre al frente de todo */
-#titlebar {
-    z-index: 999999 !important;
-}
-
-/* Contenedor principal de la titlebar */
-.titlebar-container {
-    z-index: 999999 !important;
-    position: relative;
-}
-
-/* Botones de la titlebar (minimizar, maximizar, cerrar) */
-.titlebar-buttons {
-    z-index: 999999 !important;
-    position: relative;
-}
-
 .react-aria-ModalOverlay {
     position: fixed;
-    top: 2.5rem; /* Altura de la titlebar (h-10 = 40px = 2.5rem) */
+    top: 0;
     left: 0;
     width: 100vw;
-    height: calc(var(--visual-viewport-height) - 2.5rem);
+    height: var(--visual-viewport-height);
     background: rgba(0 0 0 / 0.5);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
