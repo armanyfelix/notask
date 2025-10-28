@@ -56,33 +56,23 @@ function AppRoutes() {
     }
   };
 
-  const getAccount = async (id: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("accounts")
-        .select("*")
-        .eq("user_id", id)
-        .single();
-      if (data) {
-        setAccount(data);
-        return data;
-      }
-      if (error) {
-        console.log(error);
-      }
-    } catch (error) {
+  async function getAccount(id: string) {
+    const { data, error } = await supabase
+      .from("accounts")
+      .select("*")
+      .eq("user_id", id)
+      .single();
+    if (data) {
+      setAccount(data);
+    }
+    if (error) {
       console.log(error);
     }
-  };
+  }
 
   async function getSpaces() {
     if (account) {
-      console.log("gettins spaces");
-      const { data } = await supabase
-        .from("spaces")
-        .select("*")
-        .eq("account", account?.id);
-      console.log(data);
+      const { data } = await supabase.from("spaces").select("*").eq("account", account.id);
       if (data?.length) {
         const dataWithImages = await addImageUrl(data);
         setSpaces(dataWithImages);
@@ -120,20 +110,18 @@ function AppRoutes() {
   };
 
   const onAuthStateChange = () => {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(event, session, account);
+    return supabase.auth.onAuthStateChange(async (event, currentSession) => {
       switch (event) {
         case "INITIAL_SESSION":
-          if (session) {
-            await getAccount(session.user.id);
+          if (currentSession) {
+            await getAccount(currentSession.user.id);
             getSpaces();
           }
           break;
         case "SIGNED_IN":
-          if (session) {
-            const acc = await getAccount(session.user.id);
-            // setSession(session);
-            console.log("getting account", acc);
+          if (currentSession) {
+            getAccount(currentSession.user.id);
+            setSession(currentSession);
             getSpaces();
           }
           break;
@@ -150,15 +138,17 @@ function AppRoutes() {
           navigate("/password/reset");
           break;
         case "TOKEN_REFRESHED":
-          if (session) {
-            setSession(session);
+          if (currentSession) {
+            setSession(currentSession);
           }
           break;
         case "USER_UPDATED":
-          if (session) {
-            setSession(session);
-            getAccount(session.user.id);
+          if (currentSession) {
+            setSession(currentSession);
+            getAccount(currentSession.user.id);
           }
+          break;
+        default:
           break;
       }
     });

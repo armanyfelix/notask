@@ -22,6 +22,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@hookform/resolvers": "^5.2.2",
     "@preact/signals-react": "^3.3.1",
+    "@react-aria/collections": "^3.0.0",
     "@supabase/supabase-js": "^2.76.1",
     "@tailwindcss/vite": "^4.1.15",
     "@tauri-apps/api": "^2.9.0",

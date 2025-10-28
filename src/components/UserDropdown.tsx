@@ -21,14 +21,18 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Session } from "@supabase/supabase-js";
+import { createHideableComponent } from "@react-aria/collections";
 
 interface Props {
   session: Session | null;
 }
 
-export default function UserDropdown({ session }: Props) {
+const UserDropdown = createHideableComponent(function ({ session }: Props) {
+  // export default function UserDropdown({ session }: Props) {
   const { account } = useAccountStore((s: AccountState) => s);
   const { theme, setTheme } = useThemeStore((s: ThemeState) => s);
+
+  console.log(session);
 
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [login, setLogin] = useState<boolean>(false);
@@ -63,9 +67,9 @@ export default function UserDropdown({ session }: Props) {
 
   return login ? (
     <MenuTrigger>
-      <Button className="btn btn-ghost btn-circle avatar">
+      <Button aria-label="user-menu" className="cursor-pointer avatar">
         {avatarUrl ? (
-          <img src={avatarUrl} className="h-5 w-5 rounded-full" alt="avatar" />
+          <img src={avatarUrl} className="size-5 rounded-full" alt="avatar" />
         ) : (
           <span className="icon-[solar--user-circle-bold-duotone] size-7"></span>
         )}
@@ -158,4 +162,6 @@ export default function UserDropdown({ session }: Props) {
       Login
     </Link>
   );
-}
+});
+
+export default UserDropdown;

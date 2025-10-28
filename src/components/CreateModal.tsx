@@ -1,17 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogTrigger,
-  Menu,
-  MenuItem,
-  MenuTrigger,
-  Modal,
-  Popover,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-} from "react-aria-components";
+import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import CreateSpace from "./common/CreateSpace";
 import CreateItem from "./common/CreateItem";
 
@@ -28,26 +15,38 @@ export default function CreateModal({ accountId, spaces, setSpaces }: Props) {
         <Button aria-label="Menu" className="btn btn-square btn-ghost btn-sm">
           <span className="icon-[solar--add-circle-line-duotone] size-6"></span>
         </Button>
-        <Popover className="dialog">
-          <Menu className="menu menu-sm">
+        <Popover className="dialog" placement="bottom right">
+          <Menu className="menu">
             <MenuItem onAction={() => alert("open")}>
               <li>
-                <Button className="whitespace-nowrap">Note</Button>
+                <Button className="whitespace-nowrap">
+                  <span className="icon-[solar--file-smile-line-duotone] size-5"></span>
+                  Note
+                </Button>
               </li>
             </MenuItem>
             <MenuItem onAction={() => alert("open")}>
               <li>
-                <Button className="whitespace-nowrap">List</Button>
+                <Button className="whitespace-nowrap">
+                  <span className="icon-[solar--clipboard-add-line-duotone] size-5"></span>
+                  List
+                </Button>
               </li>
             </MenuItem>
             <MenuItem onAction={() => alert("open")}>
               <li>
-                <Button className="whitespace-nowrap">Folder</Button>
+                <Button className="whitespace-nowrap">
+                  <span className="icon-[solar--add-folder-line-duotone] size-5"></span>
+                  Folder
+                </Button>
               </li>
             </MenuItem>
             <MenuItem onAction={() => alert("open")}>
               <li>
-                <Button className="whitespace-nowrap">Space</Button>
+                <Button className="whitespace-nowrap">
+                  <span className="icon-[solar--planet-line-duotone] size-5"></span>
+                  Space
+                </Button>
               </li>
             </MenuItem>
           </Menu>

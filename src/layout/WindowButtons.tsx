@@ -35,7 +35,7 @@ export default function WindowButtons({ noMaximizable = false }) {
   }, []);
 
   return (
-    <div className="fixed right-0 top-0 flex items-center bg-base-100 z-999">
+    <div className="sticky right-0 top-0 flex items-center bg-base-100 z-999">
       <button
         className="inline-flex justify-center items-center size-8 duration-300 ease-in-out hover:bg-base-300 cursor-default"
         onClick={handleMinimize}

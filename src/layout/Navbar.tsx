@@ -2,8 +2,9 @@ import CreateModal from "@/components/CreateModal";
 import { useAccountStore, useSidebarStore, useSpacesStore } from "../utils/zustand";
 import { Button } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
+import { createHideableComponent } from "@react-aria/collections";
 
-export default function Navbar() {
+const Navbar = createHideableComponent(function () {
   const { closeSidebar, setCloseSidebar } = useSidebarStore();
   const { account } = useAccountStore();
   const { spaces, setSpaces } = useSpacesStore();
@@ -86,4 +87,6 @@ export default function Navbar() {
       </div>
     </header>
   );
-}
+});
+
+export default Navbar;
