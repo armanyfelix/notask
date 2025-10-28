@@ -1,8 +1,8 @@
-import CreateModal from "@/components/CreateModal";
 import { useAccountStore, useSidebarStore, useSpacesStore } from "../utils/zustand";
 import { Button } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
 import { createHideableComponent } from "@react-aria/collections";
+import CreateMenu from "@/components/CreateMenu";
 
 const Navbar = createHideableComponent(function () {
   const { closeSidebar, setCloseSidebar } = useSidebarStore();
@@ -69,7 +69,7 @@ const Navbar = createHideableComponent(function () {
         </div>
       </div>
       <div className="flex items-center overflow-hidden space-x-1 pl-1">
-        <CreateModal accountId={account?.id} setSpaces={setSpaces} spaces={spaces} />
+        <CreateMenu accountId={account?.id} setSpaces={setSpaces} spaces={spaces} />
         {/*<NotificationsDialog />*/}
         {/*<Button className="btn btn-square btn-ghost btn-sm">
           <span className="icon-[tabler--plus] size-5"></span>

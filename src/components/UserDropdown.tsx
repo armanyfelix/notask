@@ -71,10 +71,10 @@ const UserDropdown = createHideableComponent(function ({ session }: Props) {
         {avatarUrl ? (
           <img src={avatarUrl} className="size-5 rounded-full" alt="avatar" />
         ) : (
-          <span className="icon-[solar--user-circle-bold-duotone] size-7"></span>
+          <span className="icon-[solar--user-circle-bold-duotone] size-6"></span>
         )}
       </Button>
-      <Popover placement="bottom">
+      <Popover placement="bottom right">
         <Menu className="dialog menu flex-nowrap">
           <MenuItem>
             <li>

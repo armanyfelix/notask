@@ -67,6 +67,22 @@ export const useThemeStore = create<ThemeState>()(
   ),
 );
 
+export type TabsState = {
+  tabs: any;
+  setTabs: (tabs: any) => void;
+};
+export const useTabsStore = create<TabsState>()(
+  persist(
+    (set) => ({
+      tabs: [],
+      setTabs: (tabs) => set({ tabs }),
+    }),
+    {
+      name: "tabs",
+    },
+  ),
+);
+
 export type SidebarState = {
   closeSidebar: boolean;
   setCloseSidebar: (WideSidebar: boolean) => void;

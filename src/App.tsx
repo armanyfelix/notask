@@ -32,6 +32,7 @@ import { documentDir } from "@tauri-apps/api/path";
 import BaseLayout from "./layout/BaseLayout";
 import { load } from "@tauri-apps/plugin-store";
 import CreateHub from "./pages/CreateHub";
+import Note from "./pages/notes/Note";
 
 function AppRoutes() {
   const { account, setAccount } = useAccountStore();
@@ -186,6 +187,7 @@ function AppRoutes() {
           <Route path="/today" element={<Home />} />
           <Route path="/upcoming" element={<Upcoming />} />
           <Route path="/list/:id" element={<List />} />
+          <Route path="/note/:id" element={<Note />} />
         </Route>
       </Route>
       <Route element={<ProtectedRoute isAllowed={!session && !account} />}>

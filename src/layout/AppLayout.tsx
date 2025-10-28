@@ -1,35 +1,21 @@
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
-import { Outlet } from "react-router-dom";
-import Titlebar from "./TitleBar";
-import Dock from "./Dock";
+import { Outlet, useLocation } from "react-router";
 import { Button, Collection, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
-import {
-  useAccountStore,
-  useSessionStore,
-  useSidebarStore,
-  useSpacesStore,
-} from "@/utils/zustand";
+import { useSessionStore, useTabsStore } from "@/utils/zustand";
 import { useEffect, useState } from "react";
 import { load } from "@tauri-apps/plugin-store";
 import UserDropdown from "@/components/UserDropdown";
 import WindowButtons from "./WindowButtons";
-import CreateModal from "@/components/CreateModal";
-import { twMerge } from "tailwind-merge";
-import { createHideableComponent } from "@react-aria/collections";
 
 export default function AppLayout() {
   const { session } = useSessionStore();
+  const { tabs, setTabs } = useTabsStore();
+  let { pathname } = useLocation();
 
-  const [activeTab, setActiveTab] = useState("");
+  const [currentTab, setCurrentTab] = useState("");
   const [hubs, setHubs] = useState([]);
   const [currentHub, setCurrentHub] = useState();
-
-  const tabs = [
-    { id: 1, title: "Mouse settings" },
-    { id: 2, title: "Keyboard settings" },
-    { id: 3, title: "Gamepad settings" },
-  ];
 
   const getHubs = async () => {
     try {
@@ -40,8 +26,35 @@ export default function AppLayout() {
         setHubs(keys);
         const defaultsStore = await load("defaults.json");
         const defaultHub: any = await defaultsStore.get("hub");
-        console.log(defaultHub);
         setCurrentHub(defaultHub);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getTabs = async () => {
+    try {
+      const tabsStore = await load("tabs.json");
+      const tabsLength = await tabsStore.length();
+      if (tabsLength > 0) {
+        const values: any = await tabsStore.values();
+        console.log(values);
+        setTabs(values);
+        const defaultsStore = await load("defaults.json");
+        const defaultTab: any = await defaultsStore.get("tab");
+        setCurrentTab(defaultTab);
+      } else {
+        await tabsStore.set("tab 0", {
+          path: "/",
+          title: "new tab",
+        });
+        setTabs([
+          {
+            title: "new tab",
+            path: "/",
+          },
+        ]);
       }
     } catch (error) {
       console.error(error);
@@ -50,6 +63,7 @@ export default function AppLayout() {
 
   useEffect(() => {
     getHubs();
+    getTabs();
   }, []);
 
   function onOpenTab(tab: any) {}
@@ -64,11 +78,11 @@ export default function AppLayout() {
             className="tabs tabs-lift flex-nowrap tabs-sm bg-transparent ml-1.5 flex-1"
             items={tabs}
           >
-            {(item) => (
+            {(item: any) => (
               <Tab
-                id={item.id}
-                key={item.id}
-                className="tab flex-nowrap [--tab-bg:var(--color-base-200)] group"
+                id={item.path}
+                href={item.path}
+                className="tab flex-nowrap [--tab-bg:var(--color-base-200)] group outline-none"
                 onPress={() => onOpenTab(item)}
               >
                 <span className="ml-2 text-nowrap">{item.title}</span>
@@ -80,7 +94,7 @@ export default function AppLayout() {
           </TabList>
           <div className="flex w-full items-center">
             <div data-tauri-drag-region className="w-full min-w-10 h-8"></div>
-            <UserDropdown session={session} />
+            {/*<UserDropdown session={session} />*/}
             <WindowButtons />
           </div>
         </div>
@@ -90,7 +104,7 @@ export default function AppLayout() {
             <Navbar />
             <Collection items={tabs}>
               {(item) => (
-                <TabPanel>
+                <TabPanel id={pathname}>
                   <Outlet />
                 </TabPanel>
               )}

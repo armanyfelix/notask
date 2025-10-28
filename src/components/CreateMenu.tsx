@@ -1,6 +1,5 @@
+import { useTabsStore } from "@/utils/zustand";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
-import CreateSpace from "./common/CreateSpace";
-import CreateItem from "./common/CreateItem";
 
 interface Props {
   accountId: number | undefined;
@@ -8,18 +7,29 @@ interface Props {
   setSpaces: (value: any) => void;
 }
 
-export default function CreateModal({ accountId, spaces, setSpaces }: Props) {
+export default function CreateMenu({ accountId, spaces, setSpaces }: Props) {
+  const { tabs, setTabs } = useTabsStore();
+
+  const onNewNote = () => {
+    setTabs([
+      ...tabs,
+      {
+        path: "/note/",
+        title: "Untitled",
+      },
+    ]);
+  };
   return (
     <>
       <MenuTrigger>
         <Button aria-label="Menu" className="btn btn-square btn-ghost btn-sm">
-          <span className="icon-[solar--add-circle-line-duotone] size-6"></span>
+          <span className="icon-[solar--add-circle-line-duotone] size-5.5"></span>
         </Button>
-        <Popover className="dialog" placement="bottom right">
-          <Menu className="menu">
+        <Popover placement="bottom right">
+          <Menu className="dialog menu">
             <MenuItem onAction={() => alert("open")}>
               <li>
-                <Button className="whitespace-nowrap">
+                <Button onPress={() => onNewNote()} className="whitespace-nowrap">
                   <span className="icon-[solar--file-smile-line-duotone] size-5"></span>
                   Note
                 </Button>
