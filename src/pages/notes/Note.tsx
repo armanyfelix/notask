@@ -1,3 +1,3 @@
 export default function Note() {
-  return <div>hello world!</div>;
+  return <div className="text-red-500">hello world!</div>;
 }

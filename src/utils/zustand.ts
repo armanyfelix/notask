@@ -70,12 +70,16 @@ export const useThemeStore = create<ThemeState>()(
 export type TabsState = {
   tabs: any;
   setTabs: (tabs: any) => void;
+  selectedTab: any;
+  setSelectedTab: (tab: any) => void;
 };
 export const useTabsStore = create<TabsState>()(
   persist(
     (set) => ({
       tabs: [],
       setTabs: (tabs) => set({ tabs }),
+      selectedTab: {},
+      setSelectedTab: (selectedTab) => set({ selectedTab }),
     }),
     {
       name: "tabs",

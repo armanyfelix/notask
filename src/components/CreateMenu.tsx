@@ -1,5 +1,6 @@
 import { useTabsStore } from "@/utils/zustand";
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import { useNavigate } from "react-router";
 
 interface Props {
   accountId: number | undefined;
@@ -8,7 +9,8 @@ interface Props {
 }
 
 export default function CreateMenu({ accountId, spaces, setSpaces }: Props) {
-  const { tabs, setTabs } = useTabsStore();
+  const { tabs, setTabs, setSelectedTab } = useTabsStore();
+  const navigate = useNavigate();
 
   const onNewNote = () => {
     setTabs([
@@ -18,6 +20,11 @@ export default function CreateMenu({ accountId, spaces, setSpaces }: Props) {
         title: "Untitled",
       },
     ]);
+    setSelectedTab({
+      path: "/note/",
+      title: "Untitled",
+    });
+    navigate("/note/");
   };
   return (
     <>
@@ -27,9 +34,9 @@ export default function CreateMenu({ accountId, spaces, setSpaces }: Props) {
         </Button>
         <Popover placement="bottom right">
           <Menu className="dialog menu">
-            <MenuItem onAction={() => alert("open")}>
+            <MenuItem onAction={() => onNewNote()}>
               <li>
-                <Button onPress={() => onNewNote()} className="whitespace-nowrap">
+                <Button className="whitespace-nowrap">
                   <span className="icon-[solar--file-smile-line-duotone] size-5"></span>
                   Note
                 </Button>

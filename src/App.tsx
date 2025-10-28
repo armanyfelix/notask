@@ -187,7 +187,7 @@ function AppRoutes() {
           <Route path="/today" element={<Home />} />
           <Route path="/upcoming" element={<Upcoming />} />
           <Route path="/list/:id" element={<List />} />
-          <Route path="/note/:id" element={<Note />} />
+          <Route path="/note" element={<Note />} />
         </Route>
       </Route>
       <Route element={<ProtectedRoute isAllowed={!session && !account} />}>
