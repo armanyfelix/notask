@@ -61,54 +61,6 @@ body {
     @apply rounded-box border-neutral/90 bg-base-100/90 text-base-content border shadow-xl backdrop-blur-lg;
 }
 
-.ce-toolbar__plus,
-.ce-toolbar__settings-btn {
-    background-color: #374151 !important; /* gray-700 */
-    color: white !important;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-}
-
-.ce-toolbar__plus:hover,
-.ce-toolbar__settings-btn:hover {
-    background-color: #4b5563 !important; /* gray-600 */
-}
-
-.ce-toolbar__plus svg,
-.ce-toolbar__settings-btn svg {
-    fill: white !important;
-}
-
-/* Dropdown menu */
-.ce-settings {
-    background-color: #1f2937 !important; /* gray-800 */
-    border: 1px solid #374151 !important;
-    border-radius: 6px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.ce-settings__button {
-    color: #e5e7eb !important; /* gray-200 */
-}
-
-.ce-settings__button:hover {
-    background-color: #374151 !important; /* gray-700 */
-}
-
-.ce-block--selected .ce-block__content {
-    background: #888 !important;
-}
-
-.editor-container ::selection {
-    background-color: #888;
-    color: #000;
-}
-
-.editor-container ::-moz-selection {
-    background-color: #888;
-    color: #000;
-}
-
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;

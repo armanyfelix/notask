@@ -129,7 +129,7 @@ export default function AppLayout() {
         </div>
         <div className="flex w-full items-center">
           <div data-tauri-drag-region className="w-full min-w-10 h-8"></div>
-          {/*<UserDropdown session={session} />*/}
+          <UserDropdown session={session} />
           <WindowButtons />
         </div>
       </div>
