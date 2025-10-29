@@ -298,9 +298,7 @@ export default function Home({}: any) {
             style={{
               padding: "10px",
               color: "#000",
-              backgroundColor: message.includes("Error")
-                ? "#ffebee"
-                : "#e8f5e8",
+              backgroundColor: message.includes("Error") ? "#ffebee" : "#e8f5e8",
               border: `1px solid ${message.includes("Error") ? "#f44336" : "#4CAF50"}`,
               borderRadius: "4px",
               marginTop: "20px",
@@ -314,8 +312,7 @@ export default function Home({}: any) {
         <div style={{ marginTop: "20px", fontSize: "12px", color: "#666" }}>
           <p>Los archivos se guardan en el directorio de la aplicación.</p>
           <p>
-            Puedes crear nuevos archivos escribiendo un nombre y haciendo click
-            en "Crear".
+            Puedes crear nuevos archivos escribiendo un nombre y haciendo click en "Crear".
           </p>
         </div>
       </div>

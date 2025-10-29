@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { Link, Outlet, useLocation } from "react-router";
-import { Button, Collection, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
+import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 import { useSessionStore, useTabsStore } from "@/utils/zustand";
 import { useEffect, useState } from "react";
 import { load } from "@tauri-apps/plugin-store";
@@ -11,7 +11,6 @@ import WindowButtons from "./WindowButtons";
 export default function AppLayout() {
   const { session } = useSessionStore();
   const { tabs, setTabs, selectedTab, setSelectedTab } = useTabsStore();
-  let { pathname } = useLocation();
 
   const [hubs, setHubs] = useState([]);
   const [currentHub, setCurrentHub] = useState();
@@ -66,16 +65,56 @@ export default function AppLayout() {
 
   return (
     <main className="h-screen flex flex-col overflow-hidden">
-      {/*<Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>*/}
-      <div className="sticky top-0 bottom-0 right-0 left-0 h-8 bg-base-100 flex  items-center">
-        <Button className="btn btn-ghost btn-sm">{currentHub}</Button>
+      <div className="sticky top-0 bottom-0 right-0 left-0 h-8 bg-base-100 flex ml-1 items-center">
+        <MenuTrigger>
+          <Button aria-label="Menu" className="btn btn-square btn-ghost btn-sm">
+            {currentHub}
+          </Button>
+          <Popover placement="bottom left">
+            <Menu className="dialog menu">
+              <MenuItem onAction={() => {}}>
+                <li>
+                  <Button className="whitespace-nowrap">
+                    <span className="icon-[solar--file-smile-line-duotone] size-5"></span>
+                    Note
+                  </Button>
+                </li>
+              </MenuItem>
+              <MenuItem onAction={() => alert("open")}>
+                <li>
+                  <Button className="whitespace-nowrap">
+                    <span className="icon-[solar--clipboard-add-line-duotone] size-5"></span>
+                    List
+                  </Button>
+                </li>
+              </MenuItem>
+              <MenuItem onAction={() => alert("open")}>
+                <li>
+                  <Button className="whitespace-nowrap">
+                    <span className="icon-[solar--add-folder-line-duotone] size-5"></span>
+                    Folder
+                  </Button>
+                </li>
+              </MenuItem>
+              <MenuItem onAction={() => alert("open")}>
+                <li>
+                  <Button className="whitespace-nowrap">
+                    <span className="icon-[solar--planet-line-duotone] size-5"></span>
+                    Space
+                  </Button>
+                </li>
+              </MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
         <div
           role="tablist"
           aria-label="Tabs"
           className="tabs tabs-lift flex-nowrap tabs-sm bg-transparent ml-1.5 flex-1"
         >
-          {tabs.map((item: any) => (
+          {tabs.map((item: any, i: number) => (
             <Link
+              key={i}
               role="tab"
               to={item.path}
               className={`tab flex-nowrap [--tab-bg:var(--color-base-200)] group outline-none ${selectedTab.path === item.path && "tab-active"}`}
@@ -98,16 +137,9 @@ export default function AppLayout() {
         <Sidebar />
         <div className="w-full overflow-auto border-l border-neutral bg-base-200pr-1">
           <Navbar />
-          {/*<Collection items={tabs}>*/}
-          {/*{(item) => (*/}
-          {/*// <TabPanel id={pathname}>*/}
           <Outlet />
-          {/*// </TabPanel>*/}
-          {/*)}*/}
-          {/*</Collection>*/}
         </div>
       </div>
-      {/*</Tabs>*/}
     </main>
   );
 }
