@@ -148,14 +148,13 @@ function NoteApp(): JSX.Element {
         <SharedHistoryContext>
           <TableContext>
             <ToolbarContext>
-              <div className="editor-shell">
+              <div className="bg-base-300 mx-auto max-w-5xl overflow-auto relative h-[90vh] ">
                 <Editor />
               </div>
               <Settings />
               {isDevPlayground ? <DocsPlugin /> : null}
               {isDevPlayground ? <PasteLogPlugin /> : null}
               {isDevPlayground ? <TestRecorderPlugin /> : null}
-
               {measureTypingPerf ? <TypingPerfPlugin /> : null}
             </ToolbarContext>
           </TableContext>

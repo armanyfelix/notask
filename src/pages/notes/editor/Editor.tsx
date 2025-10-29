@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import "./editor.css";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { CharacterLimitPlugin } from "@lexical/react/LexicalCharacterLimitPlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
@@ -24,7 +25,10 @@ import { CAN_USE_DOM } from "@lexical/utils";
 import { useEffect, useMemo, useState } from "react";
 import { Doc } from "yjs";
 
-import { createWebsocketProvider, createWebsocketProviderWithDoc } from "./collaboration";
+import {
+  createWebsocketProvider,
+  createWebsocketProviderWithDoc,
+} from "./collaboration";
 import { useSettings } from "./context/SettingsContext";
 import { useSharedHistoryContext } from "./context/SharedHistoryContext";
 import ActionsPlugin from "./plugins/ActionsPlugin";
@@ -110,10 +114,10 @@ export default function Editor(): JSX.Element {
     : isRichText
       ? "Enter some rich text..."
       : "Enter some plain text...";
-  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(
-    null,
-  );
-  const [isSmallWidthViewport, setIsSmallWidthViewport] = useState<boolean>(false);
+  const [floatingAnchorElem, setFloatingAnchorElem] =
+    useState<HTMLDivElement | null>(null);
+  const [isSmallWidthViewport, setIsSmallWidthViewport] =
+    useState<boolean>(false);
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
@@ -152,7 +156,10 @@ export default function Editor(): JSX.Element {
         />
       )}
       {isRichText && (
-        <ShortcutsPlugin editor={activeEditor} setIsLinkEditMode={setIsLinkEditMode} />
+        <ShortcutsPlugin
+          editor={activeEditor}
+          setIsLinkEditMode={setIsLinkEditMode}
+        />
       )}
       <div
         className={`editor-container ${showTreeView ? "tree-view" : ""} ${
@@ -184,7 +191,10 @@ export default function Editor(): JSX.Element {
             {isCollab ? (
               useCollabV2 ? (
                 <>
-                  <CollabV2 id={COLLAB_DOC_ID} shouldBootstrap={!skipCollaborationInit} />
+                  <CollabV2
+                    id={COLLAB_DOC_ID}
+                    shouldBootstrap={!skipCollaborationInit}
+                  />
                   <VersionsPlugin id={COLLAB_DOC_ID} />
                 </>
               ) : (
@@ -209,7 +219,11 @@ export default function Editor(): JSX.Element {
             />
             <MarkdownShortcutPlugin />
             {isCodeHighlighted &&
-              (isCodeShiki ? <CodeHighlightShikiPlugin /> : <CodeHighlightPrismPlugin />)}
+              (isCodeShiki ? (
+                <CodeHighlightShikiPlugin />
+              ) : (
+                <CodeHighlightPrismPlugin />
+              ))}
             <ListPlugin hasStrictIndent={listStrictIndent} />
             <CheckListPlugin />
             <TablePlugin
@@ -268,7 +282,10 @@ export default function Editor(): JSX.Element {
           </>
         )}
         {(isCharLimit || isCharLimitUtf8) && (
-          <CharacterLimitPlugin charset={isCharLimit ? "UTF-16" : "UTF-8"} maxLength={5} />
+          <CharacterLimitPlugin
+            charset={isCharLimit ? "UTF-16" : "UTF-8"}
+            maxLength={5}
+          />
         )}
         {isAutocomplete && <AutocompletePlugin />}
         <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
@@ -284,7 +301,13 @@ export default function Editor(): JSX.Element {
   );
 }
 
-function CollabV2({ id, shouldBootstrap }: { id: string; shouldBootstrap: boolean }) {
+function CollabV2({
+  id,
+  shouldBootstrap,
+}: {
+  id: string;
+  shouldBootstrap: boolean;
+}) {
   // VersionsPlugin needs GC disabled.
   const doc = useMemo(() => new Doc({ gc: false }), []);
 

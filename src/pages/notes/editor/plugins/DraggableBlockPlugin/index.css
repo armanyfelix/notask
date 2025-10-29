@@ -9,6 +9,7 @@
   will-change: transform;
   display: flex;
   gap: 2px;
+  color: #efefef;
 }
 
 .draggable-block-menu .icon {
@@ -22,6 +23,7 @@
   display: inline-block;
   border: none;
   cursor: pointer;
+  color: #efefef;
   background-color: transparent;
   background-image: url(../../images/icons/plus.svg);
 }
