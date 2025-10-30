@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   useAccountStore,
-  useSidebarStore,
+  useSidebarsStore,
   useSpacesStore,
   useUIStore,
 } from "../utils/zustand";
@@ -15,20 +15,20 @@ import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import { twMerge } from "tailwind-merge";
 
 export default function Sidebar() {
-  const [space, setSpace] = useState<any>(null);
-  const [page, setPage] = useState<string>("");
-  // const favorites = signal<any>([])
-
   const { account, setAccount } = useAccountStore();
-  // const session = useSessionStore()
   const { spaces } = useSpacesStore();
-  const { closeSidebar, setCloseSidebar } = useSidebarStore();
+  const { leftSidebarOpen, setLeftSidebarOpen } = useSidebarsStore();
   const {
     setOpenFavoritesSidebar,
     openFavoritesSidebar,
     setOpenSpacesSidebar,
     openSpacesSidebar,
   } = useUIStore();
+
+  const [space, setSpace] = useState<any>(null);
+  const [page, setPage] = useState<string>("");
+  const [track, setTrack] = useState(false);
+  const [width, setWidth] = useState(320);
 
   const routes = [
     {
@@ -62,13 +62,13 @@ export default function Sidebar() {
   ];
 
   const onOpenSpace = (s: any) => {
-    setCloseSidebar(page === s.name ? !closeSidebar : true);
+    setLeftSidebarOpen(page === s.name ? !leftSidebarOpen : true);
     setSpace(s);
     setPage(s.name);
   };
 
   const onToggle = (p: string, a: string) => {
-    setCloseSidebar(page === a ? !closeSidebar : true);
+    setLeftSidebarOpen(page === a ? !leftSidebarOpen : true);
     setSpace(null);
     setPage(p);
   };
@@ -85,21 +85,24 @@ export default function Sidebar() {
       }
     }
   }
-  const [track, setTrack] = useState(false);
-  const [width, setWidth] = useState(320);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (track) {
-        const newWidth = Math.min(Math.max(e.clientX, 120), 510);
+        const newWidth = Math.min(Math.max(e.clientX, 120), 420);
         setWidth(newWidth);
       }
     };
     const handleMouseUp = () => {
       if (track) setTrack(false);
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    if (track) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    } else {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
@@ -114,7 +117,7 @@ export default function Sidebar() {
     <aside className="flex items-start">
       <div
         style={{
-          marginRight: `${closeSidebar ? 0 : -width - 12}px`,
+          marginRight: `${leftSidebarOpen ? 0 : -width - 12}px`,
           transition: "0.5s ease",
         }}
         className="select-none absolute shadow-md md:static md:shadow-none hidden sm:flex"
@@ -122,16 +125,18 @@ export default function Sidebar() {
         <div
           className={twMerge(
             "flex transition-all duration-500 bg-base-200",
-            closeSidebar ? "min-w-[120px]  max-w-[510px]" : "-translate-x-full",
+            leftSidebarOpen
+              ? "min-w-[120px]  max-w-[420]"
+              : "-translate-x-full",
           )}
         >
           <div
             style={{ width: `${width}px` }}
             className={twMerge(
-              "relative min-w-[120px] max-w-[510px] h-[calc(100vh-40px)] flex ml-1.5 overflow-auto flex-col justify-between",
+              "relative min-w-[120px] max-w-[420] h-[calc(100vh-40px)] flex ml-1.5 overflow-auto flex-col justify-between",
             )}
           >
-            <div className="static select-none z-50 w-10 flex flex-col space-y-2 items-center justify-between h-[calc(100vh-32px)] bg-base-100">
+            {/*<div className="static select-none z-50 w-10 flex flex-col space-y-2 items-center justify-between h-[calc(100vh-32px)] bg-base-100">
               {routes.map((r, i) => (
                 <Link
                   key={i}
@@ -206,9 +211,9 @@ export default function Sidebar() {
                   <span className="icon-[solar--settings-bold-duotone] size-6"></span>
                 </Link>
               </div>
-            </div>
+            </div>*/}
             {page === "lists" && <ListsExplorer />}
-            {closeSidebar && space && (
+            {leftSidebarOpen && space && (
               <SpaceExplorer
                 space={space}
                 account={account}
@@ -219,7 +224,7 @@ export default function Sidebar() {
           </div>
           <div
             onMouseDown={() => setTrack(true)}
-            className="w-1.5 h-screen bg-transparent hover:bg-neutral/80 transition-colors cursor-col-resize"
+            className="w-1.5 h-screen bg-transparent active:bg-secondary hover:bg-secondary transition-colors cursor-col-resize"
           ></div>
         </div>
       </div>

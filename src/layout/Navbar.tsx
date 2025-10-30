@@ -1,15 +1,18 @@
 import {
   useAccountStore,
-  useSidebarStore,
+  useSidebarsStore,
   useSpacesStore,
 } from "../utils/zustand";
 import { Button } from "react-aria-components";
-import { twMerge } from "tailwind-merge";
-import { createHideableComponent } from "@react-aria/collections";
 import CreateMenu from "@/components/CreateMenu";
 
-const Navbar = createHideableComponent(function () {
-  const { closeSidebar, setCloseSidebar } = useSidebarStore();
+export default function Navbar() {
+  const {
+    rightSidebarOpen,
+    setRightSidebarOpen,
+    leftSidebarOpen,
+    setLeftSidebarOpen,
+  } = useSidebarsStore();
   const { account } = useAccountStore();
   const { spaces, setSpaces } = useSpacesStore();
 
@@ -17,20 +20,16 @@ const Navbar = createHideableComponent(function () {
     <header className="sticky top-0 right-0 z-50 flex h-8.5 bg-base-200 border-b border-neutral justify-between">
       <div className="flex items-center overflow-hidden space-x-1">
         <div
-          className={twMerge(
-            "transition-all ",
-            closeSidebar ? "-translte-x-10" : "translate-x-0 duration-700",
-          )}
+        // className={twMerge(
+        //   "transition-all ",
+        //   rightSidebarOpen ? "-translate-x-10" : "translate-x-0 duration-700",
+        // )}
         >
-          {/*<Button
-            onPress={() => setCloseSidebar(!closeSidebar)}
-            className="btn btn-square btn-ghost btn-sm"
-          >*/}
           <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
             <input
               type="checkbox"
-              checked={closeSidebar}
-              onClick={() => setCloseSidebar(!closeSidebar)}
+              checked={leftSidebarOpen}
+              onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
             />
             <div className="swap-on">
               <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
@@ -39,12 +38,6 @@ const Navbar = createHideableComponent(function () {
               <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
             </div>
           </label>
-          {/*{!closeSidebar ? (
-              <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
-            ) : (
-              <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
-            )}*/}
-          {/*</Button>*/}
         </div>
 
         <Button className="btn btn-square btn-ghost btn-sm">
@@ -96,22 +89,30 @@ const Navbar = createHideableComponent(function () {
           <span className="icon-[tabler--arrows-diagonal] size-5"></span>
           <span className="hidden icon-[tabler--arrows-diagonal-minimize] size-5"></span>
         </Button>
-        <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
-          <input
-            type="checkbox"
-            checked={closeSidebar}
-            onClick={() => setCloseSidebar(!closeSidebar)}
-          />
-          <div className="swap-on">
-            <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
-          </div>
-          <div className="swap-off">
-            <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
-          </div>
-        </label>
+        <Button className="btn btn-square btn-ghost btn-sm">
+          <span className="icon-[tabler--dots] size-5"></span>
+        </Button>
+        <div
+        // className={twMerge(
+        //   "transition-all ",
+        //   rightSidebarOpen ? "translte-x-10" : "-translate-x-0 duration-700",
+        // )}
+        >
+          <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
+            <input
+              type="checkbox"
+              checked={rightSidebarOpen}
+              onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+            />
+            <div className="swap-on">
+              <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
+            </div>
+            <div className="swap-off">
+              <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
+            </div>
+          </label>
+        </div>
       </div>
     </header>
   );
-});
-
-export default Navbar;
+}

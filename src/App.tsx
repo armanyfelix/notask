@@ -73,7 +73,10 @@ function AppRoutes() {
 
   async function getSpaces() {
     if (account) {
-      const { data } = await supabase.from("spaces").select("*").eq("account", account.id);
+      const { data } = await supabase
+        .from("spaces")
+        .select("*")
+        .eq("account", account.id);
       if (data?.length) {
         const dataWithImages = await addImageUrl(data);
         setSpaces(dataWithImages);

@@ -87,15 +87,19 @@ export const useTabsStore = create<TabsState>()(
   ),
 );
 
-export type SidebarState = {
-  closeSidebar: boolean;
-  setCloseSidebar: (WideSidebar: boolean) => void;
+export type SidebarsState = {
+  rightSidebarOpen: boolean;
+  setRightSidebarOpen: (rightSidebarOpen: boolean) => void;
+  leftSidebarOpen: boolean;
+  setLeftSidebarOpen: (leftSidebarOpen: boolean) => void;
 };
-export const useSidebarStore = create<SidebarState>()(
+export const useSidebarsStore = create<SidebarsState>()(
   persist(
     (set) => ({
-      closeSidebar: false,
-      setCloseSidebar: (closeSidebar) => set({ closeSidebar }),
+      rightSidebarOpen: false,
+      setRightSidebarOpen: (rightSidebarOpen) => set({ rightSidebarOpen }),
+      leftSidebarOpen: false,
+      setLeftSidebarOpen: (leftSidebarOpen) => set({ leftSidebarOpen }),
     }),
     {
       name: "sidebar",

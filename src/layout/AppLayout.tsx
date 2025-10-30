@@ -142,7 +142,7 @@ export default function AppLayout() {
       <div className="flex h">
         <Sidebar />
         <div className="w-full overflow-auto border-l border-neutral bg-base-200pr-1">
-          <Navbar />
+          {/*<Navbar />*/}
           <Outlet />
         </div>
       </div>
