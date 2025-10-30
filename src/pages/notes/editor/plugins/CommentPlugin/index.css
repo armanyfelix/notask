@@ -148,7 +148,7 @@ i.add-comment {
 .CommentPlugin_ShowCommentsButton {
   position: fixed;
   top: 80px;
-  right: 20px;
+  right: 70px;
   background-color: #ddd;
   border-radius: 10px;
 }

@@ -35,6 +35,7 @@ import TestRecorderPlugin from "./editor/plugins/TestRecorderPlugin";
 import TypingPerfPlugin from "./editor/plugins/TypingPerfPlugin";
 import Settings from "./editor/Settings";
 import PlaygroundEditorTheme from "./editor/themes/PlaygroundEditorTheme";
+import Sidebar from "./Sidebar";
 
 console.warn(
   "If you are profiling the playground app, please ensure you turn off the debug view. You can disable it by pressing on the settings control in the bottom-left of your screen and toggling the debug view setting.",
@@ -148,14 +149,19 @@ function NoteApp(): JSX.Element {
         <SharedHistoryContext>
           <TableContext>
             <ToolbarContext>
-              <div className="bg-base-300 mx-auto max-w-5xl overflow-auto relative h-[90vh] ">
-                <Editor />
+              <div className="flex">
+                <div className="bg-base-300 mx-auto w-full max-w-4xl max-wxl overflow-auto relative h-[90vh] ">
+                  <Editor />
+                </div>
+                <Settings />
+                {isDevPlayground ? <DocsPlugin /> : null}
+                {isDevPlayground ? <PasteLogPlugin /> : null}
+                {isDevPlayground ? <TestRecorderPlugin /> : null}
+                {measureTypingPerf ? <TypingPerfPlugin /> : null}
+                <div>
+                  <Sidebar />
+                </div>
               </div>
-              <Settings />
-              {isDevPlayground ? <DocsPlugin /> : null}
-              {isDevPlayground ? <PasteLogPlugin /> : null}
-              {isDevPlayground ? <TestRecorderPlugin /> : null}
-              {measureTypingPerf ? <TypingPerfPlugin /> : null}
             </ToolbarContext>
           </TableContext>
         </SharedHistoryContext>

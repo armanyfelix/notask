@@ -1,4 +1,8 @@
-import { useAccountStore, useSidebarStore, useSpacesStore } from "../utils/zustand";
+import {
+  useAccountStore,
+  useSidebarStore,
+  useSpacesStore,
+} from "../utils/zustand";
 import { Button } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
 import { createHideableComponent } from "@react-aria/collections";
@@ -23,7 +27,11 @@ const Navbar = createHideableComponent(function () {
             className="btn btn-square btn-ghost btn-sm"
           >*/}
           <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
-            <input type="checkbox" onClick={() => setCloseSidebar(!closeSidebar)} />
+            <input
+              type="checkbox"
+              checked={closeSidebar}
+              onClick={() => setCloseSidebar(!closeSidebar)}
+            />
             <div className="swap-on">
               <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
             </div>
@@ -69,7 +77,11 @@ const Navbar = createHideableComponent(function () {
         </div>
       </div>
       <div className="flex items-center overflow-hidden space-x-1 pl-1">
-        <CreateMenu accountId={account?.id} setSpaces={setSpaces} spaces={spaces} />
+        <CreateMenu
+          accountId={account?.id}
+          setSpaces={setSpaces}
+          spaces={spaces}
+        />
         {/*<NotificationsDialog />*/}
         {/*<Button className="btn btn-square btn-ghost btn-sm">
           <span className="icon-[tabler--plus] size-5"></span>
@@ -84,6 +96,19 @@ const Navbar = createHideableComponent(function () {
           <span className="icon-[tabler--arrows-diagonal] size-5"></span>
           <span className="hidden icon-[tabler--arrows-diagonal-minimize] size-5"></span>
         </Button>
+        <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
+          <input
+            type="checkbox"
+            checked={closeSidebar}
+            onClick={() => setCloseSidebar(!closeSidebar)}
+          />
+          <div className="swap-on">
+            <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
+          </div>
+          <div className="swap-off">
+            <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
+          </div>
+        </label>
       </div>
     </header>
   );

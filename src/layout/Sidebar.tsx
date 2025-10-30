@@ -34,7 +34,9 @@ export default function Sidebar() {
     {
       name: "Home",
       path: "/",
-      icon: <span className="icon-[solar--home-smile-angle-bold-duotone] size-6"></span>,
+      icon: (
+        <span className="icon-[solar--home-smile-angle-bold-duotone] size-6"></span>
+      ),
     },
     {
       name: "Lists",
@@ -46,12 +48,16 @@ export default function Sidebar() {
     {
       name: "Notes",
       path: "/",
-      icon: <span className="icon-[solar--notebook-bold-duotone] size-6"></span>,
+      icon: (
+        <span className="icon-[solar--notebook-bold-duotone] size-6"></span>
+      ),
     },
     {
       name: "Whiteboard",
       path: "/",
-      icon: <span className="icon-[solar--pen-new-square-bold-duotone] size-6"></span>,
+      icon: (
+        <span className="icon-[solar--pen-new-square-bold-duotone] size-6"></span>
+      ),
     },
   ];
 
@@ -69,7 +75,10 @@ export default function Sidebar() {
 
   async function getFavorites() {
     if (account) {
-      const { data } = await supabase.from("lists").select("*").eq("favorite", true);
+      const { data } = await supabase
+        .from("lists")
+        .select("*")
+        .eq("favorite", true);
       if (data) {
         const withImages = await addImageUrl(data);
         return withImages;
@@ -103,79 +112,6 @@ export default function Sidebar() {
 
   return (
     <aside className="flex items-start">
-      <div className="static select-none z-50 w-10 flex flex-col space-y-2 items-center justify-between h-[calc(100vh-40px)] bg-base-100">
-        {routes.map((r, i) => (
-          <Link
-            key={i}
-            to={r.path}
-            onClick={() => onToggle(r.name, r.name)}
-            className={`btn btn-ghost btn-square btn-sm tooltip tooltip-right`}
-            data-tip={r.name}
-          >
-            {r.icon}
-            {/*{closeSidebar && !space ? <span>{r.name}</span> : ""}*/}
-          </Link>
-        ))}
-        <Button
-          onPress={() => setOpenFavoritesSidebar(!openFavoritesSidebar)}
-          className={`group btn btn-ghost btn-xs p-0.5 tooltip tooltip-right`}
-          data-tip="Favorites"
-        >
-          <span className="icon-[solar--star-fall-bold] -mr-1 size-4.5"></span>
-          <span
-            className={`icon-[solar--alt-arrow-up-linear] duration-300 ease-in-out ${openFavoritesSidebar && "rotate-180"}`}
-          ></span>
-        </Button>
-        {openFavoritesSidebar && (
-          <Button
-            className="btn btn-ghost btn-square btn-sm tooltip tooltip-right"
-            data-tip="planet"
-          >
-            <span className="icon-[tabler--star] size-5"></span>
-          </Button>
-        )}
-        <Button
-          onPress={() => setOpenSpacesSidebar(!openSpacesSidebar)}
-          className={`group btn btn-ghost btn-xs p-0.5 tooltip tooltip-right`}
-          data-tip="Spaces"
-        >
-          <span className="icon-[solar--planet-4-bold] -mr-1 size-4.5"></span>
-          <span
-            className={`icon-[solar--alt-arrow-up-linear] duration-300 ease-in-out size-3 ${openSpacesSidebar && "rotate-180"}`}
-          ></span>
-        </Button>
-        {openSpacesSidebar &&
-          spaces &&
-          spaces.map((s: any) => (
-            <Button
-              key={s.id}
-              className={`btn btn-ghost btn-square btn-sm tooltip tooltip-right`}
-              data-tip={`${s.name}`}
-              onPress={() => {
-                onOpenSpace(s);
-              }}
-            >
-              {!s.image && !s.icon && (
-                <span className="icon-[solar--planet-bold-duotone] size-6"></span>
-              )}
-              {s.image && <img src={s.image} width={24} height={24} alt="" />}
-              {!s.image && s.icon && (
-                <Icon
-                  icon={`tabler:${s.icon.name}`}
-                  style={{ color: s.icon.color }}
-                  width={24}
-                  height={24}
-                />
-              )}
-            </Button>
-          ))}
-        <div className="mt-auto">
-          <Link to="/settings" className="btn btn-ghost btn-square btn-sm">
-            <span className="icon-[solar--settings-bold-duotone] size-6"></span>
-          </Link>
-        </div>
-      </div>
-
       <div
         style={{
           marginRight: `${closeSidebar ? 0 : -width - 12}px`,
@@ -195,9 +131,89 @@ export default function Sidebar() {
               "relative min-w-[120px] max-w-[510px] h-[calc(100vh-40px)] flex ml-1.5 overflow-auto flex-col justify-between",
             )}
           >
+            <div className="static select-none z-50 w-10 flex flex-col space-y-2 items-center justify-between h-[calc(100vh-32px)] bg-base-100">
+              {routes.map((r, i) => (
+                <Link
+                  key={i}
+                  to={r.path}
+                  onClick={() => onToggle(r.name, r.name)}
+                  className={`btn btn-ghost btn-square btn-sm tooltip tooltip-right`}
+                  data-tip={r.name}
+                >
+                  {r.icon}
+                </Link>
+              ))}
+              <Button
+                onPress={() => setOpenFavoritesSidebar(!openFavoritesSidebar)}
+                className={`group btn btn-ghost btn-xs p-0.5 tooltip tooltip-right`}
+                data-tip="Favorites"
+              >
+                <span className="icon-[solar--star-fall-bold] -mr-1 size-4.5"></span>
+                <span
+                  className={`icon-[solar--alt-arrow-up-linear] duration-300 ease-in-out ${openFavoritesSidebar && "rotate-180"}`}
+                ></span>
+              </Button>
+              {openFavoritesSidebar && (
+                <Button
+                  className="btn btn-ghost btn-square btn-sm tooltip tooltip-right"
+                  data-tip="planet"
+                >
+                  <span className="icon-[tabler--star] size-5"></span>
+                </Button>
+              )}
+              <Button
+                onPress={() => setOpenSpacesSidebar(!openSpacesSidebar)}
+                className={`group btn btn-ghost btn-xs p-0.5 tooltip tooltip-right`}
+                data-tip="Spaces"
+              >
+                <span className="icon-[solar--planet-4-bold] -mr-1 size-4.5"></span>
+                <span
+                  className={`icon-[solar--alt-arrow-up-linear] duration-300 ease-in-out size-3 ${openSpacesSidebar && "rotate-180"}`}
+                ></span>
+              </Button>
+              {openSpacesSidebar &&
+                spaces &&
+                spaces.map((s: any) => (
+                  <Button
+                    key={s.id}
+                    className={`btn btn-ghost btn-square btn-sm tooltip tooltip-right`}
+                    data-tip={`${s.name}`}
+                    onPress={() => {
+                      onOpenSpace(s);
+                    }}
+                  >
+                    {!s.image && !s.icon && (
+                      <span className="icon-[solar--planet-bold-duotone] size-6"></span>
+                    )}
+                    {s.image && (
+                      <img src={s.image} width={24} height={24} alt="" />
+                    )}
+                    {!s.image && s.icon && (
+                      <Icon
+                        icon={`tabler:${s.icon.name}`}
+                        style={{ color: s.icon.color }}
+                        width={24}
+                        height={24}
+                      />
+                    )}
+                  </Button>
+                ))}
+              <div className="mt-auto">
+                <Link
+                  to="/settings"
+                  className="btn btn-ghost btn-square btn-sm"
+                >
+                  <span className="icon-[solar--settings-bold-duotone] size-6"></span>
+                </Link>
+              </div>
+            </div>
             {page === "lists" && <ListsExplorer />}
             {closeSidebar && space && (
-              <SpaceExplorer space={space} account={account} setAccount={setAccount} />
+              <SpaceExplorer
+                space={space}
+                account={account}
+                setAccount={setAccount}
+              />
             )}
             <div className="mt-auto">Footer</div>
           </div>

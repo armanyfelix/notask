@@ -1,7 +1,13 @@
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { Link, Outlet, useLocation } from "react-router";
-import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
 import { useSessionStore, useTabsStore } from "@/utils/zustand";
 import { useEffect, useState } from "react";
 import { load } from "@tauri-apps/plugin-store";

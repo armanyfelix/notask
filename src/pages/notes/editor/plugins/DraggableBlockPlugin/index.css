@@ -9,7 +9,6 @@
   will-change: transform;
   display: flex;
   gap: 2px;
-  color: #efefef;
 }
 
 .draggable-block-menu .icon {
