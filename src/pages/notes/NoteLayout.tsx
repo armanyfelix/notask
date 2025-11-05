@@ -37,6 +37,7 @@ import Settings from "./editor/Settings";
 import PlaygroundEditorTheme from "./editor/themes/PlaygroundEditorTheme";
 import Sidebar from "./Sidebar";
 import Navbar from "@/layout/Navbar";
+import { Button } from "@excalidraw/excalidraw/index";
 
 console.warn(
   "If you are profiling the playground app, please ensure you turn off the debug view. You can disable it by pressing on the settings control in the bottom-left of your screen and toggling the debug view setting.",
@@ -150,18 +151,57 @@ export default function NoteLayout(): JSX.Element {
         <SharedHistoryContext>
           <TableContext>
             <ToolbarContext>
-              <div className="flex">
+              <div className="flex bg-base-100">
                 <div className="w-full">
                   <Navbar />
-                  <div className="bg-base-300 mx-auto w-full max-w-4xl max-wxl overflow-auto relative h-[90vh] ">
-                    <Editor />
+                  <div className="flex items-start bg mx-auto max-w-4xl">
+                    <div className="w-full overflow-auto h-[calc(100vh-66px)]">
+                      <Editor />
+                    </div>
+                    <div>
+                      <div className="flex flex-col mt-3 items-center">
+                        <button
+                          className="btn btn-square btn-ghost tooltip tooltip-right group"
+                          data-tip="full screen"
+                        >
+                          <span className="icon-[tabler--arrows-diagonal] size-6 opacity-50 group-hover:opacity-100"></span>
+                          <span className="hidden icon-[tabler--arrows-diagonal-minimize] size-6 opacity-50 group-hover:opacity-100"></span>
+                        </button>
+                        <button
+                          onClick={() => {}}
+                          className={`btn btn-ghost btn-square tooltip tooltip-right group`}
+                          data-tip="Mic"
+                        >
+                          <span className="icon-[tabler--microphone] size-6 opacity-50 group-hover:opacity-100"></span>
+                        </button>
+                        <button
+                          className={`btn btn-ghost btn-square tooltip tooltip-right group`}
+                          data-tip="Markdown"
+                        >
+                          <span className="icon-[tabler--markdown] size-6 opacity-50 group-hover:opacity-100"></span>
+                        </button>
+                        <button
+                          className={`btn btn-ghost btn-square tooltip tooltip-right group`}
+                          data-tip="Read only mode"
+                        >
+                          {/*<span className="icon-[tabler--lock-filled] size-6 opacity-50 group-hover:opacity-100"></span>*/}
+                          <span className="icon-[tabler--lock-open] size-6 opacity-50 group-hover:opacity-100"></span>
+                        </button>
+                        <button
+                          className={`btn btn-ghost btn-square tooltip tooltip-right group`}
+                          data-tip="Read only mode"
+                        >
+                          <span className="icon-[tabler--poo] size-6 opacity-50 group-hover:opacity-100"></span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <Settings />
+                {/*<Settings />
                 {isDevPlayground ? <DocsPlugin /> : null}
                 {isDevPlayground ? <PasteLogPlugin /> : null}
                 {isDevPlayground ? <TestRecorderPlugin /> : null}
-                {measureTypingPerf ? <TypingPerfPlugin /> : null}
+                {measureTypingPerf ? <TypingPerfPlugin /> : null}*/}
                 <div>
                   <Sidebar />
                 </div>

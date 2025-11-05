@@ -59,17 +59,24 @@ export default function DraggableBlockPlugin({
       menuRef={menuRef}
       targetLineRef={targetLineRef}
       menuComponent={
-        <div ref={menuRef} className="icon draggable-block-menu">
+        <div
+          ref={menuRef}
+          className="draggable-block-menu absolute left-0 top-0 flex items-center align-middle cursor-grab rounded-box g-red-500"
+        >
           <button
             title="Click to add below"
-            className="icon icon-plus"
+            className="btn btn-xs btn-ghost btn-square"
             onClick={insertBlock}
-          />
-          <div className="icon" />
+          >
+            <span className="icon-[tabler--plus] size-4"></span>
+          </button>
+          <span className="icon-[tabler--grip-vertical] mr-3"></span>
         </div>
       }
       targetLineComponent={
-        <div ref={targetLineRef} className="draggable-block-target-line" />
+        <div ref={targetLineRef} className="draggable-block-target-line">
+          pop
+        </div>
       }
       isOnMenu={isOnMenu}
       onElementChanged={setDraggableElement}

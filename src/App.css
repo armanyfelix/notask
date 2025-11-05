@@ -1,16 +1,16 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-    themes:
-        dim --default,
-        dark --prefersdark;
+  themes:
+    dim --default,
+    dim --prefersdark;
 }
 @plugin "tailwindcss-react-aria-components";
 @plugin "tailwindcss-animate";
 @plugin "@iconify/tailwind4";
 
 @font-face {
-    font-family: "Futura";
-    src:
+  font-family: "Futura";
+  src:
         /* url('/fonts/futura-pt/FuturaCyrillicLight.woff'), */
         /* url('/fonts/futura-pt/FuturaCyrillicMedium.woff'), */
         /* url('/fonts/futura-pt/FuturaCyrillicDemi.woff'), */
@@ -20,218 +20,218 @@
 }
 
 @font-face {
-    font-family: "0xProto";
-    src: url("/fonts/0xProto_2_500/0xProto-Regular.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  font-family: "0xProto";
+  src: url("/fonts/0xProto_2_500/0xProto-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: "0xProto";
-    src: url("/fonts/0xProto_2_500/0xProto-Bold.woff2") format("woff2");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+  font-family: "0xProto";
+  src: url("/fonts/0xProto_2_500/0xProto-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: "0xProto";
-    src: url("/fonts/0xProto_2_500/0xProto-Italic.woff2") format("woff2");
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
+  font-family: "0xProto";
+  src: url("/fonts/0xProto_2_500/0xProto-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
 }
 
 @theme {
-    --font-proto: "0xProto", monospace;
+  --font-proto: "0xProto", monospace;
 }
 
 html,
 body {
-    font-family: "0xProto", monospace;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
+  font-family: "0xProto", monospace;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .dialog {
-    @apply rounded-box border-neutral/90 bg-base-100/90 text-base-content border shadow-xl backdrop-blur-lg;
+  @apply rounded-box border-neutral/90 bg-base-300/90 text-base-content border shadow-xl backdrop-blur-lg;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 button:focus {
-    outline: none;
+  outline: none;
 }
 
 input[type="button"] {
-    border: none;
-    outline: none;
+  border: none;
+  outline: none;
 }
 
 input[type="text"] {
-    outline: none;
+  outline: none;
 }
 
 .react-aria-Switch {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.571rem;
-    forced-color-adjust: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.571rem;
+  forced-color-adjust: none;
 
+  .switch {
+    width: 2rem;
+    height: 1.143rem;
+    border: 2px solid white;
+    background: gray;
+    border-radius: 1.143rem;
+    transition: all 200ms;
+
+    &:before {
+      content: "";
+      display: block;
+      margin: 0.143rem;
+      width: 0.857rem;
+      height: 0.857rem;
+      background: black;
+      border-radius: 16px;
+      transition: all 200ms;
+    }
+  }
+
+  &[data-pressed] .switch {
+    border-color: yellow;
+
+    &:before {
+      background: blue;
+    }
+  }
+
+  &[data-selected] {
     .switch {
-        width: 2rem;
-        height: 1.143rem;
-        border: 2px solid white;
-        background: gray;
-        border-radius: 1.143rem;
-        transition: all 200ms;
+      border-color: var(--highlight-background);
+      background: var(--highlight-background);
 
-        &:before {
-            content: "";
-            display: block;
-            margin: 0.143rem;
-            width: 0.857rem;
-            height: 0.857rem;
-            background: black;
-            border-radius: 16px;
-            transition: all 200ms;
-        }
+      &:before {
+        background: var(--field-background);
+        transform: translateX(100%);
+      }
     }
 
-    &[data-pressed] .switch {
-        border-color: yellow;
-
-        &:before {
-            background: blue;
-        }
+    &[data-pressed] {
+      .switch {
+        border-color: var(--highlight-background-pressed);
+        background: var(--highlight-background-pressed);
+      }
     }
-
-    &[data-selected] {
-        .switch {
-            border-color: var(--highlight-background);
-            background: var(--highlight-background);
-
-            &:before {
-                background: var(--field-background);
-                transform: translateX(100%);
-            }
-        }
-
-        &[data-pressed] {
-            .switch {
-                border-color: var(--highlight-background-pressed);
-                background: var(--highlight-background-pressed);
-            }
-        }
-    }
+  }
 }
 
 .react-aria-Popover[data-entering] {
-    animation: slide 200ms;
+  animation: slide 200ms;
 }
 
 .react-aria-Popover[data-exiting] {
-    animation: slide 200ms reverse;
+  animation: slide 200ms reverse;
 }
 
 @keyframes slide {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
 
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .react-aria-ModalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: var(--visual-viewport-height);
-    background: rgba(0 0 0 / 0.5);
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: var(--visual-viewport-height);
+  background: rgba(0 0 0 / 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 
-    &[data-entering] {
-        animation: modal-fade 200ms;
-    }
+  &[data-entering] {
+    animation: modal-fade 200ms;
+  }
 
-    &[data-exiting] {
-        animation: modal-fade 150ms reverse ease-in;
-    }
+  &[data-exiting] {
+    animation: modal-fade 150ms reverse ease-in;
+  }
 }
 
 .react-aria-Modal {
-    box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
 
-    &[data-entering] {
-        animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
+  &[data-entering] {
+    animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
 
-    .react-aria-TextField {
-        margin-bottom: 8px;
-    }
+  .react-aria-TextField {
+    margin-bottom: 8px;
+  }
 }
 
 .react-aria-Input,
 .react-aria-TextArea {
-    width: 100%;
+  width: 100%;
 
-    &[data-focused] {
-        outline: 2px solid var(--focus-ring-color);
-        outline-offset: -1px;
-    }
+  &[data-focused] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
 }
 
 @keyframes modal-fade {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modal-zoom {
-    from {
-        transform: scale(0.8);
-    }
+  from {
+    transform: scale(0.8);
+  }
 
-    to {
-        transform: scale(1);
-    }
+  to {
+    transform: scale(1);
+  }
 }
 
 .react-aria-Menu {
-    max-height: inherit;
-    box-sizing: border-box;
-    min-width: 150px;
+  max-height: inherit;
+  box-sizing: border-box;
+  min-width: 150px;
 }
 
 .react-aria-MenuItem {
-    forced-color-adjust: none;
+  forced-color-adjust: none;
 }
 
 .react-aria-Form {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 8px;
 }

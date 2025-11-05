@@ -1,5 +1,11 @@
 import { useTabsStore } from "@/utils/zustand";
-import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
 import { useNavigate } from "react-router";
 
 interface Props {
@@ -30,9 +36,9 @@ export default function CreateMenu({ accountId, spaces, setSpaces }: Props) {
     <>
       <MenuTrigger>
         <Button aria-label="Menu" className="btn btn-square btn-ghost btn-sm">
-          <span className="icon-[solar--add-circle-line-duotone] size-5.5"></span>
+          <span className="icon-[tabler--plus] size-4"></span>
         </Button>
-        <Popover placement="bottom right">
+        <Popover placement="bottom left">
           <Menu className="dialog menu">
             <MenuItem onAction={() => onNewNote()}>
               <li>

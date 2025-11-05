@@ -8,15 +8,23 @@ import {
   MenuTrigger,
   Popover,
 } from "react-aria-components";
-import { useSessionStore, useTabsStore } from "@/utils/zustand";
+import {
+  useAccountStore,
+  useSessionStore,
+  useSpacesStore,
+  useTabsStore,
+} from "@/utils/zustand";
 import { useEffect, useState } from "react";
 import { load } from "@tauri-apps/plugin-store";
 import UserDropdown from "@/components/UserDropdown";
 import WindowButtons from "./WindowButtons";
+import CreateMenu from "@/components/CreateMenu";
 
 export default function AppLayout() {
   const { session } = useSessionStore();
   const { tabs, setTabs, selectedTab, setSelectedTab } = useTabsStore();
+  const { account } = useAccountStore();
+  const { spaces, setSpaces } = useSpacesStore();
 
   const [hubs, setHubs] = useState([]);
   const [currentHub, setCurrentHub] = useState();
@@ -71,7 +79,7 @@ export default function AppLayout() {
 
   return (
     <main className="h-screen flex flex-col overflow-hidden">
-      <div className="sticky top-0 bottom-0 right-0 left-0 h-8 bg-base-100 flex ml-1 items-center">
+      <div className="sticky top-0 bottom-0 right-0 left-0 h-8 bg-base-300 flex ml-1 items-center">
         <MenuTrigger>
           <Button aria-label="Menu" className="btn btn-square btn-ghost btn-sm">
             {currentHub}
@@ -133,6 +141,11 @@ export default function AppLayout() {
             </Link>
           ))}
         </div>
+        <CreateMenu
+          accountId={account?.id}
+          setSpaces={setSpaces}
+          spaces={spaces}
+        />
         <div className="flex w-full items-center">
           <div data-tauri-drag-region className="w-full min-w-10 h-8"></div>
           <UserDropdown session={session} />

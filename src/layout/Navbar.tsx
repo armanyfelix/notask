@@ -1,10 +1,11 @@
+import { useSidebarsStore } from "../utils/zustand";
 import {
-  useAccountStore,
-  useSidebarsStore,
-  useSpacesStore,
-} from "../utils/zustand";
-import { Button } from "react-aria-components";
-import CreateMenu from "@/components/CreateMenu";
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
 
 export default function Navbar() {
   const {
@@ -13,8 +14,6 @@ export default function Navbar() {
     leftSidebarOpen,
     setLeftSidebarOpen,
   } = useSidebarsStore();
-  const { account } = useAccountStore();
-  const { spaces, setSpaces } = useSpacesStore();
 
   return (
     <header className="sticky top-0 right-0 z-50 flex h-8.5 bg-base-200 border-b border-neutral justify-between">
@@ -44,7 +43,10 @@ export default function Navbar() {
           <span className="icon-[tabler--arrow-left] size-5"></span>
         </Button>
         <Button className="btn btn-square btn-ghost btn-sm">
-          <span className="icon-[tabler--arrow-right] size-6"></span>
+          <span className="icon-[tabler--arrow-right] size-5"></span>
+        </Button>
+        <Button className="btn btn-square btn-ghost btn-sm">
+          <span className="icon-[tabler--home] size-5"></span>
         </Button>
         <div className="breadcrumbs text-xs pl-2">
           <ul>
@@ -70,11 +72,6 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center overflow-hidden space-x-1 pl-1">
-        <CreateMenu
-          accountId={account?.id}
-          setSpaces={setSpaces}
-          spaces={spaces}
-        />
         {/*<NotificationsDialog />*/}
         {/*<Button className="btn btn-square btn-ghost btn-sm">
           <span className="icon-[tabler--plus] size-5"></span>
@@ -83,36 +80,79 @@ export default function Navbar() {
           <span className="icon-[tabler--search] size-5"></span>
         </Button>
         <Button className="btn btn-square btn-ghost btn-sm">
+          <span className="icon-[tabler--share-3] size-5"></span>
+        </Button>
+        <Button className="btn btn-square btn-ghost btn-sm">
           <span className="icon-[tabler--layout-columns] size-5"></span>
         </Button>
-        <Button className="btn btn-square btn-ghost btn-sm">
-          <span className="icon-[tabler--arrows-diagonal] size-5"></span>
-          <span className="hidden icon-[tabler--arrows-diagonal-minimize] size-5"></span>
-        </Button>
-        <Button className="btn btn-square btn-ghost btn-sm">
-          <span className="icon-[tabler--dots] size-5"></span>
-        </Button>
-        <div
-        // className={twMerge(
-        //   "transition-all ",
-        //   rightSidebarOpen ? "translte-x-10" : "-translate-x-0 duration-700",
-        // )}
-        >
-          <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
-            <input
-              type="checkbox"
-              checked={rightSidebarOpen}
-              onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
-            />
-            <div className="swap-on">
-              <span className="icon-[tabler--layout-sidebar-left-expand] size-6"></span>
-            </div>
-            <div className="swap-off">
-              <span className="icon-[tabler--layout-sidebar-left-collapse] size-6"></span>
-            </div>
-          </label>
-        </div>
+        <Options />
+        {/*<div
+        className={twMerge(
+           "transition-all ",
+           rightSidebarOpen ? "translte-x-10" : "-translate-x-0 duration-700",
+         )}
+         >*/}
+        <label className="swap swap-flip btn btn-square pt-1.5 btn-sm btn-ghost">
+          <input
+            type="checkbox"
+            checked={rightSidebarOpen}
+            onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+          />
+          <div className="swap-on">
+            <span className="icon-[tabler--layout-sidebar-right-expand] size-6"></span>
+          </div>
+          <div className="swap-off">
+            <span className="icon-[tabler--layout-sidebar-right-collapse] size-6"></span>
+          </div>
+        </label>
+        {/*</div>*/}
       </div>
     </header>
+  );
+}
+
+function Options() {
+  return (
+    <MenuTrigger>
+      <Button aria-label="Menu" className="btn btn-square btn-ghost btn-sm">
+        <span className="icon-[tabler--dots] size-5"></span>
+      </Button>
+      <Popover placement="bottom right">
+        <Menu className="dialog menu">
+          <MenuItem onAction={() => {}}>
+            <li>
+              <Button className="whitespace-nowrap">
+                <span className="icon-[solar--file-smile-line-duotone] size-5"></span>
+                Duplicate
+              </Button>
+            </li>
+          </MenuItem>
+          <MenuItem onAction={() => alert("open")}>
+            <li>
+              <Button className="whitespace-nowrap">
+                <span className="icon-[solar--clipboard-add-line-duotone] size-5"></span>
+                Move to
+              </Button>
+            </li>
+          </MenuItem>
+          <MenuItem onAction={() => alert("open")}>
+            <li>
+              <Button className="whitespace-nowrap">
+                <span className="icon-[solar--add-folder-line-duotone] size-5"></span>
+                Archived
+              </Button>
+            </li>
+          </MenuItem>
+          <MenuItem onAction={() => alert("open")}>
+            <li>
+              <Button className="whitespace-nowrap">
+                <span className="icon-[solar--planet-line-duotone] size-5"></span>
+                Delete
+              </Button>
+            </li>
+          </MenuItem>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
   );
 }

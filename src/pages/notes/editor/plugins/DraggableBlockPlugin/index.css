@@ -1,4 +1,4 @@
-.draggable-block-menu {
+/*.draggable-block-menu {
   border-radius: 4px;
   padding: 2px 1px;
   cursor: grab;
@@ -25,7 +25,7 @@
   color: #efefef;
   background-color: transparent;
   background-image: url(../../images/icons/plus.svg);
-}
+}*/
 
 .draggable-block-menu:active {
   cursor: grabbing;

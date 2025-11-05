@@ -35,16 +35,16 @@ export default function WindowButtons({ noMaximizable = false }) {
   }, []);
 
   return (
-    <div className="sticky right-0 top-0 flex items-center bg-base-100 z-999">
+    <div className="sticky right-0 top-0 flex items-center bg-base-300 z-999">
       <button
-        className="inline-flex justify-center items-center size-8 duration-300 ease-in-out hover:bg-base-300 cursor-default"
+        className="inline-flex justify-center items-center size-8 duration-300 ease-in-out hover:bg-base-100 cursor-default"
         onClick={handleMinimize}
       >
         <span className="icon-[tabler--minus] size-4"></span>
       </button>
       {!noMaximizable && (
         <button
-          className="inline-flex justify-center items-center size-8 duration-300 ease-in-out hover:bg-base-300 cursor-default"
+          className="inline-flex justify-center items-center size-8 duration-300 ease-in-out hover:bg-base-100 cursor-default"
           onClick={handleMaximize}
         >
           {isMaximized ? (
