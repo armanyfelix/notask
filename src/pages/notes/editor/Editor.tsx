@@ -147,14 +147,14 @@ export default function Editor(): JSX.Element {
 
   return (
     <>
-      {/*{isRichText && (
+      {isRichText && (
         <ToolbarPlugin
           editor={editor}
           activeEditor={activeEditor}
           setActiveEditor={setActiveEditor}
           setIsLinkEditMode={setIsLinkEditMode}
         />
-      )}*/}
+      )}
       {isRichText && (
         <ShortcutsPlugin
           editor={activeEditor}

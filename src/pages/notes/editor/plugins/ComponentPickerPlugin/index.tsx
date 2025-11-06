@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from "react";
-
 import { $createCodeNode } from "@lexical/code";
 import {
   INSERT_CHECK_LIST_COMMAND,
@@ -35,7 +34,6 @@ import {
 } from "lexical";
 import { useCallback, useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
-
 import useModal from "../../hooks/useModal";
 import catTypingGif from "../../images/cat-typing.gif";
 import { EmbedConfigs } from "../AutoEmbedPlugin";
@@ -159,20 +157,39 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
           }
         }),
     }),
-    ...([1, 2, 3] as const).map(
-      (n) =>
-        new ComponentPickerOption(`Heading ${n}`, {
-          icon: <span className={`icon-[tabler--h-${n}] size-5`}></span>,
-          keywords: ["heading", "header", `h${n}`],
-          onSelect: () =>
-            editor.update(() => {
-              const selection = $getSelection();
-              if ($isRangeSelection(selection)) {
-                $setBlocksType(selection, () => $createHeadingNode(`h${n}`));
-              }
-            }),
+    new ComponentPickerOption(`Heading 1`, {
+      icon: <span className={`icon-[tabler--h-1] size-5`}></span>,
+      keywords: ["heading", "header", `h1`],
+      onSelect: () =>
+        editor.update(() => {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            $setBlocksType(selection, () => $createHeadingNode(`h1`));
+          }
         }),
-    ),
+    }),
+    new ComponentPickerOption(`Heading 2`, {
+      icon: <span className={`icon-[tabler--h-2] size-5 `}></span>,
+      keywords: ["heading", "header", `h2`],
+      onSelect: () =>
+        editor.update(() => {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            $setBlocksType(selection, () => $createHeadingNode(`h2`));
+          }
+        }),
+    }),
+    new ComponentPickerOption(`Heading 3`, {
+      icon: <span className={`icon-[tabler--h-3] size-5`}></span>,
+      keywords: ["heading", "header", `h3`],
+      onSelect: () =>
+        editor.update(() => {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            $setBlocksType(selection, () => $createHeadingNode(`h3`));
+          }
+        }),
+    }),
     new ComponentPickerOption("Table", {
       icon: <span className="icon-[tabler--table] size-5"></span>,
       keywords: ["table", "grid", "spreadsheet", "rows", "columns"],
