@@ -50,7 +50,7 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
   exampleUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
 
   // Icon for display.
-  icon: <i className="icon youtube" />,
+  icon: <span className="icon-[tabler--brand-youtube-filled] size-5"></span>,
 
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
     editor.dispatchCommand(INSERT_YOUTUBE_COMMAND, result.id);
@@ -85,7 +85,7 @@ export const TwitterEmbedConfig: PlaygroundEmbedConfig = {
   exampleUrl: "https://x.com/jack/status/20",
 
   // Icon for display.
-  icon: <i className="icon x" />,
+  icon: <span className="icon-[tabler--brand-x] size-5"></span>,
 
   // Create the Lexical embed node from the url data.
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
@@ -120,7 +120,7 @@ export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
 
   exampleUrl: "https://www.figma.com/file/LKQ4FJ4bTnCSjedbRpk931/Sample-File",
 
-  icon: <i className="icon figma" />,
+  icon: <span className="icon-[tabler--brand-figma] size-5"></span>,
 
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
     editor.dispatchCommand(INSERT_FIGMA_COMMAND, result.id);

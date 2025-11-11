@@ -17,24 +17,24 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
-  background-color: rgba(40, 40, 40, 0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   flex-grow: 0px;
   flex-shrink: 1px;
   z-index: 100;
 }
-.Modal__modal {
+/*.Modal__modal {
   padding: 20px;
   min-height: 100px;
   min-width: 300px;
   display: flex;
   flex-grow: 0px;
-  background-color: #fff;
+  background-color: var(--color-base-300);
   flex-direction: column;
   position: relative;
   box-shadow: 0 0 20px 0 #444;
-  border-radius: 10px;
-}
-.Modal__title {
+  border-radius: var(--radius-box);
+}*/
+/*.Modal__title {
   color: #444;
   margin: 0px;
   padding-bottom: 10px;
@@ -53,7 +53,7 @@
   text-align: center;
   cursor: pointer;
   background-color: #eee;
-}
+}*/
 .Modal__closeButton:hover {
   background-color: #ddd;
 }

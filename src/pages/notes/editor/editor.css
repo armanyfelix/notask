@@ -1297,7 +1297,7 @@ i.page-break,
   opacity: 0;
 }
 
-.table-cell-action-button {
+/*.table-cell-action-button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1306,10 +1306,10 @@ i.page-break,
   top: 10px;
   right: 10px;
   border-radius: 15px;
-  color: #222;
+  color: var(--color-base-content);
   display: inline-block;
   cursor: pointer;
-}
+}*/
 
 i.chevron-down {
   background-color: transparent;

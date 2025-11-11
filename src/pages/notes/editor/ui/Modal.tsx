@@ -6,14 +6,12 @@
  *
  */
 
-import type {JSX} from 'react';
-
-import './Modal.css';
-
-import {isDOMNode} from 'lexical';
-import * as React from 'react';
-import {ReactNode, useEffect, useRef} from 'react';
-import {createPortal} from 'react-dom';
+import type { JSX } from "react";
+import "./Modal.css";
+import { isDOMNode } from "lexical";
+import * as React from "react";
+import { ReactNode, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 function PortalImpl({
   onClose,
@@ -37,7 +35,7 @@ function PortalImpl({
   useEffect(() => {
     let modalOverlayElement: HTMLElement | null = null;
     const handler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         onClose();
       }
     };
@@ -56,31 +54,38 @@ function PortalImpl({
     if (modelElement !== null) {
       modalOverlayElement = modelElement.parentElement;
       if (modalOverlayElement !== null) {
-        modalOverlayElement.addEventListener('click', clickOutsideHandler);
+        modalOverlayElement.addEventListener("click", clickOutsideHandler);
       }
     }
 
-    window.addEventListener('keydown', handler);
+    window.addEventListener("keydown", handler);
 
     return () => {
-      window.removeEventListener('keydown', handler);
+      window.removeEventListener("keydown", handler);
       if (modalOverlayElement !== null) {
-        modalOverlayElement?.removeEventListener('click', clickOutsideHandler);
+        modalOverlayElement?.removeEventListener("click", clickOutsideHandler);
       }
     };
   }, [closeOnClickOutside, onClose]);
 
   return (
     <div className="Modal__overlay" role="dialog">
-      <div className="Modal__modal" tabIndex={-1} ref={modalRef}>
-        <h2 className="Modal__title">{title}</h2>
-        <button
-          className="Modal__closeButton"
-          aria-label="Close modal"
-          type="button"
-          onClick={onClose}>
-          X
-        </button>
+      <div
+        className="p-5 min-h-28 min-w-xs relative flex flex-col grow-0 dialog"
+        tabIndex={-1}
+        ref={modalRef}
+      >
+        <div className="flex justify-between items-baseline">
+          <h2 className="text-lg font-bold">{title}</h2>
+          <button
+            className="btn btn-sm btn-square"
+            aria-label="Close modal"
+            type="button"
+            onClick={onClose}
+          >
+            X
+          </button>
+        </div>
         <div className="Modal__content">{children}</div>
       </div>
     </div>
@@ -102,7 +107,8 @@ export default function Modal({
     <PortalImpl
       onClose={onClose}
       title={title}
-      closeOnClickOutside={closeOnClickOutside}>
+      closeOnClickOutside={closeOnClickOutside}
+    >
       {children}
     </PortalImpl>,
     document.body,

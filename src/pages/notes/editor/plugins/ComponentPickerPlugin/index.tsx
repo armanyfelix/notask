@@ -267,7 +267,7 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
         editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
     }),
     new ComponentPickerOption("Poll", {
-      icon: <span className="icon-[tabler--chart-bar]"></span>,
+      icon: <span className="icon-[tabler--chart-bar] size-5"></span>,
       keywords: ["poll", "vote"],
       onSelect: () =>
         showModal("Insert Poll", (onClose) => (
@@ -360,15 +360,26 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
           <InsertLayoutDialog activeEditor={editor} onClose={onClose} />
         )),
     }),
-    ...(["left", "center", "right", "justify"] as const).map(
-      (alignment) =>
-        new ComponentPickerOption(`Align ${alignment}`, {
-          icon: <span className={`icon-[tabler--align-${alignment}]`}></span>,
-          keywords: ["align", "justify", alignment],
-          onSelect: () =>
-            editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
-        }),
-    ),
+    new ComponentPickerOption(`Align left`, {
+      icon: <span className={`icon-[tabler--align-left] size-5`}></span>,
+      keywords: ["align", "justify", "left"],
+      onSelect: () => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left"),
+    }),
+    new ComponentPickerOption(`Align center`, {
+      icon: <span className={`icon-[tabler--align-center] size-5`}></span>,
+      keywords: ["align", "justify", "center"],
+      onSelect: () => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center"),
+    }),
+    new ComponentPickerOption(`Align right`, {
+      icon: <span className={`icon-[tabler--align-right] size-5`}></span>,
+      keywords: ["align", "justify", "right"],
+      onSelect: () => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right"),
+    }),
+    new ComponentPickerOption(`Align justify`, {
+      icon: <span className="icon-[tabler--align-justified] size-5"></span>,
+      keywords: ["align", "justify", "justify"],
+      onSelect: () => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify"),
+    }),
   ];
 }
 
