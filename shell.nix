@@ -11,7 +11,7 @@ pkgs.mkShell {
     webkitgtk_4_1
     glib
     gtk3
-    libsoup_2_4
+    # libsoup_2_4
     librsvg
     
     # Herramientas de desarrollo
@@ -26,7 +26,7 @@ pkgs.mkShell {
     webkitgtk_4_1
     glib
     gtk3
-    libsoup_2_4
+    # libsoup_2_4
     librsvg
   ];
   

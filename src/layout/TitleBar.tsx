@@ -38,7 +38,7 @@ export default function Titlebar() {
   function onOpenTab(tab: any) {}
 
   return (
-    <div className="sticky top-0 bottom-0 right-0 left-0 h-8 bg-base-100">
+    <div id="titlebar" className="sticky top-0 bottom-0 right-0 left-0 h-7">
       <div className="flex items-center">
         <Button className="btn btn-ghost btn-sm">{currentHub}</Button>
         <Tabs className="">

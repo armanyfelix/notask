@@ -1,250 +1,250 @@
 import "./App.css";
-import AppLayout from "./layout/AppLayout";
-import {
-  BrowserRouter,
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router";
-import {
-  useAccountStore,
-  useSessionStore,
-  useSpacesStore,
-  useThemeStore,
-} from "./utils/zustand";
-import Signin from "./pages/auth/Signin";
-import Home from "./pages/Home";
-import Upcoming from "./pages/lists/Upcoming";
-import List from "./pages/lists/List";
-import Signup from "./pages/auth/Signup";
-import Welcome from "./pages/Welcome";
-import NotFound from "./pages/NotFound";
-import { useEffect, useState } from "react";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import supabase from "./utils/supabase";
-import ResetPassword from "./pages/auth/ResetPassword";
-import { addImageUrl } from "./helpers/images";
-import isTauri from "./utils/isTauri";
 import { documentDir } from "@tauri-apps/api/path";
-import BaseLayout from "./layout/BaseLayout";
 import { load } from "@tauri-apps/plugin-store";
-import CreateHub from "./pages/CreateHub";
+import { useEffect, useState } from "react";
+import {
+	BrowserRouter,
+	Navigate,
+	Outlet,
+	Route,
+	Routes,
+	useLocation,
+	useNavigate,
+} from "react-router";
+import { addImageUrl } from "./helpers/images";
+import AppLayout from "./layout/AppLayout";
+import BaseLayout from "./layout/BaseLayout";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import Signin from "./pages/auth/Signin";
+import Signup from "./pages/auth/Signup";
+import Home from "./pages/Home";
+import InitialSetup from "./pages/InitialSetup";
+import List from "./pages/lists/List";
+import Upcoming from "./pages/lists/Upcoming";
+import NotFound from "./pages/NotFound";
 import Note from "./pages/notes/Note";
+import Welcome from "./pages/Welcome";
+import isTauri from "./utils/isTauri";
+import supabase from "./utils/supabase";
+import {
+	useAccountStore,
+	useSessionStore,
+	useSpacesStore,
+	useThemeStore,
+} from "./utils/zustand";
 
 function AppRoutes() {
-  const { account, setAccount } = useAccountStore();
-  const { session, setSession } = useSessionStore();
-  const { theme, setTheme } = useThemeStore();
-  const { setSpaces } = useSpacesStore();
+	const { account, setAccount } = useAccountStore();
+	const { session, setSession } = useSessionStore();
+	const { theme, setTheme } = useThemeStore();
+	const { setSpaces } = useSpacesStore();
 
-  const [allowResetPassword, setAllowResetPassword] = useState<boolean>(false);
-  const [noHubs, setNoHubs] = useState<boolean>(false);
-  let navigate = useNavigate();
+	const [allowResetPassword, setAllowResetPassword] = useState<boolean>(false);
+	const [noHubs, setNoHubs] = useState<boolean>(false);
+	const navigate = useNavigate();
 
-  const getHubs = async () => {
-    try {
-      const hubsStore = await load("hubs.json");
-      const hubsLength = await hubsStore.length();
-      if (hubsStore === null || hubsLength <= 0) {
-        setNoHubs(true);
-        navigate("/getting-started");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+	const getHubs = async () => {
+		try {
+			const hubsStore = await load("hubs.json");
+			const hubsLength = await hubsStore.length();
+			if (hubsStore === null || hubsLength <= 0) {
+				setNoHubs(true);
+				navigate("/getting-started");
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
-  async function getAccount(id: string) {
-    const { data, error } = await supabase
-      .from("accounts")
-      .select("*")
-      .eq("user_id", id)
-      .single();
-    if (data) {
-      setAccount(data);
-    }
-    if (error) {
-      console.log(error);
-    }
-  }
+	async function getAccount(id: string) {
+		const { data, error } = await supabase
+			.from("accounts")
+			.select("*")
+			.eq("user_id", id)
+			.single();
+		if (data) {
+			setAccount(data);
+		}
+		if (error) {
+			console.log(error);
+		}
+	}
 
-  async function getSpaces() {
-    if (account) {
-      const { data } = await supabase
-        .from("spaces")
-        .select("*")
-        .eq("account", account.id);
-      if (data?.length) {
-        const dataWithImages = await addImageUrl(data);
-        setSpaces(dataWithImages);
-      }
-    }
-  }
+	async function getSpaces() {
+		if (account) {
+			const { data } = await supabase
+				.from("spaces")
+				.select("*")
+				.eq("account", account.id);
+			if (data?.length) {
+				const dataWithImages = await addImageUrl(data);
+				setSpaces(dataWithImages);
+			}
+		}
+	}
 
-  const getAppDir = async () => {
-    try {
-      const dir = await documentDir();
-      console.log("Directorio de la app:", dir);
-    } catch (error) {
-      console.error("Error al obtener directorio:", error);
-    }
-  };
+	const getAppDir = async () => {
+		try {
+			const dir = await documentDir();
+			console.log("Directorio de la app:", dir);
+		} catch (error) {
+			console.error("Error al obtener directorio:", error);
+		}
+	};
 
-  const applyTheme = () => {
-    if (!theme) {
-      if (window.matchMedia("(prefers-color-scheme: dark)")?.matches) {
-        setTheme("dark");
-      } else {
-        setTheme("light");
-      }
-    } else {
-      setTheme(theme);
-      document.documentElement.setAttribute("data-theme", theme);
-    }
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", (event) => {
-        const newTheme = event.matches ? "dark" : "light";
-        setTheme(newTheme);
-        document.documentElement.setAttribute("data-theme", newTheme);
-      });
-  };
+	const applyTheme = () => {
+		if (!theme) {
+			if (window.matchMedia("(prefers-color-scheme: dark)")?.matches) {
+				setTheme("dark");
+			} else {
+				setTheme("light");
+			}
+		} else {
+			setTheme(theme);
+			document.documentElement.setAttribute("data-theme", theme);
+		}
+		window
+			.matchMedia("(prefers-color-scheme: dark)")
+			.addEventListener("change", (event) => {
+				const newTheme = event.matches ? "dark" : "light";
+				setTheme(newTheme);
+				document.documentElement.setAttribute("data-theme", newTheme);
+			});
+	};
 
-  const onAuthStateChange = () => {
-    return supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      switch (event) {
-        case "INITIAL_SESSION":
-          if (currentSession) {
-            await getAccount(currentSession.user.id);
-            getSpaces();
-          }
-          break;
-        case "SIGNED_IN":
-          if (currentSession) {
-            getAccount(currentSession.user.id);
-            setSession(currentSession);
-            getSpaces();
-          }
-          break;
-        case "SIGNED_OUT":
-          setSession(null);
-          setAccount(null);
-          setSpaces([]);
-          break;
-        case "PASSWORD_RECOVERY":
-          setAllowResetPassword(true);
-          setSession(null);
-          setAccount(null);
-          setSpaces([]);
-          navigate("/password/reset");
-          break;
-        case "TOKEN_REFRESHED":
-          if (currentSession) {
-            setSession(currentSession);
-          }
-          break;
-        case "USER_UPDATED":
-          if (currentSession) {
-            setSession(currentSession);
-            getAccount(currentSession.user.id);
-          }
-          break;
-        default:
-          break;
-      }
-    });
-  };
+	const onAuthStateChange = () => {
+		return supabase.auth.onAuthStateChange(async (event, currentSession) => {
+			switch (event) {
+				case "INITIAL_SESSION":
+					if (currentSession) {
+						await getAccount(currentSession.user.id);
+						getSpaces();
+					}
+					break;
+				case "SIGNED_IN":
+					if (currentSession) {
+						getAccount(currentSession.user.id);
+						setSession(currentSession);
+						getSpaces();
+					}
+					break;
+				case "SIGNED_OUT":
+					setSession(null);
+					setAccount(null);
+					setSpaces([]);
+					break;
+				case "PASSWORD_RECOVERY":
+					setAllowResetPassword(true);
+					setSession(null);
+					setAccount(null);
+					setSpaces([]);
+					navigate("/password/reset");
+					break;
+				case "TOKEN_REFRESHED":
+					if (currentSession) {
+						setSession(currentSession);
+					}
+					break;
+				case "USER_UPDATED":
+					if (currentSession) {
+						setSession(currentSession);
+						getAccount(currentSession.user.id);
+					}
+					break;
+				default:
+					break;
+			}
+		});
+	};
 
-  useEffect(() => {
-    applyTheme();
-  }, [theme]);
+	useEffect(() => {
+		applyTheme();
+	}, [theme]);
 
-  useEffect(() => {
-    getHubs();
-    const { data } = onAuthStateChange();
+	useEffect(() => {
+		getHubs();
+		const { data } = onAuthStateChange();
 
-    return () => {
-      data.subscription.unsubscribe();
-    };
-  }, []);
+		return () => {
+			data.subscription.unsubscribe();
+		};
+	}, []);
 
-  return (
-    <Routes>
-      <Route
-        element={
-          <ProtectedRoute
-            isAllowed={isTauri || (session && account)}
-            redirectTo={
-              !session && !isTauri
-                ? "/signin"
-                : (session || isTauri) && !account && "/welcome"
-            }
-          />
-        }
-      >
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/today" element={<Home />} />
-          <Route path="/upcoming" element={<Upcoming />} />
-          <Route path="/list/:id" element={<List />} />
-          <Route path="/note" element={<Note />} />
-        </Route>
-      </Route>
-      <Route element={<ProtectedRoute isAllowed={!session && !account} />}>
-        <Route element={<BaseLayout />}>
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/password/forgot" element={<ForgotPassword />} />
-          <Route
-            path="/welcome"
-            element={
-              <ProtectedRoute isAllowed={session && isTauri && !account}>
-                <Welcome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/password/reset"
-            element={
-              // <ProtectedRoute
-              //   isAllowed={allowResetPassword && !session && !account}
-              // >
-              <ResetPassword />
-              // </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Route>
-      <Route element={<ProtectedRoute isAllowed={isTauri && noHubs} />}>
-        <Route path="/getting-started" element={<CreateHub />} />
-      </Route>
-    </Routes>
-  );
+	return (
+		<Routes>
+			<Route
+				element={
+					<ProtectedRoute
+						isAllowed={isTauri || (session && account)}
+						redirectTo={
+							!session && !isTauri
+								? "/signin"
+								: (session || isTauri) && !account && "/welcome"
+						}
+					/>
+				}
+			>
+				<Route element={<AppLayout />}>
+					<Route path="/" element={<Home />} />
+					<Route path="/today" element={<Home />} />
+					<Route path="/upcoming" element={<Upcoming />} />
+					<Route path="/list/:id" element={<List />} />
+					<Route path="/note" element={<Note />} />
+				</Route>
+			</Route>
+			<Route element={<ProtectedRoute isAllowed={!session && !account} />}>
+				<Route element={<BaseLayout />}>
+					<Route path="/signin" element={<Signin />} />
+					<Route path="/signup" element={<Signup />} />
+					<Route path="/password/forgot" element={<ForgotPassword />} />
+					<Route
+						path="/welcome"
+						element={
+							<ProtectedRoute isAllowed={session && isTauri && !account}>
+								<Welcome />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/password/reset"
+						element={
+							// <ProtectedRoute
+							//   isAllowed={allowResetPassword && !session && !account}
+							// >
+							<ResetPassword />
+							// </ProtectedRoute>
+						}
+					/>
+					<Route path="*" element={<NotFound />} />
+				</Route>
+			</Route>
+			<Route element={<ProtectedRoute isAllowed={isTauri && noHubs} />}>
+				<Route path="/getting-started" element={<InitialSetup />} />
+			</Route>
+		</Routes>
+	);
 }
 
 export const ProtectedRoute = ({ children, isAllowed, redirectTo }: any) => {
-  const location = useLocation();
+	const location = useLocation();
 
-  if (!isAllowed) {
-    return (
-      <Navigate
-        to={redirectTo || location.state?.from?.pathname || "/"}
-        state={{ from: location }}
-        replace
-      />
-    );
-  }
-  return children ? children : <Outlet />;
+	if (!isAllowed) {
+		return (
+			<Navigate
+				to={redirectTo || location.state?.from?.pathname || "/"}
+				state={{ from: location }}
+				replace
+			/>
+		);
+	}
+	return children ? children : <Outlet />;
 };
 
-export default function App({}: any) {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  );
+export default function App() {
+	return (
+		<BrowserRouter>
+			<AppRoutes />
+		</BrowserRouter>
+	);
 }

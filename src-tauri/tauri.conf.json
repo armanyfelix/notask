@@ -1,11 +1,11 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Notask",
+  "productName": "Zag",
   "version": "0.1.0",
-  "identifier": "com.notask.app",
+  "identifier": "com.zag.app",
   "build": {
     "beforeDevCommand": "bun run dev",
-    "devUrl": "http://localhost:1420",
+    "devUrl": "http://localhost:1234",
     "beforeBuildCommand": "bun run build",
     "frontendDist": "../dist"
   },
@@ -14,7 +14,8 @@
     "windows": [
       {
         "decorations": false,
-        "title": "Notask",
+        "transparent": true,
+        "title": "Zag",
         "width": 800,
         "height": 600
       }
