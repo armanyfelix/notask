@@ -12,6 +12,7 @@ import {
 } from "@tauri-apps/plugin-fs";
 import { appDataDir } from "@tauri-apps/api/path";
 import { open } from "@tauri-apps/plugin-dialog";
+import isTauri from "../utils/isTauri";
 
 export default function Home({}: any) {
   const user = useAccountStore((s: AccountState) => s.account);
@@ -135,6 +136,7 @@ export default function Home({}: any) {
           <Button className="btn btn-primary">Create</Button>
         </div>
       </header>
+      {isTauri && (
       <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
         <h1>CRUD de Archivos de Texto con Tauri</h1>
 
@@ -316,6 +318,7 @@ export default function Home({}: any) {
           </p>
         </div>
       </div>
+      )}
       {/* <div className='grid grid-cols-3 gap-6 px-6'>
         <Agenda today={today} events={events} />
         <Notifications />

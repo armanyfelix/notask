@@ -1,22 +1,23 @@
-import { BaseDirectory, documentDir } from "@tauri-apps/api/path";
+import { documentDir, homeDir, join } from "@tauri-apps/api/path";
 import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
 import { mkdir } from "@tauri-apps/plugin-fs";
-import { Store } from "@tauri-apps/plugin-store";
 import gsap from "gsap";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Button, Input } from "react-aria-components";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import WindowButtons from "@/layout/WindowButtons";
+import { registerExistingVault, registerVault } from "@/utils/vaults";
 
 export default function InitialSetup() {
   const [showWelcome, setShowWelcome] = useState<boolean>(true);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
-  const [createHub, setCreateHub] = useState<boolean>(false);
-  const [newHubName, setNewHubName] = useState<string>("");
+  const [createVault, setCreateVault] = useState<boolean>(false);
+  const [newVaultName, setNewVaultName] = useState<string>("");
   const [isValidName, setIsValidName] = useState<boolean>(true);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [alert, setAlert] = useState<string>("");
+  const [isSavingVault, setIsSavingVault] = useState<boolean>(false);
   const navigate = useNavigate();
   const welcomeRef = useRef<HTMLElement>(null);
   const setupRef = useRef<HTMLDivElement>(null);
@@ -42,30 +43,49 @@ export default function InitialSetup() {
 
   const onOpenFolder = async () => {
     const location = await onSelectLocation();
+    if (!location) return;
+
+    try {
+      setIsSavingVault(true);
+      await registerExistingVault(location);
+      navigate("/");
+    } catch (error) {
+      setAlert(`Could not open this vault: ${String(error)}`);
+    } finally {
+      setIsSavingVault(false);
+    }
   };
 
   const onQuickStart = async () => {
     try {
-      const newDir = await mkdir("zaghub", { baseDir: BaseDirectory.Document });
-      console.log(newDir);
-    } catch (err) {}
+      setIsSavingVault(true);
+      const defaultVaultPath = await join(await homeDir(), "Zag Vault");
+      await mkdir(defaultVaultPath, { recursive: true });
+      await registerVault("Zag Vault", defaultVaultPath);
+      navigate("/");
+    } catch (error) {
+      setAlert(`Could not create the default vault: ${String(error)}`);
+    } finally {
+      setIsSavingVault(false);
+    }
   };
 
-  const onCreateHub = async () => {
-    if (!newHubName || !isValidName) {
-      setAlert("Please, pick a valid hub name");
+  const onCreateVault = async () => {
+    if (!newVaultName || !isValidName) {
+      setAlert("Please, pick a valid vault name");
     } else if (!selectedLocation) {
       setAlert("Please, select a location");
     } else {
       try {
-        await mkdir(`${selectedLocation}/${newHubName}`);
-        const hubsStore = await Store.load("hubs.json");
-        await hubsStore.set(newHubName, selectedLocation);
-        const defaultsStore = await Store.load("defaults.json");
-        await defaultsStore.set("hub", newHubName);
+        setIsSavingVault(true);
+        const vaultPath = await join(selectedLocation, newVaultName);
+        await mkdir(vaultPath);
+        await registerVault(newVaultName, vaultPath);
         navigate("/");
       } catch (error: any) {
-        setAlert(error);
+        setAlert(`Could not create the vault: ${String(error)}`);
+      } finally {
+        setIsSavingVault(false);
       }
     }
   };
@@ -183,7 +203,7 @@ export default function InitialSetup() {
     }, scope);
 
     return () => context.revert();
-  }, [showWelcome]);
+  }, [showWelcome, createVault]);
 
   const openGettingStarted = () => {
     if (isTransitioning) return;
@@ -255,13 +275,13 @@ export default function InitialSetup() {
         target?.tagName === "TEXTAREA" ||
         target?.isContentEditable;
 
-      if (createHub) {
+      if (createVault) {
         if (event.key === "Escape") {
           event.preventDefault();
-          setCreateHub(false);
+          setCreateVault(false);
         } else if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
           event.preventDefault();
-          void onCreateHub();
+          void onCreateVault();
         } else if (!isEditing && event.key.toLowerCase() === "b") {
           event.preventDefault();
           void onBrowseLocation();
@@ -274,7 +294,7 @@ export default function InitialSetup() {
       switch (event.key.toLowerCase()) {
         case "c":
           event.preventDefault();
-          setCreateHub(true);
+          setCreateVault(true);
           break;
         case "o":
           event.preventDefault();
@@ -293,10 +313,10 @@ export default function InitialSetup() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [showWelcome, createHub, isTransitioning]);
+  }, [showWelcome, createVault, isTransitioning]);
 
   return (
-    <main className="h-screen overflow-hidden bg-base-100">
+    <main className="h-screen overflow-hidden">
       {showWelcome ? (
         <section
           ref={welcomeRef}
@@ -385,88 +405,138 @@ export default function InitialSetup() {
             <WindowButtons noMaximizable />
           </div>
           <div ref={setupRef} className="p-5">
-            <div slot="title" className="pb-10 pt-5">
-              <img src="/logo_orange.png" alt="zag" className="w-48 mx-auto" />
-            </div>
-            {!createHub ? (
-              <div className="">
-                <div className="flex items-center justify-between gap-x-10">
+            {!createVault ? (
+              <section
+                aria-label="Initial setup"
+                aria-roledescription="carousel"
+                className="mx-auto max-w-[35rem]"
+              >
+                <header className="mb-5 flex items-start justify-between gap-5">
                   <div>
-                    <div>Create new hub</div>
-                    <div className="text-xs font-semibold opacity-70">
-                      Create a new repository under a folder
-                    </div>
+                    <p className="mb-1 text-[0.65rem] font-bold tracking-[0.28em] text-primary uppercase">
+                      Storage & sync
+                    </p>
+                    <h2 className="font-[Futura] text-3xl leading-tight">
+                      Where should Zag keep your data?
+                    </h2>
+                    <p className="mt-1 text-xs text-base-content/55">
+                      Choose how this device connects to your workspace.
+                    </p>
                   </div>
-                  <Button
-                    aria-keyshortcuts="C"
-                    className="btn"
-                    onPress={() => setCreateHub(true)}
-                  >
-                    Create
-                    <kbd className="kbd kbd-sm">C</kbd>
-                  </Button>
-                </div>
-                <div className="divider"></div>
-                <div className="flex items-center justify-between gap-x-10">
-                  <div>
-                    <div>Open folder as hub</div>
-                    <div className="text-xs font-semibold opacity-70">
-                      Choose an existing folder to open as a hub
-                    </div>
-                  </div>
-                  <Button
-                    aria-keyshortcuts="O"
-                    className="btn"
-                    onPress={() => onOpenFolder()}
-                  >
-                    Open
-                    <kbd className="kbd kbd-sm">O</kbd>
-                  </Button>
-                </div>
-                <div className="divider"></div>
+                  <span className="mt-1 text-xs text-base-content/40">
+                    01 / 01
+                  </span>
+                </header>
 
-                <div className="flex items-center justify-between gap-x-10">
-                  <div>
-                    <div>Open hub from your Zag account</div>
-                    <div className="text-xs font-semibold opacity-70">
-                      Set up as synced hub with existing remote hub
+                <div className="overflow-hidden" aria-live="polite">
+                  <div className="flex transition-transform duration-500 ease-out">
+                    <div className="grid min-w-full grid-cols-2 gap-3">
+                      <Button
+                        aria-keyshortcuts="S"
+                        className="group relative flex min-h-32 flex-col items-start rounded-2xl border border-base-content/10 bg-base-200/55 p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-base-200 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        onPress={() => navigate("/signin")}
+                      >
+                        <span className="icon-[solar--cloud-bold-duotone] mb-3 size-6 text-primary" />
+                        <strong className="text-sm">Zag account</strong>
+                        <span className="mt-1 text-[0.68rem] leading-relaxed text-base-content/50">
+                          Sign in or create an account to sync through Supabase.
+                        </span>
+                        <kbd className="kbd kbd-xs absolute top-3 right-3">
+                          S
+                        </kbd>
+                      </Button>
+
+                      <Button
+                        aria-keyshortcuts="C"
+                        className="group relative flex min-h-32 flex-col items-start rounded-2xl border border-base-content/10 bg-base-200/55 p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-base-200 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        onPress={() => setCreateVault(true)}
+                      >
+                        <span className="icon-[solar--add-folder-bold-duotone] mb-3 size-6 text-primary" />
+                        <strong className="text-sm">Create a vault</strong>
+                        <span className="mt-1 text-[0.68rem] leading-relaxed text-base-content/50">
+                          Choose a folder and keep your data locally under your
+                          control.
+                        </span>
+                        <kbd className="kbd kbd-xs absolute top-3 right-3">
+                          C
+                        </kbd>
+                      </Button>
+
+                      <Button
+                        aria-keyshortcuts="O"
+                        className="group relative flex min-h-32 flex-col items-start rounded-2xl border border-base-content/10 bg-base-200/55 p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-base-200 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+                        isDisabled={isSavingVault}
+                        onPress={() => onOpenFolder()}
+                      >
+                        <span className="icon-[solar--folder-open-bold-duotone] mb-3 size-6 text-primary" />
+                        <strong className="text-sm">Open a vault</strong>
+                        <span className="mt-1 text-[0.68rem] leading-relaxed text-base-content/50">
+                          Continue working from an existing Zag vault on this
+                          computer.
+                        </span>
+                        <kbd className="kbd kbd-xs absolute top-3 right-3">
+                          O
+                        </kbd>
+                      </Button>
+
+                      <Button
+                        aria-keyshortcuts="Q"
+                        className="group relative flex min-h-32 flex-col items-start rounded-2xl border border-primary/30 bg-primary/8 p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-primary/12 focus-visible:ring-2 focus-visible:ring-primary/30"
+                        isDisabled={isSavingVault}
+                        onPress={() => onQuickStart()}
+                      >
+                        <span className="icon-[solar--magic-stick-3-bold-duotone] mb-3 size-6 text-primary" />
+                        <strong className="text-sm">Getting started</strong>
+                        <span className="mt-1 text-[0.68rem] leading-relaxed text-base-content/50">
+                          Create “Zag Vault” in your home folder and start
+                          immediately.
+                        </span>
+                        <kbd className="kbd kbd-xs absolute top-3 right-3">
+                          Q
+                        </kbd>
+                      </Button>
                     </div>
                   </div>
-                  <Link to="/signin" aria-keyshortcuts="S" className="btn">
-                    Sign in
-                    <kbd className="kbd kbd-sm">S</kbd>
-                  </Link>
                 </div>
-                <div className="text-center mt-10">
-                  <Button
-                    aria-keyshortcuts="Q"
-                    className="btn btn-primary btn-wide"
-                    onPress={() => onQuickStart()}
+
+                <footer className="mt-5 flex items-center justify-between">
+                  <div
+                    className="flex items-center gap-1.5"
+                    aria-label="Slide 1 of 1"
                   >
-                    Quick Start
-                    <kbd className="kbd kbd-sm">Q</kbd>
-                  </Button>
-                </div>
-              </div>
+                    <span className="h-1.5 w-8 rounded-full bg-primary" />
+                  </div>
+                  <p className="text-[0.65rem] text-base-content/40">
+                    Press the highlighted key to choose
+                  </p>
+                </footer>
+              </section>
             ) : (
-              <div>
-                <div>
+              <section className="mx-auto max-w-[34rem]">
+                <div className="mb-7">
                   <Button
                     aria-keyshortcuts="Escape"
                     className="btn btn-ghost"
-                    onPress={() => setCreateHub(false)}
+                    onPress={() => setCreateVault(false)}
                   >
                     <span className="icon-[solar--arrow-left-line-duotone]"></span>
                     Back
                     <kbd className="kbd kbd-sm">Esc</kbd>
                   </Button>
                 </div>
-                <div className="mt-6">
+                <div>
+                  <p className="mb-1 text-[0.65rem] font-bold tracking-[0.28em] text-primary uppercase">
+                    Local storage
+                  </p>
+                  <h2 className="font-[Futura] text-3xl">Create a vault</h2>
+                  <p className="mt-1 mb-8 text-xs text-base-content/55">
+                    Your notes, tasks and settings will live inside this folder.
+                  </p>
                   <div className="flex items-start justify-between gap-x-10">
                     <div>
-                      <div>Hub name</div>
+                      <div>Vault name</div>
                       <div className="text-xs font-semibold text-nowrap opacity-70">
-                        Pick a name for your new hub
+                        Pick a name for your new vault
                       </div>
                     </div>
                     <fieldset>
@@ -474,13 +544,13 @@ export default function InitialSetup() {
                         className={`input ${!isValidName ? "input-error" : ""}`}
                         type="text"
                         required
-                        placeholder="Hub name"
+                        placeholder="Vault name"
                         maxLength={60}
                         minLength={1}
-                        value={newHubName}
+                        value={newVaultName}
                         onChange={(e: any) => {
                           const value = e.target.value;
-                          setNewHubName(value);
+                          setNewVaultName(value);
                           const hasInvalidChars = /[/\\]/.test(value);
                           const endsWithDot = /\.$/.test(value);
                           const isValid =
@@ -504,13 +574,13 @@ export default function InitialSetup() {
                       <div className="text-xs font-semibold opacity-70">
                         {selectedLocation ? (
                           <p>
-                            Your new hub will be placed in:{" "}
+                            Your new vault will be placed in:{" "}
                             <span className="text-primary">
                               {selectedLocation}
                             </span>
                           </p>
                         ) : (
-                          "Pick a place to put your new hub"
+                          "Pick a place to put your new vault"
                         )}
                       </div>
                     </div>
@@ -528,13 +598,14 @@ export default function InitialSetup() {
                   <Button
                     aria-keyshortcuts="Control+Enter Meta+Enter"
                     className="btn btn-primary btn-wide"
-                    onPress={() => onCreateHub()}
+                    isDisabled={isSavingVault}
+                    onPress={() => onCreateVault()}
                   >
-                    Create Hub
+                    Create Vault
                     <kbd className="kbd kbd-sm">Ctrl ↵</kbd>
                   </Button>
                 </div>
-              </div>
+              </section>
             )}
           </div>
         </>

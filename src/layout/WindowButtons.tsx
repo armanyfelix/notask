@@ -1,7 +1,14 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useEffect, useState } from "react";
+import isTauri from "@/utils/isTauri";
 
 export default function WindowButtons({ noMaximizable = false }) {
+	if (!isTauri) return null;
+
+	return <TauriWindowButtons noMaximizable={noMaximizable} />;
+}
+
+function TauriWindowButtons({ noMaximizable = false }) {
 	const appWindow = getCurrentWindow();
 
 	const [isMaximized, setIsMaximized] = useState(false);

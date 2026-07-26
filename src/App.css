@@ -1,309 +1,355 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-	themes:
-		halloween --default,
-		halloween --prefersdark;
+  themes:
+    halloween --default,
+    halloween --prefersdark;
 }
 @plugin "tailwindcss-react-aria-components";
 @plugin "tailwindcss-animate";
 @plugin "@iconify/tailwind4";
 
 @font-face {
-	font-family: "Futura";
-	/* url('/fonts/futura-pt/FuturaCyrillicLight.woff'), */
-	/* url('/fonts/futura-pt/FuturaCyrillicMedium.woff'), */
-	/* url('/fonts/futura-pt/FuturaCyrillicDemi.woff'), */
-	/* url('/fonts/futura-pt/FuturaCyrillicBook.woff'), */
-	/* url('/fonts/futura-pt/FuturaCyrillicBold.woff'), */
-	/* url('/fonts/futura-pt/FuturaCyrillicExtraBold.woff'), */ src: url("/fonts/futura-pt/FuturaCyrillicHeavy.woff");
+  font-family: "Futura";
+  /* url('/fonts/futura-pt/FuturaCyrillicLight.woff'), */
+  /* url('/fonts/futura-pt/FuturaCyrillicMedium.woff'), */
+  /* url('/fonts/futura-pt/FuturaCyrillicDemi.woff'), */
+  /* url('/fonts/futura-pt/FuturaCyrillicBook.woff'), */
+  /* url('/fonts/futura-pt/FuturaCyrillicBold.woff'), */
+  /* url('/fonts/futura-pt/FuturaCyrillicExtraBold.woff'), */
+  src: url("/fonts/futura-pt/FuturaCyrillicHeavy.woff");
 }
 
 @font-face {
-	font-family: "0xProto";
-	src: url("/fonts/0xProto_2_500/0xProto-Regular.woff2") format("woff2");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
+  font-family: "InterVariable";
+  src: url("/fonts/inter/InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-	font-family: "0xProto";
-	src: url("/fonts/0xProto_2_500/0xProto-Bold.woff2") format("woff2");
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "0xProto";
-	src: url("/fonts/0xProto_2_500/0xProto-Italic.woff2") format("woff2");
-	font-weight: 400;
-	font-style: italic;
-	font-display: swap;
+  font-family: "InterVariable";
+  src: url("/fonts/inter/InterVariable-Italic.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
 }
 
 @theme {
-	--font-proto: "0xProto", monospace;
+  /* Keep the existing utility name so current views migrate without churn. */
+  --font-proto: "InterVariable", "Inter", sans-serif;
 }
 
 :root {
-	--zag-window-radius: 22px;
+  --zag-window-radius: 22px;
+  --zag-window-opacity: 98%;
+  --zag-window-blur: 28px;
+  --zag-window-saturation: 115%;
 }
 
 html,
 body {
-	font-family: "0xProto", monospace;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-	box-sizing: border-box;
-	background: transparent !important;
-	border-radius: var(--zag-window-radius);
-	overflow: hidden;
+  font-family: "InterVariable", "Inter", sans-serif;
+  font-optical-sizing: auto;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: transparent !important;
+  border-radius: var(--zag-window-radius);
+  overflow: hidden;
 }
 
 #root {
-	width: 100%;
-	height: 100%;
-	background: transparent;
-	border-radius: inherit;
-	overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 #root > main {
-	border-radius: inherit;
-	overflow: hidden;
+  position: relative;
+  isolation: isolate;
+  background: color-mix(
+    in oklab,
+    var(--color-base-100) var(--zag-window-opacity),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--zag-window-blur))
+    saturate(var(--zag-window-saturation));
+  backdrop-filter: blur(var(--zag-window-blur))
+    saturate(var(--zag-window-saturation));
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/*
+ * WebKitGTK cannot blur pixels outside the webview on Linux/Wayland. This
+ * ambient layer gives the translucent surfaces something inside the webview
+ * to refract, while native window blur remains available on supported OSes.
+ */
+#root > main::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18%;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 18% 12%,
+      color-mix(in oklab, var(--color-primary) 10%, transparent) 0,
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 84% 82%,
+      color-mix(in oklab, var(--color-base-content) 4%, transparent) 0,
+      transparent 42%
+    );
+  filter: blur(52px);
+  opacity: 0.55;
+  transform: scale(1.08);
 }
 
 .dialog {
-	@apply rounded-box border-neutral/90 bg-base-300/90 text-base-content border shadow-xl backdrop-blur-lg;
+  @apply rounded-box border-neutral/90 bg-base-300/90 text-base-content border shadow-xl backdrop-blur-lg;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 button:focus {
-	outline: none;
+  outline: none;
 }
 
 input[type="button"] {
-	border: none;
-	outline: none;
+  border: none;
+  outline: none;
 }
 
 input[type="text"] {
-	outline: none;
+  outline: none;
 }
 
 .react-aria-Switch {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.571rem;
-	forced-color-adjust: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.571rem;
+  forced-color-adjust: none;
 
-	.switch {
-		width: 2rem;
-		height: 1.143rem;
-		border: 2px solid white;
-		background: gray;
-		border-radius: 1.143rem;
-		transition: all 200ms;
+  .switch {
+    width: 2rem;
+    height: 1.143rem;
+    border: 2px solid white;
+    background: gray;
+    border-radius: 1.143rem;
+    transition: all 200ms;
 
-		&:before {
-			content: "";
-			display: block;
-			margin: 0.143rem;
-			width: 0.857rem;
-			height: 0.857rem;
-			background: black;
-			border-radius: 16px;
-			transition: all 200ms;
-		}
-	}
+    &:before {
+      content: "";
+      display: block;
+      margin: 0.143rem;
+      width: 0.857rem;
+      height: 0.857rem;
+      background: black;
+      border-radius: 16px;
+      transition: all 200ms;
+    }
+  }
 
-	&[data-pressed] .switch {
-		border-color: yellow;
+  &[data-pressed] .switch {
+    border-color: yellow;
 
-		&:before {
-			background: blue;
-		}
-	}
+    &:before {
+      background: blue;
+    }
+  }
 
-	&[data-selected] {
-		.switch {
-			border-color: var(--highlight-background);
-			background: var(--highlight-background);
+  &[data-selected] {
+    .switch {
+      border-color: var(--highlight-background);
+      background: var(--highlight-background);
 
-			&:before {
-				background: var(--field-background);
-				transform: translateX(100%);
-			}
-		}
+      &:before {
+        background: var(--field-background);
+        transform: translateX(100%);
+      }
+    }
 
-		&[data-pressed] {
-			.switch {
-				border-color: var(--highlight-background-pressed);
-				background: var(--highlight-background-pressed);
-			}
-		}
-	}
+    &[data-pressed] {
+      .switch {
+        border-color: var(--highlight-background-pressed);
+        background: var(--highlight-background-pressed);
+      }
+    }
+  }
 }
 
 .react-aria-Popover[data-entering] {
-	animation: slide 200ms;
+  animation: slide 200ms;
 }
 
 .react-aria-Popover[data-exiting] {
-	animation: slide 200ms reverse;
+  animation: slide 200ms reverse;
 }
 
 @keyframes slide {
-	from {
-		transform: translateY(-20px);
-		opacity: 0;
-	}
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
 
-	to {
-		transform: translateY(0);
-		opacity: 1;
-	}
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .zag-welcome {
-	background:
-		radial-gradient(circle at 50% 36%, color-mix(in oklab, var(--color-primary) 9%, transparent), transparent 36%),
-		linear-gradient(145deg, color-mix(in oklab, var(--color-base-100) 96%, var(--color-primary)), var(--color-base-100));
+  background:
+    radial-gradient(
+      circle at 50% 36%,
+      color-mix(in oklab, var(--color-primary) 9%, transparent),
+      transparent 36%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--color-base-100) 82%, var(--color-primary)),
+      color-mix(in oklab, var(--color-base-100) 86%, transparent)
+    );
 }
 
 .zag-welcome-glow {
-	position: absolute;
-	width: 17rem;
-	height: 17rem;
-	border-radius: 999px;
-	background: color-mix(in oklab, var(--color-primary) 14%, transparent);
-	filter: blur(72px);
-	opacity: 0;
-	animation: zag-glow-in 1.8s ease-out forwards;
+  position: absolute;
+  width: 17rem;
+  height: 17rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-primary) 14%, transparent);
+  filter: blur(72px);
+  opacity: 0;
+  animation: zag-glow-in 1.8s ease-out forwards;
 }
 
 .zag-welcome-glow-one {
-	top: -8rem;
-	left: -6rem;
+  top: -8rem;
+  left: -6rem;
 }
 
 .zag-welcome-glow-two {
-	right: -7rem;
-	bottom: -9rem;
-	animation-delay: 180ms;
+  right: -7rem;
+  bottom: -9rem;
+  animation-delay: 180ms;
 }
 
 .zag-welcome-subtitle {
-	overflow: hidden;
+  overflow: hidden;
 }
 
 @keyframes zag-glow-in {
-	to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.zag-welcome-glow,
-	.zag-welcome-mark,
-	.zag-welcome-eyebrow,
-	.zag-welcome-title,
-	.zag-welcome-action,
-	.zag-welcome-footnote {
-		opacity: 1;
-		animation: none;
-		transform: none;
-	}
+  .zag-welcome-glow,
+  .zag-welcome-mark,
+  .zag-welcome-eyebrow,
+  .zag-welcome-title,
+  .zag-welcome-action,
+  .zag-welcome-footnote {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
 
-	.zag-welcome-subtitle {
-		animation: none;
-	}
+  .zag-welcome-subtitle {
+    animation: none;
+  }
 }
 
 .react-aria-ModalOverlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: var(--visual-viewport-height);
-	background: rgba(0 0 0 / 0.5);
-	backdrop-filter: blur(5px);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: var(--visual-viewport-height);
+  background: rgba(0 0 0 / 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 
-	&[data-entering] {
-		animation: modal-fade 200ms;
-	}
+  &[data-entering] {
+    animation: modal-fade 200ms;
+  }
 
-	&[data-exiting] {
-		animation: modal-fade 150ms reverse ease-in;
-	}
+  &[data-exiting] {
+    animation: modal-fade 150ms reverse ease-in;
+  }
 }
 
 .react-aria-Modal {
-	box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
 
-	&[data-entering] {
-		animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
+  &[data-entering] {
+    animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
 
-	.react-aria-TextField {
-		margin-bottom: 8px;
-	}
+  .react-aria-TextField {
+    margin-bottom: 8px;
+  }
 }
 
 .react-aria-Input,
 .react-aria-TextArea {
-	width: 100%;
+  width: 100%;
 
-	&[data-focused] {
-		outline: 2px solid var(--focus-ring-color);
-		outline-offset: -1px;
-	}
+  &[data-focused] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
 }
 
 @keyframes modal-fade {
-	from {
-		opacity: 0;
-	}
+  from {
+    opacity: 0;
+  }
 
-	to {
-		opacity: 1;
-	}
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modal-zoom {
-	from {
-		transform: scale(0.8);
-	}
+  from {
+    transform: scale(0.8);
+  }
 
-	to {
-		transform: scale(1);
-	}
+  to {
+    transform: scale(1);
+  }
 }
 
 .react-aria-Menu {
-	max-height: inherit;
-	box-sizing: border-box;
-	min-width: 150px;
+  max-height: inherit;
+  box-sizing: border-box;
+  min-width: 150px;
 }
 
 .react-aria-MenuItem {
-	forced-color-adjust: none;
+  forced-color-adjust: none;
 }
 
 .react-aria-Form {
-	display: flex;
-	flex-direction: column;
-	align-items: start;
-	gap: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 8px;
 }

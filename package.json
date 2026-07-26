@@ -9,6 +9,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri-dev": "tauri dev",
+    "check": "bun run types && bun run test && bun run build",
+    "test": "bun test",
     "types": "tsc --pretty --noEmit",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' --quiet --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",

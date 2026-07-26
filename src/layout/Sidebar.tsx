@@ -124,7 +124,7 @@ export default function Sidebar() {
       >
         <div
           className={twMerge(
-            "flex transition-all duration-500 bg-base-200",
+            "flex transition-all duration-500 bg-base-200/65 backdrop-blur-md",
             leftSidebarOpen
               ? "min-w-[120px]  max-w-[420]"
               : "-translate-x-full",
