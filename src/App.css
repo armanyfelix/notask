@@ -57,10 +57,10 @@ body {
 	border-radius: 12px;
 }
 
-main,
+/*main,
 #titlebar {
 	border-radius: 12px;
-}
+}*/
 
 .dialog {
 	@apply rounded-box border-neutral/90 bg-base-300/90 text-base-content border shadow-xl backdrop-blur-lg;

@@ -1,6 +1,6 @@
 // import UserIcon from '../assets/svgs/user.svg?react'
 // import TrashIcon from '../assets/svgs/trash.svg?react'
-import { ChangeEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import supabase from "../utils/supabase";
 import defaultListPresets from "../data/default-list-presets.json";
 import {
@@ -9,7 +9,7 @@ import {
   useAccountStore,
   useSessionStore,
 } from "../utils/zustand";
-import { redirect } from "react-router";
+import { redirect } from "react-router-dom";
 import { Button, Input } from "react-aria-components";
 
 export default function Welcome({}: any) {
@@ -24,8 +24,8 @@ export default function Welcome({}: any) {
   const setAccount = useAccountStore((s: AccountState) => s.setAccount);
   const session = useSessionStore((s: SessionState) => s.session);
 
-  const imageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = (e.target as HTMLInputElement).files;
+  const imageUpload = (e: FormEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
     if (files) {
       // Check file size (5MB)
       const maxSize = 5 * 1024 * 1024;

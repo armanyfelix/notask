@@ -35,15 +35,19 @@ export default function WindowButtons({ noMaximizable = false }) {
 	}, []);
 
 	return (
-		<div className="fixed right-0 top-0 flex items-center rounded-tr-xl z-999">
-			<button
+		<div
+			className={`fixed right-0 top-0 flex items-center z-999 ${!isMaximized && "rounded-tr-xl"}`}
+		>
+      <button
+        type="button"
 				className="inline-flex justify-center items-center size-7 duration-300 ease-in-out hover:bg-base-300 rounded-box cursor-default"
 				onClick={handleMinimize}
 			>
 				<span className="icon-[tabler--minus] size-4"></span>
 			</button>
 			{!noMaximizable && (
-				<button
+        <button
+          type="button"
 					className="inline-flex justify-center items-center size-7 duration-300 ease-in-out hover:bg-base-300 rounded-box cursor-default"
 					onClick={handleMaximize}
 				>
@@ -55,7 +59,8 @@ export default function WindowButtons({ noMaximizable = false }) {
 							viewBox="0 0 24 24"
 							className="w-3.5 h-3.5"
 							style={{ transform: "scaleX(-1)" }}
-						>
+            >
+              <title>maximize</title>
 							<g
 								fill="none"
 								stroke="currentColor"
@@ -68,11 +73,12 @@ export default function WindowButtons({ noMaximizable = false }) {
 							</g>
 						</svg>
 					) : (
-						<span className="icon-[tabler--crop-5-4] size-4"></span>
+						<span className="icon-[tabler--crop-5-4] size-3.5"></span>
 					)}
 				</button>
 			)}
-			<button
+      <button
+        type="button"
 				className="inline-flex justify-center items-center size-7 duration-300 rounded-box ease-in-out hover:bg-red-500 cursor-default"
 				onClick={handleClose}
 			>

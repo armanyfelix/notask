@@ -1,6 +1,6 @@
 import supabase from "../../utils/supabase";
 import { z } from "zod";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";

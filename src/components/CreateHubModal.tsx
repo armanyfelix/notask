@@ -8,7 +8,7 @@ import {
   Modal,
   TextField,
 } from "react-aria-components";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { confirm, open } from "@tauri-apps/plugin-dialog";
 import { BaseDirectory, documentDir } from "@tauri-apps/api/path";
 import { mkdir } from "@tauri-apps/plugin-fs";

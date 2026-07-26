@@ -12,6 +12,7 @@ import {
   Modal,
   TextField,
 } from "react-aria-components";
+import type { TablesInsert } from "../types/database.types";
 
 interface Props {
   parent: any;
@@ -34,8 +35,11 @@ export default function CreateFolderModal({
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setInvalid(false);
-    let values = Object.fromEntries(new FormData(e.currentTarget));
-    values.account = account.id;
+    const formData = new FormData(e.currentTarget);
+    const values: TablesInsert<"folders"> = {
+      name: String(formData.get("name") ?? ""),
+      account: account.id,
+    };
     if (parent) {
       switch (parent.type) {
         case "space":

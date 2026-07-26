@@ -10,7 +10,7 @@ import {
 	Routes,
 	useLocation,
 	useNavigate,
-} from "react-router";
+} from "react-router-dom";
 import { addImageUrl } from "./helpers/images";
 import AppLayout from "./layout/AppLayout";
 import BaseLayout from "./layout/BaseLayout";

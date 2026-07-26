@@ -13,6 +13,7 @@ import {
   TextField,
 } from "react-aria-components";
 import ListConfig from "./listConfig";
+import type { TablesInsert } from "../types/database.types";
 
 interface Props {
   parent: any;
@@ -42,8 +43,11 @@ export default function CreateListModal({
   const onSubmit = async (e: any) => {
     e.preventDefault();
     // invalid.value = false
-    let values = Object.fromEntries(new FormData(e.currentTarget));
-    values.account = account.id;
+    const formData = new FormData(e.currentTarget);
+    const values: TablesInsert<"lists"> = {
+      name: String(formData.get("name") ?? ""),
+      account: account.id,
+    };
     if (parent) {
       switch (parent.type) {
         case "space":

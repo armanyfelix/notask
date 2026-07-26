@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 import supabase from "../../utils/supabase";
 

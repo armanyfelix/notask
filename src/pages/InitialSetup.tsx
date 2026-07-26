@@ -5,7 +5,7 @@ import { mkdir } from "@tauri-apps/plugin-fs";
 import { Store } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import { Button, Input } from "react-aria-components";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import WindowButtons from "@/layout/WindowButtons";
 
 export default function InitialSetup() {

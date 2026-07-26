@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import GithubIcon from "../../assets/icons/github.svg?react";
 import GoogleIcon from "../../assets/icons/google.svg?react";

@@ -8,7 +8,7 @@ import {
 import supabase from "../utils/supabase";
 import { addImageUrl } from "../helpers/images";
 import { Button } from "react-aria-components";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import ListsExplorer from "./ListsExplorer";
 import SpaceExplorer from "./SpaceExplorer";
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";

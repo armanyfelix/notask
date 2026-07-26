@@ -90,8 +90,8 @@ export default function CreateSpaceModal({
         {
           name: name.trim(),
           description: description,
-          color: color,
-          image_url: iconPath,
+          icon: color ? { color: color.toString("hex") } : null,
+          image: iconPath,
           account: accountId,
         },
       ])
@@ -106,7 +106,7 @@ export default function CreateSpaceModal({
         ...spaces,
         {
           ...data,
-          image_url: image ? URL.createObjectURL(image) : null,
+          image: image ? URL.createObjectURL(image) : null,
         },
       ]);
       onClose();

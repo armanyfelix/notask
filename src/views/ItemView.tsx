@@ -7,7 +7,6 @@ import PauseIcon from "../assets/svgs/pause.svg?react";
 import AddDateIcon from "../assets/svgs/addCalendar.svg?react";
 import PriorityMenu from "../components/PriorityMenu.tsx";
 import { useEffect, useRef, useState } from "react";
-import { ChangeEvent } from "react";
 import ItemMenu from "../components/ItemMenu.tsx";
 import { format } from "date-fns";
 
@@ -89,10 +88,10 @@ export default function ItemView({
             type="text"
             defaultValue={item?.name || ""}
             // value={element?.name || ''}
-            onInput={(e: ChangeEvent<HTMLInputElement>) =>
+            onInput={(e) =>
               setItem({
-                name: (e.target as HTMLInputElement).value,
                 ...item,
+                name: e.currentTarget.value,
               })
             }
             placeholder="Task Name"
@@ -116,10 +115,10 @@ export default function ItemView({
         <div>
           <textarea
             defaultValue={item?.description || ""}
-            onInput={(e: ChangeEvent<HTMLTextAreaElement>) =>
+            onInput={(e) =>
               setItem({
-                description: (e.target as HTMLTextAreaElement).value,
                 ...item,
+                description: e.currentTarget.value,
               })
             }
             rows={4}

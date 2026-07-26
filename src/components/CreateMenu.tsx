@@ -6,7 +6,7 @@ import {
   MenuTrigger,
   Popover,
 } from "react-aria-components";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   accountId: number | undefined;

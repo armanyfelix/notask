@@ -1,3 +1,4 @@
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import {
@@ -7,7 +8,7 @@ import {
 	MenuTrigger,
 	Popover,
 } from "react-aria-components";
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet } from "react-router-dom";
 import CreateMenu from "@/components/CreateMenu";
 import UserDropdown from "@/components/UserDropdown";
 import {
@@ -16,7 +17,6 @@ import {
 	useSpacesStore,
 	useTabsStore,
 } from "@/utils/zustand";
-import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import WindowButtons from "./WindowButtons";
 
@@ -25,7 +25,9 @@ export default function AppLayout() {
 	const { tabs, setTabs, selectedTab, setSelectedTab } = useTabsStore();
 	const { account } = useAccountStore();
 	const { spaces, setSpaces } = useSpacesStore();
+	const appWindow = getCurrentWindow();
 
+	const [isMaximized, setIsMaximized] = useState(false);
 	const [hubs, setHubs] = useState([]);
 	const [currentHub, setCurrentHub] = useState();
 
@@ -71,6 +73,7 @@ export default function AppLayout() {
 	useEffect(() => {
 		getHubs();
 		getTabs();
+		appWindow.isMaximized().then((newState) => setIsMaximized(newState));
 	}, []);
 
 	function onOpenTab(tab: any) {
@@ -79,7 +82,9 @@ export default function AppLayout() {
 
 	return (
 		<main id="app" className="h-screen flex flex-col overflow-hidden">
-			<div className="sticky top-0 bottom-0 right-0 left-0 h-8 bg-base-300 flex ml-1 items-center">
+			<div
+				className={`sticky top-0 bottom-0 right-0 left-0 h-8 bg-base-30 flex pl-5 pr-20 items-center ${!isMaximized && "rounded-tr-xl"}`}
+			>
 				<MenuTrigger>
 					<Button aria-label="Menu" className="btn btn-square btn-ghost btn-sm">
 						{currentHub}
