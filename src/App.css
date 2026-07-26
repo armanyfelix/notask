@@ -1,8 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui" {
 	themes:
-		dim --default,
-		dim --prefersdark;
+		halloween --default,
+		halloween --prefersdark;
 }
 @plugin "tailwindcss-react-aria-components";
 @plugin "tailwindcss-animate";
@@ -46,6 +46,10 @@
 	--font-proto: "0xProto", monospace;
 }
 
+:root {
+	--zag-window-radius: 22px;
+}
+
 html,
 body {
 	font-family: "0xProto", monospace;
@@ -54,13 +58,23 @@ body {
 	width: 100%;
 	height: 100%;
 	box-sizing: border-box;
-	border-radius: 12px;
+	background: transparent !important;
+	border-radius: var(--zag-window-radius);
+	overflow: hidden;
 }
 
-/*main,
-#titlebar {
-	border-radius: 12px;
-}*/
+#root {
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	border-radius: inherit;
+	overflow: hidden;
+}
+
+#root > main {
+	border-radius: inherit;
+	overflow: hidden;
+}
 
 .dialog {
 	@apply rounded-box border-neutral/90 bg-base-300/90 text-base-content border shadow-xl backdrop-blur-lg;
@@ -157,6 +171,59 @@ input[type="text"] {
 	to {
 		transform: translateY(0);
 		opacity: 1;
+	}
+}
+
+.zag-welcome {
+	background:
+		radial-gradient(circle at 50% 36%, color-mix(in oklab, var(--color-primary) 9%, transparent), transparent 36%),
+		linear-gradient(145deg, color-mix(in oklab, var(--color-base-100) 96%, var(--color-primary)), var(--color-base-100));
+}
+
+.zag-welcome-glow {
+	position: absolute;
+	width: 17rem;
+	height: 17rem;
+	border-radius: 999px;
+	background: color-mix(in oklab, var(--color-primary) 14%, transparent);
+	filter: blur(72px);
+	opacity: 0;
+	animation: zag-glow-in 1.8s ease-out forwards;
+}
+
+.zag-welcome-glow-one {
+	top: -8rem;
+	left: -6rem;
+}
+
+.zag-welcome-glow-two {
+	right: -7rem;
+	bottom: -9rem;
+	animation-delay: 180ms;
+}
+
+.zag-welcome-subtitle {
+	overflow: hidden;
+}
+
+@keyframes zag-glow-in {
+	to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zag-welcome-glow,
+	.zag-welcome-mark,
+	.zag-welcome-eyebrow,
+	.zag-welcome-title,
+	.zag-welcome-action,
+	.zag-welcome-footnote {
+		opacity: 1;
+		animation: none;
+		transform: none;
+	}
+
+	.zag-welcome-subtitle {
+		animation: none;
 	}
 }
 
